@@ -96,3 +96,7 @@ MyGame.prototype.update = function () {
     }    
    
 };
+
+// Subclass Renderable to a box that takes a shader, center pos array.
+// DO NOT make size and color part of the constructor if I want to subclass it
+// again for random squares (which I do)
