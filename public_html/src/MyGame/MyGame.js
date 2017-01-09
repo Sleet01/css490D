@@ -42,17 +42,10 @@ MyGame.prototype.initialize = function () {
         "src/GLSLShaders/SimpleFS.glsl");    // Path to the Simple FragmentShader    
 
     // Step  C: Create the Renderable objects:
-    this.mWhiteSq = new Renderable(this.mConstColorShader);
-    this.mWhiteSq.setColor([1, 1, 1, 1]);
     this.mRedSq = new Renderable(this.mConstColorShader);
     this.mRedSq.setColor([1, 0, 0, 1]);
 
-    // Step  D: Initialize the white Renderable object: centered, 5x5, rotated
-    this.mWhiteSq.getXform().setPosition(50, 50);
-    this.mWhiteSq.getXform().setRotationInRad(0.2); // In Radians
-    this.mWhiteSq.getXform().setSize(10, 20);
-
-    // Step  E: Initialize the red Renderable object: centered 2x2
+    // Step  D: Initialize the red Renderable object: centered 2x2
     this.mRedSq.getXform().setPosition(50, 50);
     this.mRedSq.getXform().setSize(1, 1);
 
@@ -69,36 +62,37 @@ MyGame.prototype.draw = function () {
     // Step  B: Activate the drawing Camera
     this.mCamera.setupViewProjection();
 
-    // Step  C: Activate the white shader to draw
-    this.mWhiteSq.draw(this.mCamera.getVPMatrix());
-
-    // Step  D: Activate the red shader to draw
+    // Step  C: Activate the red shader to draw
     this.mRedSq.draw(this.mCamera.getVPMatrix());
 };
 
 // The Update function, updates the application state. Make sure to _NOT_ draw
 // anything from this function!
 MyGame.prototype.update = function () {
-    // For this very simple game, let's move the white square and pulse the red
-    var whiteXform = this.mWhiteSq.getXform();
-    var deltaX = 0.1;
-
-    // Step A: test for white square movement
-    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Right)) {
-        if (whiteXform.getXPos() > 100) // this is the right-bound of the window
-            whiteXform.setPosition(1, 50);
-        whiteXform.incXPosBy(deltaX);
-    }
-
-    // Step  B: test for white square rotation
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Up))
-        whiteXform.incRotationByDegree(1);
-
+    // For this very simple game, let's move the red square
     var redXform = this.mRedSq.getXform();
-    // Step  C: test for pulsing the red square
-    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Down)) {
-        if (redXform.getWidth() > 5)
-            redXform.setSize(2, 2);
-        redXform.incSizeBy(0.05);
+    var deltaX = 0.1;
+    var deltaY = 0.1;
+
+    // Step A: test for red square movement
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Right)) {
+        if (redXform.getXPos() < 100) // this is the right-bound of the window
+            redXform.incXPosBy(deltaX);
     }
+
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Left)) {
+        if (redXform.getXPos() > 0) // this is the left-bound of the window
+            redXform.incXPosBy(-deltaX);
+    }
+
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Up)) {
+        if (redXform.getYPos() < (50 + (75/2))) // this is the top-bound of the window
+            redXform.incYPosBy(deltaY);
+    }
+    
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Down)) {
+        if (redXform.getYPos() > (50 - (75/2))) // this is the right-bound of the window
+            redXform.incYPosBy(-deltaY);
+    }    
+   
 };
