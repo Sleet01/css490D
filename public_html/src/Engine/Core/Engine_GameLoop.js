@@ -19,7 +19,7 @@ gEngine.GameLoop = (function () {
     var mLagTime;
     var mCurrentTime;
     var mElapsedTime;
-    var mUpdatesPerDraw;
+    var mUpdatesPerDraw; //Added to track how many updates occur before a draw
 
     // The current loop state (running or should stop)
     var mIsLoopRunning = false;
@@ -32,7 +32,7 @@ gEngine.GameLoop = (function () {
             // Step A: set up for next call to _runLoop and update input!
             requestAnimationFrame(function () { _runLoop.call(mMyGame); });
 
-            // Step B: compute how much time has elapsed since we last RunLoop was executed
+            // Step B: compute how much time has elapsed since the last RunLoop was executed
             mCurrentTime = Date.now();
             mElapsedTime = mCurrentTime - mPreviousTime;
             mPreviousTime = mCurrentTime;

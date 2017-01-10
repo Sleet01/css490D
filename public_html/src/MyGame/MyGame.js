@@ -124,11 +124,9 @@ MyGame.prototype.update = function () {
     }
     
     // Change delete mode state
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.D)){
+    if ((!this.deleteMode) && gEngine.Input.isKeyClicked(gEngine.Input.keys.D)){
         this.deleteMode = true;
-    }
-    
-   
+    }  
 };
 
 // Subclass Renderable to a box that takes a shader, center pos array.
