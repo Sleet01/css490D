@@ -10,7 +10,9 @@
 
 function MyGame(htmlCanvasID) {
     // Game state variables
-    this.deleteMode = false;
+    this.mDeleteMode = false;
+    this.mDeleteModeStart = 0;
+    this.mDrawStart = 0;
     
     // variables of the constant color shader
     this.mConstColorShader = null;
@@ -54,9 +56,12 @@ MyGame.prototype.initialize = function () {
     
     // Step E: Initialize the global update information:
     // gUpdateFrame( elapsed, numUpdatePerDraw, lagTime)
-    // gUpdateObject( numObjects, deleteMode )
+    // gUpdateObject( numObjects, mDeleteMode )
     gUpdateFrame(0, 0, 0);
     gUpdateObject(1, false);
+    
+    // Log start of game
+    this.mDrawStart = Date.now();
     
     // Step F: Start the game loop running
     gEngine.GameLoop.start(this);
@@ -73,16 +78,16 @@ MyGame.prototype.draw = function () {
 
     // Step  C: Activate the Box shaders to draw
     for (var i = 0; i < this.mSquares.length; i++){
-        this.mSquares[i].draw(this.mCamera.getVPMatrix());
+        this.mSquares[i][1].draw(this.mCamera.getVPMatrix());
     }
     this.mRedSq.draw(this.mCamera.getVPMatrix());
     
     // Step D: Update gUpdateFrame and gUpdateObject
     // gUpdateFrame( elapsed, numUpdatePerDraw, lagTime)
-    // gUpdateObject( numObjects, deleteMode )
+    // gUpdateObject( numObjects, mDeleteMode )
     var mLoopStats = gEngine.GameLoop.stats();
     gUpdateFrame(mLoopStats[0],mLoopStats[1],mLoopStats[2]);
-    gUpdateObject(this.mSquares.length + 1, this.deleteMode);
+    gUpdateObject(this.mSquares.length + 1, this.mDeleteMode);
    
 };
 
@@ -118,14 +123,33 @@ MyGame.prototype.update = function () {
     // Loop to create random number of random boxes randomly
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space)){
         for ( var j = 0; j < (10 + (Math.random()*10)); j++ ){
-            this.mSquares.push(new RandomBox(this.mConstColorShader, 
-            [redXform.getXPos(), redXform.getYPos()]));
+            this.mSquares.push([Date.now() - this.mDrawStart, 
+                new RandomBox(this.mConstColorShader, 
+                [redXform.getXPos(), redXform.getYPos()])
+            ]);
         }   
     }
     
     // Change delete mode state
-    if ((!this.deleteMode) && gEngine.Input.isKeyClicked(gEngine.Input.keys.D)){
-        this.deleteMode = true;
+    if (!this.mDeleteMode){
+        if (gEngine.Input.isKeyClicked(gEngine.Input.keys.D)){
+            this.mDeleteMode = true;
+            this.mDeleteModeStart = Date.now();
+        }
+    // If we're already in Delete mode, check if there's anything to delete
+    } else {
+        if (this.mSquares.length > 0) {
+            for ( var k = 0; k < this.mSquares.length; k++) {
+                if ( (Date.now() - this.mDeleteModeStart) > this.mSquares[k][0] ){
+                    this.mSquares.pop(k);
+                } else {
+                    break;
+                }
+            }
+        }  else {
+            this.mDeleteMode = false;
+            this.mDrawStart = Date.now();
+        }
     }  
 };
 
