@@ -9,6 +9,9 @@
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
 function MyGame(htmlCanvasID) {
+    // Game state variables
+    this.deleteMode = false;
+    
     // variables of the constant color shader
     this.mConstColorShader = null;
 
@@ -49,6 +52,12 @@ MyGame.prototype.initialize = function () {
     // this.mRedSq.getXform().setPosition(50, 50);
     this.mRedSq.getXform().setSize(1, 1);
     
+    // Step E: Initialize the global update information:
+    // gUpdateFrame( elapsed, numUpdatePerDraw, lagTime)
+    // gUpdateObject( numObjects, deleteMode )
+    gUpdateFrame(0, 0, 0);
+    gUpdateObject(1, false);
+    
     // Step F: Start the game loop running
     gEngine.GameLoop.start(this);
 };
@@ -67,6 +76,13 @@ MyGame.prototype.draw = function () {
         this.mSquares[i].draw(this.mCamera.getVPMatrix());
     }
     this.mRedSq.draw(this.mCamera.getVPMatrix());
+    
+    // Step D: Update gUpdateFrame and gUpdateObject
+    // gUpdateFrame( elapsed, numUpdatePerDraw, lagTime)
+    // gUpdateObject( numObjects, deleteMode )
+    var mLoopStats = gEngine.GameLoop.stats();
+    gUpdateFrame(mLoopStats[0],mLoopStats[1],mLoopStats[2]);
+    gUpdateObject(this.mSquares.length + 1, this.deleteMode);
    
 };
 
@@ -100,13 +116,18 @@ MyGame.prototype.update = function () {
     }    
     
     // Loop to create random number of random boxes randomly
-    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Space)){
-        for ( var j = 0; j < (10 + Math.random()*10); j++ ){
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space)){
+        for ( var j = 0; j < (10 + (Math.random()*10)); j++ ){
             this.mSquares.push(new RandomBox(this.mConstColorShader, 
             [redXform.getXPos(), redXform.getYPos()]));
-        }
-        
+        }   
     }
+    
+    // Change delete mode state
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.D)){
+        this.deleteMode = true;
+    }
+    
    
 };
 

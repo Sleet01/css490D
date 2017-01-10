@@ -19,6 +19,7 @@ gEngine.GameLoop = (function () {
     var mLagTime;
     var mCurrentTime;
     var mElapsedTime;
+    var mUpdatesPerDraw;
 
     // The current loop state (running or should stop)
     var mIsLoopRunning = false;
@@ -36,7 +37,8 @@ gEngine.GameLoop = (function () {
             mElapsedTime = mCurrentTime - mPreviousTime;
             mPreviousTime = mCurrentTime;
             mLagTime += mElapsedTime;
-
+            mUpdatesPerDraw = 1;
+            
             // Step C: Make sure we update the game the appropriate number of times.
             //      Update only every Milliseconds per frame.
             //      If lag larger then update frames, update until caught up.
@@ -44,6 +46,7 @@ gEngine.GameLoop = (function () {
                 gEngine.Input.update();
                 this.update();      // call MyGame.update()
                 mLagTime -= kMPF;
+                mUpdatesPerDraw += 1;
             }
 
             // Step D: now let's draw
@@ -65,13 +68,21 @@ gEngine.GameLoop = (function () {
         // Step C: request _runLoop to start when loading is done
         requestAnimationFrame(function () { _runLoop.call(mMyGame); });
     };
+    
+    // Return array of functional statistics
+    // GameLoop will need to update these every update pass, but
+    // this function will only be called every draw.
+    var stats = function () {
+        return [mElapsedTime, mUpdatesPerDraw, mLagTime];
+    };
 
     // No Stop or Pause function, as all input are pull during the loop
     // once stopped, tricky to start the loop
     // You should implement pausing of game in game update.
 
     var mPublic = {
-        start: start
+        start: start,
+        stats: stats
     };
     return mPublic;
 

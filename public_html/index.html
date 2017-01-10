@@ -23,7 +23,7 @@
 
         <!-- Client game code -->
         <script type="text/javascript" src="src/MyGame/MyGame.js"></script> 
-    </head>
+    </head> 
 
     <body onload="new MyGame('GLCanvas');">
         <canvas id="GLCanvas" width="640" height="480">
@@ -32,5 +32,27 @@
             <!-- this message will show only if WebGL clearing failed -->
         </canvas>
             
+        <br>
+        <div id='UpdateFrame'></div>
+        <hr>
+        <div id='UpdateObject'></div>
+        
+        <script>
+            var gUpdateFrame = function(elapsed, numUpdatePerDraw, lagTime){
+                var elm = document.getElementById("UpdateFrame");
+                elm.innerHTML =
+                        "<b>Time to update/draw:</b>" + elapsed + " milliseconds<br>" +
+                        "<b>Frames per second: </b>" + (1000/elapsed).toFixed(2) + "<br>" +
+                        "<b>Num Update() Calls per Draw(): </b>" + numUpdatePerDraw + "<br>" +
+                        "<b>Lag Time: </b>" + lagTime.toFixed(2) + " milliseconds<br>";
+            };
+            
+            var gUpdateObject = function(n, deleteMode) {
+                var elm = document.getElementById("UpdateObject");
+                elm.innerHTML = 
+                        "<b>Total num objects: </b>" + n + "<br>" +
+                        "<b>Delete mode = " + deleteMode;
+            };
+        </script>
     </body>
 </html>
