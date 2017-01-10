@@ -101,9 +101,9 @@ Camera.prototype.setupViewProjection = function () {
          this.mNearPlane,   // z-distance to near plane 
          this.mFarPlane  // z-distance to far plane 
     );
-    console.log("Projection Matrix");
-    console.log("WCCenter X, Y:" + this.mWCCenter[0] + ", " + this.mWCCenter[1]);
-    console.log("halfWCWidth, Height: " + halfWCWidth + ", " + halfWCHeight);
+    //console.log("Projection Matrix");
+    //console.log("WCCenter X, Y:" + this.mWCCenter[0] + ", " + this.mWCCenter[1]);
+    //console.log("halfWCWidth, Height: " + halfWCWidth + ", " + halfWCHeight);
     // Step B3: concatenate view and project matrices
     mat4.multiply(this.mVPMatrix, this.mProjMatrix, this.mViewMatrix);
     //</editor-fold>

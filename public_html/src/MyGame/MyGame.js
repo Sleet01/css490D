@@ -13,7 +13,7 @@ function MyGame(htmlCanvasID) {
     this.mConstColorShader = null;
 
     // variables for the squares
-    this.mWhiteSq = null;        // these are the Renderable objects
+    this.mSquares = [];        // these are the Renderable objects
     this.mRedSq = null;
 
     // The camera to view the scene
@@ -42,13 +42,14 @@ MyGame.prototype.initialize = function () {
         "src/GLSLShaders/SimpleFS.glsl");    // Path to the Simple FragmentShader    
 
     // Step  C: Create the Renderable objects:
-    this.mRedSq = new Renderable(this.mConstColorShader);
+    this.mRedSq = new Box(this.mConstColorShader, [50,50]);
     this.mRedSq.setColor([1, 0, 0, 1]);
 
     // Step  D: Initialize the red Renderable object: centered 2x2
-    this.mRedSq.getXform().setPosition(50, 50);
+    // this.mRedSq.getXform().setPosition(50, 50);
     this.mRedSq.getXform().setSize(1, 1);
-
+    this.mSquares.push(this.mRedSq);
+    
     // Step F: Start the game loop running
     gEngine.GameLoop.start(this);
 };
@@ -62,8 +63,11 @@ MyGame.prototype.draw = function () {
     // Step  B: Activate the drawing Camera
     this.mCamera.setupViewProjection();
 
-    // Step  C: Activate the red shader to draw
-    this.mRedSq.draw(this.mCamera.getVPMatrix());
+    // Step  C: Activate the Box shaders to draw
+    for (var i = 0; i < this.mSquares.length; i++){
+        this.mSquares[i].draw(this.mCamera.getVPMatrix());
+    }
+   
 };
 
 // The Update function, updates the application state. Make sure to _NOT_ draw
@@ -94,9 +98,41 @@ MyGame.prototype.update = function () {
         if (redXform.getYPos() > (50 - (75/2))) // this is the right-bound of the window
             redXform.incYPosBy(-deltaY);
     }    
+    
+    // Loop to create random number of random boxes randomly
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space)){
+        for ( var j = 0; j < (10 + Math.random()*10); j++ ){
+            this.mSquares.unshift(new RandomBox(this.mConstColorShader, 
+            [redXform.getXPos(), redXform.getYPos()]));
+        }
+        
+    }
    
 };
 
 // Subclass Renderable to a box that takes a shader, center pos array.
 // DO NOT make size and color part of the constructor if I want to subclass it
 // again for random squares (which I do)
+function Box(shader, centerPos){
+    Renderable.call(this, shader);
+    this.getXform().setPosition(centerPos[0], centerPos[1]);
+};
+Box.prototype = Object.create( Renderable.prototype );
+Box.prototype.constructor = Box;
+
+
+// Consider moving this to subclass files under MyGame.
+function RandomBox(shader, centerPos){
+    var mXOffset = (centerPos[0] - 5) + (Math.random() * 10);
+    var mYOffset = (centerPos[1] - 5) + (Math.random() * 10);
+    var mSize = 1 + Math.random() * 6; // 1~6
+    var mRandRotation = 0.0 + Math.random() * 2 * 3.14159265359; // 0 ~ 2*Pi
+    Box.call(this, shader, [mXOffset, mYOffset]);
+    
+    var mXform = this.getXform();
+    mXform.setSize(mSize, mSize);
+    mXform.setRotationInRad(mRandRotation);
+    
+}
+RandomBox.prototype = Object.create( Box.prototype );
+RandomBox.prototype.constructor = RandomBox;
