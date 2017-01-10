@@ -45,10 +45,9 @@ MyGame.prototype.initialize = function () {
     this.mRedSq = new Box(this.mConstColorShader, [50,50]);
     this.mRedSq.setColor([1, 0, 0, 1]);
 
-    // Step  D: Initialize the red Renderable object: centered 2x2
+    // Step  D: Initialize the red Renderable object: centered 1x1
     // this.mRedSq.getXform().setPosition(50, 50);
     this.mRedSq.getXform().setSize(1, 1);
-    this.mSquares.push(this.mRedSq);
     
     // Step F: Start the game loop running
     gEngine.GameLoop.start(this);
@@ -67,6 +66,7 @@ MyGame.prototype.draw = function () {
     for (var i = 0; i < this.mSquares.length; i++){
         this.mSquares[i].draw(this.mCamera.getVPMatrix());
     }
+    this.mRedSq.draw(this.mCamera.getVPMatrix());
    
 };
 
@@ -100,9 +100,9 @@ MyGame.prototype.update = function () {
     }    
     
     // Loop to create random number of random boxes randomly
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space)){
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Space)){
         for ( var j = 0; j < (10 + Math.random()*10); j++ ){
-            this.mSquares.unshift(new RandomBox(this.mConstColorShader, 
+            this.mSquares.push(new RandomBox(this.mConstColorShader, 
             [redXform.getXPos(), redXform.getYPos()]));
         }
         
@@ -129,10 +129,15 @@ function RandomBox(shader, centerPos){
     var mRandRotation = 0.0 + Math.random() * 2 * 3.14159265359; // 0 ~ 2*Pi
     Box.call(this, shader, [mXOffset, mYOffset]);
     
+    this.setColor(this.randomColorArray());
+    
     var mXform = this.getXform();
     mXform.setSize(mSize, mSize);
     mXform.setRotationInRad(mRandRotation);
     
-}
+};
 RandomBox.prototype = Object.create( Box.prototype );
 RandomBox.prototype.constructor = RandomBox;
+RandomBox.prototype.randomColorArray = function(){
+    return [Math.random(), Math.random(), Math.random(), 1];
+};
