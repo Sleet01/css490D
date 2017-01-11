@@ -13,6 +13,7 @@ function MyGame(htmlCanvasID) {
     this.mDeleteMode = false;
     this.mDeleteModeStart = 0;
     this.mDrawStart = 0;
+    this.mFrameNumber = 0;
     
     // variables of the constant color shader
     this.mConstColorShader = null;
@@ -83,13 +84,19 @@ MyGame.prototype.draw = function () {
     // gUpdateFrame( elapsed, numUpdatePerDraw, lagTime)
     // gUpdateObject( numObjects, mDeleteMode )
     var mLoopStats = gEngine.GameLoop.stats();
-    gUpdateFrame(mLoopStats[0],mLoopStats[1],mLoopStats[2]);
-    gUpdateObject(this.mSquares.length + 1, this.mDeleteMode);
-    if(this.mSquares.length > 0){
-        gFirstItem(this.mSquares[0], this.mSquares[this.mSquares.length -1]);
-    }
-    else{
-        gFirstItem([0], [0]);
+    if (( this.mFrameNumber % 10 ) === 0 ){ // Smooths UI updates
+        // Use global UI update functions to put numbers on the web page
+        gUpdateFrame(mLoopStats[0],mLoopStats[1],mLoopStats[2]);
+        gUpdateObject(this.mSquares.length + 1, this.mDeleteMode);
+
+        // Update the first and last instance times for delete mode checks
+        if(this.mSquares.length > 0){
+            gFirstItem(this.mSquares[0], this.mSquares[this.mSquares.length -1]);
+        }
+        else{
+            // Array of zeros.
+            gFirstItem([0], [0]);
+        }
     }
 };
 
@@ -100,6 +107,7 @@ MyGame.prototype.update = function () {
     var redXform = this.mRedSq.getXform();
     var deltaX = 0.1;
     var deltaY = 0.1;
+    this.mFrameNumber = (this.mFrameNumber + 1) % 120;
 
     // Step A: test for red square movement
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Right)) {
