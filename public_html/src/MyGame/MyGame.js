@@ -60,9 +60,6 @@ MyGame.prototype.initialize = function () {
     gUpdateFrame(0, 0, 0);
     gUpdateObject(1, false);
     
-    // Log start of game
-    this.mDrawStart = Date.now();
-    
     // Step F: Start the game loop running
     gEngine.GameLoop.start(this);
 };
@@ -125,8 +122,17 @@ MyGame.prototype.update = function () {
             redXform.incYPosBy(-deltaY);
     }    
     
-    // Loop to create random number of random boxes randomly
-    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Space)){
+    // Loop to create random number of random boxes randomly when space is *clicked*.
+    // Could also be on press, but this soon fills in the 
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space)){
+        
+        // Log start of drawing if this is the first set
+        if (this.mDrawStart === 0){
+            this.mDrawStart = Date.now();
+    }
+        // Generate 10 - 20 (since j < 19.999) randomized boxes within (-5, -5) to
+        // (5, 5) of the cursor position, and record the time of creation for later
+        // deleting.
         for ( var j = 0; j < (10 + (Math.random()*10)); j++ ){
             this.mSquares.push([Date.now() - this.mDrawStart, 
                 new RandomBox(this.mConstColorShader, 
@@ -151,9 +157,10 @@ MyGame.prototype.update = function () {
                     break;
                 }
             }
+        // If there are no more squares left, leave Delete Mode and reset times.
         }  else {
             this.mDeleteMode = false;
-            this.mDrawStart = Date.now();
+            this.mDrawStart = 0;
             this.mDeleteModeStart = 0;
         }
     }  
@@ -169,7 +176,7 @@ function Box(shader, centerPos){
 Box.prototype = Object.create( Renderable.prototype );
 Box.prototype.constructor = Box;
 
-
+// Subclass of Box that randomizes itself on instantiation a la MP1 spec
 // Consider moving this to subclass files under MyGame.
 function RandomBox(shader, centerPos){
     var mXOffset = (centerPos[0] - 5) + (Math.random() * 10);
