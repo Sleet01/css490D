@@ -88,7 +88,12 @@ MyGame.prototype.draw = function () {
     var mLoopStats = gEngine.GameLoop.stats();
     gUpdateFrame(mLoopStats[0],mLoopStats[1],mLoopStats[2]);
     gUpdateObject(this.mSquares.length + 1, this.mDeleteMode);
-   
+    if(this.mSquares.length > 0){
+        gFirstItem(this.mSquares[0], this.mSquares[this.mSquares.length -1]);
+    }
+    else{
+        gFirstItem([0], [0]);
+    }
 };
 
 // The Update function, updates the application state. Make sure to _NOT_ draw
@@ -121,7 +126,7 @@ MyGame.prototype.update = function () {
     }    
     
     // Loop to create random number of random boxes randomly
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space)){
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Space)){
         for ( var j = 0; j < (10 + (Math.random()*10)); j++ ){
             this.mSquares.push([Date.now() - this.mDrawStart, 
                 new RandomBox(this.mConstColorShader, 
@@ -141,7 +146,7 @@ MyGame.prototype.update = function () {
         if (this.mSquares.length > 0) {
             for ( var k = 0; k < this.mSquares.length; k++) {
                 if ( (Date.now() - this.mDeleteModeStart) > this.mSquares[k][0] ){
-                    this.mSquares.pop(k);
+                    this.mSquares.shift();
                 } else {
                     break;
                 }
@@ -149,6 +154,7 @@ MyGame.prototype.update = function () {
         }  else {
             this.mDeleteMode = false;
             this.mDrawStart = Date.now();
+            this.mDeleteModeStart = 0;
         }
     }  
 };

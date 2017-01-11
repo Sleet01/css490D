@@ -36,6 +36,8 @@
         <div id='UpdateFrame'></div>
         <hr>
         <div id='UpdateObject'></div>
+        <hr>
+        <div id="UpdateBox"></div>
         
         <script>
             var gUpdateFrame = function(elapsed, numUpdatePerDraw, lagTime){
@@ -52,6 +54,13 @@
                 elm.innerHTML = 
                         "<b>Total num objects: </b>" + n + "<br>" +
                         "<b>Delete mode = " + deleteMode;
+            };
+            
+            var gFirstItem = function(itemZero, itemOmega) {
+                var elm = document.getElementById("UpdateBox");
+                elm.innerHTML =
+                        "<b>First item instance time: </b>" + itemZero[0] + "<br>" +
+                        "<b>Last item instance time: </b>" + itemOmega[0];
             };
         </script>
     </body>
