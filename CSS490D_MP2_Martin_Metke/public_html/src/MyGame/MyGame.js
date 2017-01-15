@@ -129,4 +129,12 @@ MyGame.prototype.update = function () {
             gEngine.GameLoop.stop();
         }
     }
+    
+    if (gEngine.Input.isKeyReleased(gEngine.Input.keys.A)) {
+        gEngine.AudioClips.playACue(this.kCue);
+        xform.incYPosBy(deltaX);
+        if (xform.getYPos() > 61) {  // this is the left-bound of the window
+            gEngine.GameLoop.stop();
+        }
+    }
 };
