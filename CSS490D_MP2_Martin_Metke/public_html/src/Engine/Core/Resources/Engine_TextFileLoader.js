@@ -16,7 +16,8 @@ var gEngine = gEngine || { };
 gEngine.TextFileLoader = (function () {
     var eTextFileType = Object.freeze({
         eXMLFile: 0,
-        eTextFile: 1
+        eTextFile: 1,
+        eJSONFile: 2
     });
 
     // if fileType is a eTextFileType
@@ -38,12 +39,27 @@ gEngine.TextFileLoader = (function () {
 
             req.onload = function () {
                 var fileContent = null;
-                if (fileType === eTextFileType.eXMLFile) {
-                    var parser = new DOMParser();
-                    fileContent = parser.parseFromString(req.responseText, "text/xml");
-                } else {
-                    fileContent = req.responseText;
+                switch(fileType) {
+                    case eTextFileType.eXMLFile:
+                        var parser = new DOMParser();
+                        fileContent = parser.parseFromString(req.responseText, "text/xml");
+                        break;
+                    case eTextFileType.eTextFile:
+                        fileContent = req.responseText;
+                        break;
+                    case eTextFileType.eJSONFile:
+                        fileContent = JSON.parse(req.responseText);
+                        break;
+                    default:
+                        alert(fileType + ": loading failed! [Hint: you cannot double click index.html to run this project. " +
+                        "The index.html file must be loaded by a web-server.]");
                 }
+//                if (fileType === eTextFileType.eXMLFile) {
+//                    var parser = new DOMParser();
+//                    fileContent = parser.parseFromString(req.responseText, "text/xml");
+//                } else {
+//                    fileContent = req.responseText;
+//                }
                 gEngine.ResourceMap.asyncLoadCompleted(fileName, fileContent);
                 if ((callbackFunction !== null) && (callbackFunction !== undefined)) {
                     callbackFunction(fileName);

@@ -14,6 +14,7 @@ function BlueLevel() {
     this.kCue = "assets/sounds/BlueLevel_cue.wav";
 
     // scene file name
+    // this.kSceneFile = "assets/scene.json";
     this.kSceneFile = "assets/BlueLevel.xml";
     // all squares
     this.mSqSet = [];        // these are the Renderable objects
