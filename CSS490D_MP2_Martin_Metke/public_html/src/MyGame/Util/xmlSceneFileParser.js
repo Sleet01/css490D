@@ -7,11 +7,11 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function SceneFileParser(sceneFilePath) {
+function xmlSceneFileParser(sceneFilePath) {
     this.mSceneXml = gEngine.ResourceMap.retrieveAsset(sceneFilePath);
 }
 
-SceneFileParser.prototype._getElm = function (tagElm) {
+xmlSceneFileParser.prototype._getElm = function (tagElm) {
     var theElm = this.mSceneXml.getElementsByTagName(tagElm);
     if (theElm.length === 0) {
         console.error("Warning: Level element:[" + tagElm + "]: is not found!");
@@ -19,7 +19,7 @@ SceneFileParser.prototype._getElm = function (tagElm) {
     return theElm;
 };
 
-SceneFileParser.prototype.parseCamera = function () {
+xmlSceneFileParser.prototype.parseCamera = function () {
     var camElm = this._getElm("Camera");
     var cx = Number(camElm[0].getAttribute("CenterX"));
     var cy = Number(camElm[0].getAttribute("CenterY"));
@@ -42,7 +42,7 @@ SceneFileParser.prototype.parseCamera = function () {
     return cam;
 };
 
-SceneFileParser.prototype.parseSquares = function (sqSet) {
+xmlSceneFileParser.prototype.parseSquares = function (sqSet) {
     var elm = this._getElm("Square");
     var i, j, x, y, w, h, r, c, sq;
     for (i = 0; i < elm.length; i++) {

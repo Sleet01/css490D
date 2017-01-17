@@ -14,8 +14,8 @@ function BlueLevel() {
     this.kCue = "assets/sounds/BlueLevel_cue.wav";
 
     // scene file name
-    this.kSceneFile = "assets/scene.json";
-    // this.kSceneFile = "assets/BlueLevel.xml";
+    //this.kSceneFile = "assets/BlueLevel.xml";
+    this.kSceneFile = "assets/scene.json"
     // all squares
     this.mSqSet = [];        // these are the Renderable objects
 
@@ -26,8 +26,8 @@ gEngine.Core.inheritPrototype(BlueLevel, Scene);
 
 BlueLevel.prototype.loadScene = function () {
     // load the scene file
+    //gEngine.TextFileLoader.loadTextFile(this.kSceneFile, gEngine.TextFileLoader.eTextFileType.eXMLFile);
     gEngine.TextFileLoader.loadTextFile(this.kSceneFile, gEngine.TextFileLoader.eTextFileType.eJSONFile);
-
     // loads the audios
     gEngine.AudioClips.loadAudio(this.kBgClip);
     gEngine.AudioClips.loadAudio(this.kCue);
@@ -47,7 +47,9 @@ BlueLevel.prototype.unloadScene = function () {
 };
 
 BlueLevel.prototype.initialize = function () {
-    var sceneParser = new SceneFileParser(this.kSceneFile);
+
+    var sceneParser = new jsonSceneFileParser(this.kSceneFile);
+    //var sceneParser = new xmlSceneFileParser(this.kSceneFile);
 
     // Step A: Read in the camera
     this.mCamera = sceneParser.parseCamera();
