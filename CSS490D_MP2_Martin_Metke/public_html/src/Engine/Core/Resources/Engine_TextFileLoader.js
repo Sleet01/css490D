@@ -49,7 +49,7 @@ gEngine.TextFileLoader = (function () {
                         break;
                     case eTextFileType.eJSONFile:
                         fileContent = JSON.parse(req.responseText);
-                        console.log("Loaded JSON file: Camera at " + fileContent["Camera"]["Center"]);
+                        // console.log("Loaded JSON file: Camera at " + fileContent["Camera"]["Center"]);
                         break;
                     default:
                         alert(fileType + ": loading failed! [Hint: you cannot double click index.html to run this project. " +

@@ -18,8 +18,8 @@ function BlueLevel() {
     // all squares
     this.mSqSet = [];        // these are the Renderable objects
 
-    // The camera to view the scene
-    this.mCamera = null;
+    // The cameras to view the scene
+    this.mCameras = [];
 }
 gEngine.Core.inheritPrototype(BlueLevel, Scene);
 
@@ -48,9 +48,25 @@ BlueLevel.prototype.initialize = function () {
 
     var sceneParser = new xmlSceneFileParser(this.kSceneFile);
 
-    // Step A: Read in the camera
-    this.mCamera = sceneParser.parseCamera();
+    // Step A: Read in the cameras
+    this.mCameras[0] = sceneParser.parseCamera();
 
+    // Attempt to load the PiP camera from the last level; instantiate if not saved
+    if (gEngine.ResourceMap.isAssetLoaded("PiPCamera")){
+        this.mCameras[1] = gEngine.ResourceMap.retrieveAsset("PiPCamera");
+    } else {
+
+        this.mCameras[1] = new Camera(
+            vec2.fromValues(20, 60),   // position of the camera
+            40,                        // width of camera
+            [40, 200, 100, 100]         // viewport (orgX, orgY, width, height)
+        );
+        this.mCameras[1].setBackgroundColor([0, 0.9, 0.9, 1]);
+        
+        // Save this PiP camera for next level to use
+        gEngine.ResourceMap.saveAsset("PiPCamera", this.mCameras[1]);
+    }
+    
     // Step B: Read all the squares
     sceneParser.parseSquares(this.mSqSet);
 
@@ -64,13 +80,15 @@ BlueLevel.prototype.draw = function () {
     // Step A: clear the canvas
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
 
-    // Step  B: Activate the drawing Camera
-    this.mCamera.setupViewProjection();
+    // Draw all objects to each camera in turn
+    for (var i=0; i<this.mCameras.length; i++){
+        // Step  B: Activate the drawing Camera
+        this.mCameras[i].setupViewProjection();
 
-    // Step  C: draw all the squares
-    var i;
-    for (i = 0; i < this.mSqSet.length; i++) {
-        this.mSqSet[i].draw(this.mCamera.getVPMatrix());
+        // Step  C: draw everything
+        for (var j=0; j < this.mSqSet.length; j++){
+            this.mSqSet[j].draw(this.mCameras[i].getVPMatrix());
+        }
     }
 };
 
@@ -87,7 +105,7 @@ BlueLevel.prototype.update = function () {
     
     
         // Step B: Level controls
-    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Q)) {
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Q)) {
         gEngine.GameLoop.stop();
     }
    
@@ -117,7 +135,7 @@ BlueLevel.prototype.update = function () {
     
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.S)) {
         gEngine.AudioClips.playACue(this.kCue);
-        if ( mobileCam.getYPos() >= 40 ){
+        if ( mobileCam.getYPos() - camDelta >= 40 ){
             mobileCam.incYPosBy(-camDelta);
         }
     }

@@ -68,6 +68,13 @@ gEngine.ResourceMap = (function () {
         return r;
     };
 
+    // Save a game-state object in the Resource Map for later use.
+    var saveAsset = function (rName, rObject) {
+        mResourceMap[rName] = new MapEntry(rName);
+        mResourceMap[rName].mAsset = rObject;
+        // console.log("New asset = " + mResourceMap[rName].mAsset.toString());
+    };
+
     var isAssetLoaded = function (rName) {
         return (rName in mResourceMap);
     };
@@ -98,6 +105,7 @@ gEngine.ResourceMap = (function () {
         setLoadCompleteCallback: setLoadCompleteCallback,
         //</editor-fold>
         //<editor-fold desc="resource storage and reference count support">
+        saveAsset: saveAsset,
         retrieveAsset: retrieveAsset,
         unloadAsset: unloadAsset,
         isAssetLoaded: isAssetLoaded,

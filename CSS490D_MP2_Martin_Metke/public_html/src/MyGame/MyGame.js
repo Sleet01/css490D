@@ -53,17 +53,24 @@ MyGame.prototype.unloadScene = function() {
 MyGame.prototype.initialize = function () {
     // Step A: Parse this scene with a JSON sceneParser
     var sceneParser = new jsonSceneFileParser(this.kSceneFile);
-    
+
     // Step A: set up the cameras
     this.mCameras[0] = sceneParser.parseCamera();
-    
-    this.mCameras[1] = new Camera(
-        vec2.fromValues(20, 60),   // position of the camera
-        40,                        // width of camera
-        [40, 200, 100, 100]         // viewport (orgX, orgY, width, height)
-        );
-    this.mCameras[1].setBackgroundColor([0, 0.4, 0.6, 1]);
 
+    // Attempt to load PiP camera from last level; instantiate if not saved
+    if (gEngine.ResourceMap.isAssetLoaded("PiPCamera")){
+        this.mCameras[1] = gEngine.ResourceMap.retrieveAsset("PiPCamera");
+    } else {
+
+        this.mCameras[1] = new Camera(
+            vec2.fromValues(20, 60),   // position of the camera
+            40,                        // width of camera
+            [40, 200, 100, 100]         // viewport (orgX, orgY, width, height)
+        );
+        this.mCameras[1].setBackgroundColor([0, 0.9, 0.9, 1]);
+        // Save this camera to the ResourceMap for the next level to use.
+        gEngine.ResourceMap.saveAsset("PiPCamera", this.mCameras[1]);
+    }
     // Step B: Read all the squares
     sceneParser.parseSquares(this.mSqSet);
 
@@ -115,7 +122,7 @@ MyGame.prototype.update = function () {
     }
     
     // Step B: Level controls
-    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Q)) {
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Q)) {
         gEngine.GameLoop.stop();
     }
    
@@ -145,7 +152,7 @@ MyGame.prototype.update = function () {
     
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.S)) {
         gEngine.AudioClips.playACue(this.kCue);
-        if ( mobileCam.getYPos() >= 40 ){
+        if ( mobileCam.getYPos() - camDelta >= 40 ){
             mobileCam.incYPosBy(-camDelta);
         }
     }

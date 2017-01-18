@@ -19,15 +19,11 @@ jsonSceneFileParser.prototype._getElm = function (tagElm) {
     return theElm;
 };
 
+// Load a camera definition from the parsed text file
 jsonSceneFileParser.prototype.parseCamera = function () {
     // Debugging
-    console.log("Attempting to open Camera!  Camera is: " + this._getElm("Camera"));
-//    var camElm = this._getElm("Camera");
-//    var cx = Number(camElm[0]["CenterX"]);
-//    var cy = Number(camElm[0]["CenterY"]);
-//    var w = Number(camElm[0]["Width"]);
-//    var viewport = camElm[0]["Viewport"].split(" ");
-//    var bgColor = camElm[0]["BgColor"].split(" ");
+    // console.log("Attempting to open Camera!  Camera is: " + this._getElm("Camera"));
+
     var camElm = this._getElm("Camera");
     var cx = Number(camElm["Center"][0]);
     var cy = Number(camElm["Center"][1]);
@@ -36,8 +32,6 @@ jsonSceneFileParser.prototype.parseCamera = function () {
     var bgColor = camElm["BgColor"].map(Number);
     // make sure viewport and color are number
     
-    
-
     var cam = new Camera(
         vec2.fromValues(cx, cy),  // position of the camera
         w,                        // width of camera
