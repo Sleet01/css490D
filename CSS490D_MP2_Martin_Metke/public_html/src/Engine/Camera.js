@@ -43,8 +43,25 @@ Camera.prototype.setWCCenter = function (xPos, yPos) {
     this.mWCCenter[0] = xPos;
     this.mWCCenter[1] = yPos;
 };
+// Position manipulation getter/setters
+Camera.prototype.getXPos = function () { return this.mViewport[0]; };
+Camera.prototype.getYPos = function (){ return this.mViewport[1]; };
+Camera.prototype.setXPos = function (xPos){ this.mViewport[0] = xPos; };
+Camera.prototype.setYPos = function (xPos){ this.mViewport[1] = xPos; };
+Camera.prototype.setPosition = function (xPos,yPos){ this.setXpos(xPos); this.setYpos(yPos); };
+Camera.prototype.getPosition = function () { return [this.getXpos(), this.getYpos()]; };
+Camera.prototype.incXPosBy = function (delta) { this.mViewport[0] += delta; };
+Camera.prototype.incYPosBy = function (delta) { this.mViewport[1] += delta; };
+
 Camera.prototype.getWCCenter = function () { return this.mWCCenter; };
 Camera.prototype.setWCWidth = function (width) { this.mWCWidth = width; };
+Camera.prototype.adjZoom = function (delta) { this.mWCWidth += delta; };
+Camera.prototype.setWCXPos = function (xPos) { this.mWCCenter[0] = xPos; };
+Camera.prototype.setWCYPos = function (yPos) { this.mWCCenter[1] = yPos; };
+Camera.prototype.getWCXPos = function () { return this.mWCCenter[0]; };
+Camera.prototype.getWCYPos = function () { return this.mWCCenter[1]; };
+Camera.prototype.incWCXPos = function (delta) { this.mWCCenter[0] += delta; };
+Camera.prototype.incWCYPos = function (delta) { this.mWCCenter[1] += delta; };
 
 Camera.prototype.setViewport = function (viewportArray) { this.mViewport = viewportArray; };
 Camera.prototype.getViewport = function () { return this.mViewport; };

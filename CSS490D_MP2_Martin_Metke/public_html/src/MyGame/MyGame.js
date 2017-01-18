@@ -14,7 +14,7 @@ function MyGame() {
     this.kCue = "assets/sounds/MyGame_cue.wav";
 
     // The camera to view the scene
-    this.mCamera = [];
+    this.mCameras = [];
     // all squares
     this.mSqSet = [];
 
@@ -55,14 +55,14 @@ MyGame.prototype.initialize = function () {
     var sceneParser = new jsonSceneFileParser(this.kSceneFile);
     
     // Step A: set up the cameras
-    this.mCamera[0] = sceneParser.parseCamera();
+    this.mCameras[0] = sceneParser.parseCamera();
     
-    this.mCamera[1] = new Camera(
+    this.mCameras[1] = new Camera(
         vec2.fromValues(20, 60),   // position of the camera
-        100,                        // width of camera
+        40,                        // width of camera
         [40, 200, 100, 100]         // viewport (orgX, orgY, width, height)
         );
-    this.mCamera[1].setBackgroundColor([0, 0.4, 0.6, 1]);
+    this.mCameras[1].setBackgroundColor([0, 0.4, 0.6, 1]);
 
     // Step B: Read all the squares
     sceneParser.parseSquares(this.mSqSet);
@@ -77,13 +77,14 @@ MyGame.prototype.draw = function () {
     // Step A: clear the canvas
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
 
-    for (var i=0; i<this.mCamera.length; i++){
-        // Step  B: Activate the drawing Cameras
-        this.mCamera[i].setupViewProjection();
+    // Draw all objects to each camera in turn
+    for (var i=0; i<this.mCameras.length; i++){
+        // Step  B: Activate the drawing Camera
+        this.mCameras[i].setupViewProjection();
 
         // Step  C: draw everything
         for (var j=0; j < this.mSqSet.length; j++){
-            this.mSqSet[j].draw(this.mCamera[i].getVPMatrix());
+            this.mSqSet[j].draw(this.mCameras[i].getVPMatrix());
         }
     }
 };
@@ -91,40 +92,87 @@ MyGame.prototype.draw = function () {
 // The update function, updates the application state. Make sure to _NOT_ draw
 // anything from this function!
 MyGame.prototype.update = function () {
+    // Step A: Automatic updates of Gray Level objects
     // Rotate red square (GrayLevel.mSqSet[1]) by 1.2 degrees/update
     var rotRate = 1.2; //degrees
     // Move white square left (GrayLevel.mSqSet[0]) by 1/9th unit/update
-    var movDeltaX = -(1.0/9);
+    var deltaX = -(1.0/9);
+    // Arrange for manipulation of PiP camera location
+    var camDelta = 10;
+    var mainDelta = 1;
+    var mainCam = this.mCameras[0];
+    var mobileCam = this.mCameras[1];
     
+    // Manipulate red square first
     var xform = this.mSqSet[1].getXform();
     xform.incRotationByDegree(rotRate);
 
+    // Move white rectangle next
     xform = this.mSqSet[0].getXform();
-    xform.incXPosBy(movDeltaX);
-
-   
-    if (xform.getXPos() < 10 ) { // this is the right-bound of the window
+    xform.incXPosBy(deltaX);
+    if (xform.getXPos() < 10 ) { // this is the left-bound of the window
         xform.setPosition(30, 60);
     }
-
-    // Step A: test for white square movement
-    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Left)) {
-        gEngine.AudioClips.playACue(this.kCue);
-        xform.incXPosBy(-deltaX);
-        if (xform.getXPos() < 11) { // this is the left-boundary
-            gEngine.GameLoop.stop();
-        }
-    }
     
+    // Step B: Level controls
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Q)) {
         gEngine.GameLoop.stop();
     }
-    
+   
+    // Step C: Camera controls
+    // Handle PiP camera movement.  'A' key uses 'isKeyReleased'
     if (gEngine.Input.isKeyReleased(gEngine.Input.keys.A)) {
         gEngine.AudioClips.playACue(this.kCue);
-        xform.incYPosBy(deltaX);
-        if (xform.getYPos() > 61) {  // this is the left-bound of the window
-            gEngine.GameLoop.stop();
+        if ( mobileCam.getXPos() - camDelta >= 20 ){
+            mobileCam.incXPosBy(-camDelta);
         }
+    }
+    // We know the lower-left corner and can find the VP width; only allow movement
+    // that keeps the full PiP camera within the greater viewport
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.D)) {
+        gEngine.AudioClips.playACue(this.kCue);
+        if ( mobileCam.getXPos() + camDelta + mobileCam.getViewport()[2] <= 620 ){
+            mobileCam.incXPosBy(camDelta);
+        }
+    }
+    
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.W)) {
+        gEngine.AudioClips.playACue(this.kCue);
+        if ( mobileCam.getYPos() + camDelta + mobileCam.getViewport()[3] <= 340 ){
+            mobileCam.incYPosBy(camDelta);
+        }
+    }
+    
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.S)) {
+        gEngine.AudioClips.playACue(this.kCue);
+        if ( mobileCam.getYPos() >= 40 ){
+            mobileCam.incYPosBy(-camDelta);
+        }
+    }
+    
+    // Handle main cam look-at point and zoom
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.F)) {
+        mainCam.incWCYPos(mainDelta);
+    }
+    
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.V)) {
+        mainCam.incWCYPos(-mainDelta);
+    }
+
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.C)) {
+        mainCam.incWCXPos(-mainDelta);
+    }
+    
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.B)) {
+        mainCam.incWCXPos(mainDelta);
+    }
+    
+    // Zoom controls.  'Z' zooms in, so decrease WCWidth.
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Z)) {
+        mainCam.adjZoom(-mainDelta);
+    }
+
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.X)) {
+        mainCam.adjZoom(mainDelta);
     }
 };

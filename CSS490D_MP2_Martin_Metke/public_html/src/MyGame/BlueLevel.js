@@ -77,25 +77,74 @@ BlueLevel.prototype.draw = function () {
 // The update function, updates the application state. Make sure to _NOT_ draw
 // anything from this function!
 BlueLevel.prototype.update = function () {
-    // For this very simple game, let's move the first square
-    var xform = this.mSqSet[1].getXform();
-    var deltaX = 0.05;
-
-    /// Move right and swap ovre
-    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Right)) {
+    //Step A: no object updates in this level
+    
+    // Arrange for manipulation of PiP camera location
+    var camDelta = 10;
+    var mainDelta = 1;
+    var mainCam = this.mCameras[0];
+    var mobileCam = this.mCameras[1];
+    
+    
+        // Step B: Level controls
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Q)) {
+        gEngine.GameLoop.stop();
+    }
+   
+    // Step C: Camera controls
+    // Handle PiP camera movement.  'A' key uses 'isKeyReleased'
+    if (gEngine.Input.isKeyReleased(gEngine.Input.keys.A)) {
         gEngine.AudioClips.playACue(this.kCue);
-        xform.incXPosBy(deltaX);
-        if (xform.getXPos() > 30) { // this is the right-bound of the window
-            xform.setPosition(12, 60);
+        if ( mobileCam.getXPos() - camDelta >= 20 ){
+            mobileCam.incXPosBy(-camDelta);
         }
     }
-
-    // Step A: test for white square movement
-    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Left)) {
+    // We know the lower-left corner and can find the VP width; only allow movement
+    // that keeps the full PiP camera within the greater viewport
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.D)) {
         gEngine.AudioClips.playACue(this.kCue);
-        xform.incXPosBy(-deltaX);
-        if (xform.getXPos() < 11) { // this is the left-boundary
-            gEngine.GameLoop.stop();
+        if ( mobileCam.getXPos() + camDelta + mobileCam.getViewport()[2] <= 620 ){
+            mobileCam.incXPosBy(camDelta);
         }
+    }
+    
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.W)) {
+        gEngine.AudioClips.playACue(this.kCue);
+        if ( mobileCam.getYPos() + camDelta + mobileCam.getViewport()[3] <= 340 ){
+            mobileCam.incYPosBy(camDelta);
+        }
+    }
+    
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.S)) {
+        gEngine.AudioClips.playACue(this.kCue);
+        if ( mobileCam.getYPos() >= 40 ){
+            mobileCam.incYPosBy(-camDelta);
+        }
+    }
+    
+    // Handle main cam look-at point and zoom
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.F)) {
+        mainCam.incWCYPos(mainDelta);
+    }
+    
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.V)) {
+        mainCam.incWCYPos(-mainDelta);
+    }
+
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.C)) {
+        mainCam.incWCXPos(-mainDelta);
+    }
+    
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.B)) {
+        mainCam.incWCXPos(mainDelta);
+    }
+    
+    // Zoom controls.  'Z' zooms in, so decrease WCWidth.
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Z)) {
+        mainCam.adjZoom(-mainDelta);
+    }
+
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.X)) {
+        mainCam.adjZoom(mainDelta);
     }
 };
