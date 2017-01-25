@@ -1,0 +1,10 @@
+Notes on CSS490D_MP2:
+
+Set up MyGame.prototype.update and then copy/paste it to other levels.
+Can make inheritance-based later.
+
+Add camera manipulation functions, for cleanliness.
+
+Fuck GrayScene.  Just make MyGame load that stuff!
+
+Add camera serializing and "save-to-ResourceMap"
