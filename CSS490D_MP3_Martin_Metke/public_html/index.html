@@ -32,6 +32,8 @@
         <script type="text/javascript" src="src/Engine/Renderables/SpriteRenderable.js"></script>
         <script type="text/javascript" src="src/Engine/Renderables/SpriteAnimateRenderable.js"></script>
         <script type="text/javascript" src="src/Engine/Renderables/FontRenderable.js"></script>
+        <!-- Game Object support -->
+        <script type="text/javascript" src="src/Engine/GameObjects/GameObjects.js"></script>
         <!-- Shaders -->
         <script type="text/javascript" src="src/Engine/Shaders/SimpleShader.js"></script>
         <script type="text/javascript" src="src/Engine/Shaders/TextureShader.js"></script>
@@ -39,7 +41,8 @@
 
         <!-- Client game code -->
         <script type="text/javascript" src="src/MyGame/MyGame.js"></script>
-        <script type="text/javascript" src="src/MyGame/GameOver.js"></script> 
+        <script type="text/javascript" src="src/MyGame/GameOver.js"></script>
+        <script type="text/javascript" src="src/MyGame/MainView.js"></script> 
         <style type = "text/css">  
             body {
                 text-align: center;
@@ -58,7 +61,7 @@
     </head>
 
     <body onload="
-        var myGame = new MyGame();
+        var myGame = new MainView();
         gEngine.Core.initializeEngineCore('GLCanvas', myGame);
      ">
         <!-- We are going to attempt to make the GLCanvas variable in size -->
