@@ -61,10 +61,59 @@
         var myGame = new MyGame();
         gEngine.Core.initializeEngineCore('GLCanvas', myGame);
      ">
-        <canvas id="GLCanvas" width="640" height="480">
+        <!-- We are going to attempt to make the GLCanvas variable in size -->
+                
+        <canvas id="GLCanvas" style='margin-top: 5%'>
+            <!-- Add back 'width="640" height="480"' to fix size -->
             <!-- GLCanvas is the area we will draw in: a 640x480 area. -->
             Your browser does not support the HTML5 canvas.
             <!-- this message will show only if WebGL clearing failed -->
         </canvas>
+        
+        <script>
+            (function() {
+		var 
+                    // Obtain a reference to the canvas element
+                    // using its id.
+                    htmlCanvas = document.getElementById('GLCanvas'),
+			
+                    // Obtain a graphics context on the
+                    // canvas element for drawing.
+                    context = htmlCanvas.getContext('3d');
+ 
+                // Start listening to resize events and
+                // draw canvas.
+                initialize();
+ 
+                    function initialize() {
+			// Register an event listener to
+			// call the resizeCanvas() function each time 
+			// the window is resized.
+			window.addEventListener('resize', resizeCanvas, false);
+				
+			// Draw canvas border for the first time.
+			resizeCanvas();
+                    }
+				
+                    // Display custom canvas.
+                    // In this case it's a blue, 5 pixel border that 
+                    // resizes along with the browser window.					
+                    function redraw() {
+			context.strokeStyle = 'blue';
+			context.lineWidth = '5';
+			context.strokeRect(0, 0, window.innerWidth, window.innerHeight);
+                    }
+		
+                    // Runs each time the DOM window resize event fires.
+                    // Resets the canvas dimensions to match window,
+                    // then draws the new borders accordingly.
+                    function resizeCanvas() {
+			htmlCanvas.width = window.innerWidth * 0.6;
+			htmlCanvas.height = window.innerHeight * 0.8;
+			redraw();
+                    }
+		
+		})();
+	</script>
     </body>
 </html>
