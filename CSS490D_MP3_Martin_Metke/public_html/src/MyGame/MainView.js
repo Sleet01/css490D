@@ -15,7 +15,7 @@ function MainView() {
     this.objects = [];
     
     //Test sprite textures
-    this.kTestSprite = "assets/minion_sprite.png";
+    this.kTestSprite = "assets/Bound.png";
 }
 gEngine.Core.inheritPrototype(MainView, Scene);
 
@@ -31,10 +31,12 @@ MainView.prototype.unloadScene = function () {
 
 MainView.prototype.initialize = function () {
     // Step A: set up the cameras
+    var mGLSize = [gEngine.Core.getGL().canvas.clientWidth,
+                   gEngine.Core.getGL().canvas.clientHeight];
     this.mCamera = new Camera(
         vec2.fromValues(50, 33),   // position of the camera
         100,                       // width of camera
-        [0, 0, 600, 400]           // viewport (orgX, orgY, width, height)
+        [0, 0, mGLSize[0], mGLSize[1]]           // viewport (orgX, orgY, width, height)
     );
     this.mCamera.setBackgroundColor([0.9, 0.9, 0.9, 1]);
             // sets the background to gray
