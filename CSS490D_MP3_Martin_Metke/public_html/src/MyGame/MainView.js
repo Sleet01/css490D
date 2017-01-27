@@ -12,8 +12,16 @@
 function MainView() {
     this.mCamera = null;
     this.mMsg = null;
+    this.objects = [];
+    
+    //Test sprite textures
+    this.kTestSprite = "assets/Bound.png";
 }
 gEngine.Core.inheritPrototype(MainView, Scene);
+
+MainView.prototype.loadScene = function () {
+    gEngine.Textures.loadTexture(this.kTestSprite);
+};
 
 MainView.prototype.unloadScene = function () {
     // will be called from GameLoop.stop
@@ -37,6 +45,8 @@ MainView.prototype.initialize = function () {
     this.mMsg.getXform().setPosition(22, 32);
     this.mMsg.setTextHeight(10);
     //</editor-fold>
+        // Array of objects
+    this.objects[0] = new InteractiveBound(new TextureRenderable(this.kTestSprite));
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
@@ -48,6 +58,7 @@ MainView.prototype.draw = function () {
     // Step  B: Activate the drawing Camera
     this.mCamera.setupViewProjection();
     this.mMsg.draw(this.mCamera.getVPMatrix());
+    this.objects[0].draw(this.mCamera.getVPMatrix());
 };
 
 // The update function, updates the application state. Make sure to _NOT_ draw
