@@ -15,7 +15,7 @@ function MainView() {
     this.objects = [];
     
     //Test sprite textures
-    this.kTestSprite = "assets/Bound.png";
+    this.kTestSprite = "assets/favicon.png";
 }
 gEngine.Core.inheritPrototype(MainView, Scene);
 
@@ -45,8 +45,10 @@ MainView.prototype.initialize = function () {
     this.mMsg.getXform().setPosition(22, 32);
     this.mMsg.setTextHeight(10);
     //</editor-fold>
-        // Array of objects
+     
+    // Array of objects
     this.objects[0] = new InteractiveBound(new TextureRenderable(this.kTestSprite));
+    this.objects[0].getXform().setPosition([25, 33]);
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
@@ -64,5 +66,8 @@ MainView.prototype.draw = function () {
 // The update function, updates the application state. Make sure to _NOT_ draw
 // anything from this function!
 MainView.prototype.update = function () {
-    gEngine.GameLoop.stop();
+    if(gEngine.Input.isKeyClicked(gEngine.Input.keys.T)){
+        gEngine.GameLoop.stop();
+    }
+    
 };
