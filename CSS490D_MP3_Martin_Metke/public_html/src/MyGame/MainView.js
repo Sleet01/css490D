@@ -15,7 +15,7 @@ function MainView() {
     this.objects = [];
     
     //Test sprite textures
-    this.kTestSprite = "assets/favicon.png";
+    this.kTestSprite = "assets/minion_sprite.png";
 }
 gEngine.Core.inheritPrototype(MainView, Scene);
 
@@ -25,6 +25,7 @@ MainView.prototype.loadScene = function () {
 
 MainView.prototype.unloadScene = function () {
     // will be called from GameLoop.stop
+    gEngine.Textures.unloadTexture(this.kTestSprite);
     gEngine.Core.cleanUp(); // release gl resources
 };
 
@@ -47,8 +48,15 @@ MainView.prototype.initialize = function () {
     //</editor-fold>
      
     // Array of objects
-    this.objects[0] = new InteractiveBound(new TextureRenderable(this.kTestSprite));
-    this.objects[0].getXform().setPosition([25, 33]);
+    var tempTR = new TextureRenderable(this.kTestSprite);
+    tempTR.setColor([1, 1, 1, 0]);
+    tempTR.getXform().setPosition(50, 25);
+    tempTR.getXform().setSize(24, 19.2);
+    // this.objects[0] = tempTR;
+    this.objects[0] = new InteractiveBound(tempTR);
+    //this.objects[0].getXform().setPosition([25, 33]);
+    //this.objects[0].getXform().setSize(20,20);
+    
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
