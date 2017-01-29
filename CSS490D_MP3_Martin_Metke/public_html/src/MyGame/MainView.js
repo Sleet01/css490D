@@ -50,8 +50,8 @@ MainView.prototype.initialize = function () {
       
     this.objects[0] = new InteractiveBound(new TextureRenderable(this.kTestSprite),
                                             this.mCameras[0].getWCBounds());
-    // Create a new InteractiveFontObject to report data from the IB, and connect them
-    this.objects[1] = new InteractiveFontObject();
+    // Create a new InteractiveBoundDisplay to report data from the IB, and connect them
+    this.objects[1] = new InteractiveBoundDisplay();
     this.objects[0].setReportObject(this.objects[1]);
 };
 

@@ -1,4 +1,4 @@
-/* File: InteractiveFontObject.js 
+/* File: InteractiveBoundDisplay.js 
  *
  * Inherits from InteractiveObject
  * This is a specific InteractiveObject which displays a bounding box
@@ -12,9 +12,9 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-/* InteractiveFontObject takes a renderableObj (which had better be a TextureRenderable)
+/* InteractiveBoundDisplay takes a renderableObj (which had better be a TextureRenderable)
  */
-function InteractiveFontObject(status = [0.0, 0.0, 0.0, 0.0]) {
+function InteractiveBoundDisplay(status = [0.0, 0.0, 0.0, 0.0]) {
     this.mStatus = status;
     this.mText = 'Status:Bound Pos=(' + this.mStatus[0].toPrecision(4) +
                 ', ' + this.mStatus[1].toPrecision(4) + ') Size=(' +
@@ -29,9 +29,9 @@ function InteractiveFontObject(status = [0.0, 0.0, 0.0, 0.0]) {
     this.mMsg.setTextHeight(2);
 
 }
-gEngine.Core.inheritPrototype(InteractiveFontObject, InteractiveObject);
+gEngine.Core.inheritPrototype(InteractiveBoundDisplay, InteractiveObject);
 
-InteractiveFontObject.prototype.update = function () {
+InteractiveBoundDisplay.prototype.update = function () {
 
     this.mText = 'Status:Bound Pos=(' + this.mStatus[0].toPrecision(4) +
                 ', ' + this.mStatus[1].toPrecision(4) + ') Size=(' +
@@ -42,11 +42,11 @@ InteractiveFontObject.prototype.update = function () {
 };
 
 // Let other objects set our status any time.
-InteractiveFontObject.prototype.setData = function(status){
+InteractiveBoundDisplay.prototype.setData = function(status){
     this.mStatus = status;
 };
 
 // Draw the TextureRenderable; additionally, if set, draw the animation frames
-InteractiveFontObject.prototype.draw = function (aCameraVPM) {
+InteractiveBoundDisplay.prototype.draw = function (aCameraVPM) {
     this.mRenderComponent.draw(aCameraVPM);
 };

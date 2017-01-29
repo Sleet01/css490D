@@ -48,7 +48,7 @@ InteractiveBound.prototype.setBounds = function (aBounds) {
 };
 
 /*  @brief  set the object that this will update when this is updated.
- *  @param  {InteractiveFontObject} reportObject
+ *  @param  {InteractiveBoundDisplay} reportObject
  *  @pre    reportObject has a setData() method
  *  @post   reportObject is updated with this' current position and size
  */
