@@ -94,21 +94,42 @@ InteractiveBound.prototype.updateClones = function() {
 InteractiveBound.prototype.sanitizePosition = function() {
     if (this.mMoveBounds.length !== 0 ){
         var xForm = this.getXform();
+        
+        if(this.mWidth < 1){
+            xForm.setWidth(1);
+            this.mWidth = xForm.getWidth();
+        }
+        if(this.mHeight < 1){
+            xForm.setHeight(1);
+            this.mHeight = xForm.getHeight();
+        }
+        
         var hWidth = this.mWidth/2.0;
         var hHeight = this.mHeight/2.0;
         var left = ( xForm.getXPos() - hWidth );
         var right = ( xForm.getXPos() + hWidth );
         var bottom = ( xForm.getYPos() - hHeight );
         var top = ( xForm.getYPos() + hHeight );
-        var lEdge = this.mMoveBounds[0];
-        var rEdge = this.mMoveBounds[0] + this.mMoveBounds[2];
-        var bEdge = this.mMoveBounds[1];
-        var tEdge = this.mMoveBounds[1] + this.mMoveBounds[3];
-                
+        var lEdge = (this.mMoveBounds[0]).toPrecision(6);
+        var rEdge = (this.mMoveBounds[0] + this.mMoveBounds[2]).toPrecision(6);
+        var bEdge = (this.mMoveBounds[1]).toPrecision(6);
+        var tEdge = (this.mMoveBounds[1] + this.mMoveBounds[3]).toPrecision(6);
+        
+        if (this.mWidth > (rEdge - lEdge)) {
+            xForm.setWidth(rEdge - lEdge);
+            this.mWidth = xForm.getWidth();
+        }
+        if (this.mHeight > (tEdge - bEdge)) {
+            xForm.setHeight(tEdge - bEdge);
+            this.mHeight = xForm.getHeight();
+        }
+        
         if (left < lEdge) { xForm.incXPosBy( lEdge - left ); }
-        if (bottom < bEdge) { xForm.incXPosBy( bEdge - bottom ); }
-        if (right > rEdge) {xForm.incYPosBy( rEdge - right); }
+        if (bottom < bEdge) { xForm.incYPosBy( bEdge - bottom ); }
+        if (right > rEdge) {xForm.incXPosBy( rEdge - right); }
         if (top > tEdge) {xForm.incYPosBy( tEdge - top ); }
+        
+        
     }
     
 };

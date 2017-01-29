@@ -49,7 +49,7 @@ MainView.prototype.initialize = function () {
             // sets the background to gray
       
     this.objects[0] = new InteractiveBound(new TextureRenderable(this.kTestSprite),
-                                            this.mGLViewPort);
+                                            this.mCameras[0].getWCBounds());
     // Create a new InteractiveFontObject to report data from the IB, and connect them
     this.objects[1] = new InteractiveFontObject();
     this.objects[0].setReportObject(this.objects[1]);
@@ -78,7 +78,7 @@ MainView.prototype.update = function () {
     var mCVP = this.mCameras[0].getViewport();
     if ((mCVP[2] !== this.mGLViewPort[2]) || (mCVP[3] !== this.mGLViewPort[3])){
         this.mCameras[0].setViewport(this.mGLViewPort);
-        this.objects[0].setBounds(mCVP);
+        this.objects[0].getWCBounds();
     }
         
     if(gEngine.Input.isKeyClicked(gEngine.Input.keys.P)){

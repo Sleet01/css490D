@@ -64,6 +64,13 @@ Camera.prototype.getWCXPos = function () { return this.mWCCenter[0]; };
 Camera.prototype.getWCYPos = function () { return this.mWCCenter[1]; };
 Camera.prototype.incWCXPos = function (delta) { this.mWCCenter[0] += delta; };
 Camera.prototype.incWCYPos = function (delta) { this.mWCCenter[1] += delta; };
+Camera.prototype.getWCBounds = function () { 
+    var xOrigin = this.mWCCenter[0] - this.mWCWidth/2.0;
+    var yOrigin = this.mWCCenter[1] - this.getWCHeight()/2.0;
+    var xLimit = this.mWCWidth;
+    var yLimit = this.getWCHeight();
+    return ([xOrigin, yOrigin, xLimit, yLimit]);
+};
 
 Camera.prototype.setViewport = function (viewportArray) { this.mViewport = viewportArray; };
 Camera.prototype.getViewport = function () { return this.mViewport; };
