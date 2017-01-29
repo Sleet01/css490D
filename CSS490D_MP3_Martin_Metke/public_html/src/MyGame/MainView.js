@@ -53,6 +53,10 @@ MainView.prototype.initialize = function () {
     // Create a new InteractiveBoundDisplay to report data from the IB, and connect them
     this.objects[1] = new InteractiveBoundDisplay();
     this.objects[0].setReportObject(this.objects[1]);
+    this.objects[2] = new InteractiveFontDisplay("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
+    this.objects[2].getXform().setPosition(10,12);
+    this.objects[3] = new InteractiveFontDisplay("Canvas.clientX: " + this.mGLViewPort.toString());
+    this.objects[3].getXform().setPosition(10,10);
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
@@ -64,8 +68,9 @@ MainView.prototype.draw = function () {
     // Step  B: Activate the drawing Camera
     this.mCameras[0].setupViewProjection();
 //    this.mMsg.draw(this.mCamera.getVPMatrix());
-    this.objects[0].draw(this.mCameras[0].getVPMatrix());
-    this.objects[1].draw(this.mCameras[0].getVPMatrix());
+    for (var j=0; j<this.objects.length; j++) {
+        this.objects[j].draw(this.mCameras[0].getVPMatrix());
+    }
 };
 
 // The update function, updates the application state. Make sure to _NOT_ draw
@@ -73,12 +78,14 @@ MainView.prototype.draw = function () {
 MainView.prototype.update = function () {
     // grab the latest GL canvas size info and update camera size if necessary
     // NEEDS WORK
-    this.mGLViewPort[2] = gEngine.Core.getGL().canvas.clientWidth;
-    this.mGLViewPort[3] = gEngine.Core.getGL().canvas.clientHeight;
+    
+    this.mGLViewPort[2] = gEngine.Core.getGL().canvas.width;
+    this.mGLViewPort[3] = gEngine.Core.getGL().canvas.height;
     var mCVP = this.mCameras[0].getViewport();
     if ((mCVP[2] !== this.mGLViewPort[2]) || (mCVP[3] !== this.mGLViewPort[3])){
         this.mCameras[0].setViewport(this.mGLViewPort);
-        this.objects[0].getWCBounds();
+        this.objects[2].setMessage("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
+        this.objects[3].setMessage("Canvas.clientX: " + this.mGLViewPort.toString());
     }
         
     if(gEngine.Input.isKeyClicked(gEngine.Input.keys.P)){
@@ -87,4 +94,18 @@ MainView.prototype.update = function () {
     }
     
     this.objects[0].update();
+    this.objects[2].update();
+    this.objects[3].update();
 };
+
+window.addEventListener('resize', function(event){
+    gEngine.VertexBuffer.initialize();
+//    this.mGLViewPort[2] = gEngine.Core.getGL().canvas.clientWidth;
+//    this.mGLViewPort[3] = gEngine.Core.getGL().canvas.clientHeight;
+//    var mCVP = this.mCameras[0].getViewport();
+//    if ((mCVP[2] !== this.mGLViewPort[2]) || (mCVP[3] !== this.mGLViewPort[3])){
+//        this.mCameras[0].setViewport(this.mGLViewPort);
+//        this.objects[2].setMessage("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
+//        this.objects[3].setMessage("Canvas.clientX: " + this.mGLViewPort.toString());
+//    }
+});

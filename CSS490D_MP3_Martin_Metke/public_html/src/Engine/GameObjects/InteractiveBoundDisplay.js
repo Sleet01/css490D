@@ -7,12 +7,12 @@
  */
 
 /*jslint node: true, vars: true */
-/*global gEngine: false, InteractiveObject: false, FontRenderable: false*/
+/*global gEngine: false, InteractiveFontDisplay: false, FontRenderable: false*/
 /* find out more about jslint: http://www.jslint.com/help.html */
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-/* InteractiveBoundDisplay takes a renderableObj (which had better be a TextureRenderable)
+/* InteractiveBoundDisplay takes status, which is composed into its font object message
  */
 function InteractiveBoundDisplay(status = [0.0, 0.0, 0.0, 0.0]) {
     this.mStatus = status;
@@ -20,16 +20,10 @@ function InteractiveBoundDisplay(status = [0.0, 0.0, 0.0, 0.0]) {
                 ', ' + this.mStatus[1].toPrecision(4) + ') Size=(' +
                 this.mStatus[2].toPrecision(4) + ', ' +
                 this.mStatus[3].toPrecision(4) + ')';
-    this.mMsg = new FontRenderable(this.mText);
     // Call the superclass with the compiled message
-    InteractiveObject.call(this, this.mMsg);
-    
-    this.mMsg.setColor([0, 0, 0, 1]);
-    this.mMsg.getXform().setPosition(10, 15);
-    this.mMsg.setTextHeight(2);
-
+    InteractiveFontDisplay.call(this, this.mText);
 }
-gEngine.Core.inheritPrototype(InteractiveBoundDisplay, InteractiveObject);
+gEngine.Core.inheritPrototype(InteractiveBoundDisplay, InteractiveFontDisplay);
 
 InteractiveBoundDisplay.prototype.update = function () {
 
@@ -44,9 +38,4 @@ InteractiveBoundDisplay.prototype.update = function () {
 // Let other objects set our status any time.
 InteractiveBoundDisplay.prototype.setData = function(status){
     this.mStatus = status;
-};
-
-// Draw the TextureRenderable; additionally, if set, draw the animation frames
-InteractiveBoundDisplay.prototype.draw = function (aCameraVPM) {
-    this.mRenderComponent.draw(aCameraVPM);
 };
