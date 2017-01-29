@@ -35,26 +35,24 @@ MainView.prototype.unloadScene = function () {
 MainView.prototype.initialize = function () {
     // Step A: set up the cameras
     // Set up this.MGLViewPort for camera resizing
-    this.mGLViewPort = [0, 
-                        0, 
+    this.mGLViewPort = [0, //canvas x-orgin 
+                        0, //canvas y-origin
                         gEngine.Core.getGL().canvas.clientWidth,
                         gEngine.Core.getGL().canvas.clientHeight];
 
     this.mCameras[0] = new Camera(
-        vec2.fromValues(50, 33),   // position of the camera
+        vec2.fromValues(50, 40),   // position of the camera
         100,                       // width of camera
         this.mGLViewPort           // viewport (orgX, orgY, width, height)
     );
     this.mCameras[0].setBackgroundColor([0.9, 0.9, 0.9, 1]);
             // sets the background to gray
-    
-    this.objects[0] = new InteractiveFontObject();
-    
-    this.objects[1] = new InteractiveBound(
-                new TextureRenderable(this.kTestSprite),
-                [5, 5, 95, 60],
-                this.objects[0]);
-    
+      
+    this.objects[0] = new InteractiveBound(new TextureRenderable(this.kTestSprite),
+                                            this.mGLViewPort);
+    // Create a new InteractiveFontObject to report data from the IB, and connect them
+    this.objects[1] = new InteractiveFontObject();
+    this.objects[0].setReportObject(this.objects[1]);
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
@@ -66,8 +64,8 @@ MainView.prototype.draw = function () {
     // Step  B: Activate the drawing Camera
     this.mCameras[0].setupViewProjection();
 //    this.mMsg.draw(this.mCamera.getVPMatrix());
-    this.objects[1].draw(this.mCameras[0].getVPMatrix());
     this.objects[0].draw(this.mCameras[0].getVPMatrix());
+    this.objects[1].draw(this.mCameras[0].getVPMatrix());
 };
 
 // The update function, updates the application state. Make sure to _NOT_ draw
@@ -80,12 +78,13 @@ MainView.prototype.update = function () {
     var mCVP = this.mCameras[0].getViewport();
     if ((mCVP[2] !== this.mGLViewPort[2]) || (mCVP[3] !== this.mGLViewPort[3])){
         this.mCameras[0].setViewport(this.mGLViewPort);
+        this.objects[0].setBounds(mCVP);
     }
         
-    if(gEngine.Input.isKeyClicked(gEngine.Input.keys.Q)){
+    if(gEngine.Input.isKeyClicked(gEngine.Input.keys.P)){
         //this.unloadScene();
         gEngine.GameLoop.stop();
     }
     
-    this.objects[1].update();
+    this.objects[0].update();
 };
