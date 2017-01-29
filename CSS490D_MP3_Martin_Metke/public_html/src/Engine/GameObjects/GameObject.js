@@ -20,8 +20,8 @@ GameObject.prototype.update = function () {};
 
 GameObject.prototype.getRenderable = function () { return this.mRenderComponent; };
 
-GameObject.prototype.draw = function (aCamera) {
-    this.mRenderComponent.draw(aCamera);
+GameObject.prototype.draw = function (aCameraVPM) {
+    this.mRenderComponent.draw(aCameraVPM);
 };
 
 

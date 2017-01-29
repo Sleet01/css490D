@@ -13,6 +13,7 @@ function MainView() {
     this.mCamera = null;
     this.mMsg = null;
     this.objects = [];
+    this.mGLViewPort = [];
     
     //Test sprite textures
     this.kTestSprite = "assets/Bound.png";
@@ -26,27 +27,32 @@ MainView.prototype.loadScene = function () {
 MainView.prototype.unloadScene = function () {
     // will be called from GameLoop.stop
     gEngine.Textures.unloadTexture(this.kTestSprite);
-    gEngine.Core.cleanUp(); // release gl resources
+        
+    var nextLevel = new GameOver();  // next level to be loaded
+    gEngine.Core.startScene(nextLevel);
 };
 
 MainView.prototype.initialize = function () {
     // Step A: set up the cameras
-    var mGLSize = [gEngine.Core.getGL().canvas.clientWidth,
-                   gEngine.Core.getGL().canvas.clientHeight];
+    // Set up this.MGLViewPort for camera resizing
+    this.mGLViewPort = [0, 0, 
+                        gEngine.Core.getGL().canvas.clientWidth,
+                        gEngine.Core.getGL().canvas.clientHeight];
+
     this.mCamera = new Camera(
         vec2.fromValues(50, 33),   // position of the camera
         100,                       // width of camera
-        [0, 0, mGLSize[0], mGLSize[1]]           // viewport (orgX, orgY, width, height)
+        this.mGLViewPort           // viewport (orgX, orgY, width, height)
     );
     this.mCamera.setBackgroundColor([0.9, 0.9, 0.9, 1]);
             // sets the background to gray
 
     //<editor-fold desc="Create the fonts!">
-    // this.mText = new FontRenderable("This is green text");
-    this.mMsg = new FontRenderable("Game Over!");
-    this.mMsg.setColor([0, 0, 0, 1]);
-    this.mMsg.getXform().setPosition(22, 32);
-    this.mMsg.setTextHeight(10);
+    //this.mText = new FontRenderable("This is green text");
+//    this.mMsg = new FontRenderable("Game Over!");
+//    this.mMsg.setColor([0, 0, 0, 1]);
+//    this.mMsg.getXform().setPosition(22, 32);
+//    this.mMsg.setTextHeight(10);
     //</editor-fold>
      
     // Array of objects
@@ -69,14 +75,26 @@ MainView.prototype.draw = function () {
 
     // Step  B: Activate the drawing Camera
     this.mCamera.setupViewProjection();
-    this.mMsg.draw(this.mCamera.getVPMatrix());
+//    this.mMsg.draw(this.mCamera.getVPMatrix());
     this.objects[0].draw(this.mCamera.getVPMatrix());
 };
 
 // The update function, updates the application state. Make sure to _NOT_ draw
 // anything from this function!
 MainView.prototype.update = function () {
-    if(gEngine.Input.isKeyClicked(gEngine.Input.keys.T)){
+    // grab the latest GL canvas size info and update camera size if necessary
+    this.mGLViewPort = [0, 0, 
+                        gEngine.Core.getGL().canvas.clientWidth,
+                        gEngine.Core.getGL().canvas.clientHeight];
+    var mCVP = this.mCamera.getViewport();
+    if ((mCVP[2] !== this.mGLViewPort[2]) || (mCVP[3] !== this.mGLViewPort[3])){
+        this.mCamera.setViewport(this.mGLViewPort);
+    }
+    
+    
+    
+    if(gEngine.Input.isKeyClicked(gEngine.Input.keys.Q)){
+        //this.unloadScene();
         gEngine.GameLoop.stop();
     }
     

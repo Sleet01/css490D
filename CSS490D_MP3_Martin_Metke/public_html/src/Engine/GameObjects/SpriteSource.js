@@ -21,6 +21,6 @@ SpriteSource.prototype.update = function () {};
 
 SpriteSource.prototype.getRenderable = function () { return this.mRenderComponent; };
 
-SpriteSource.prototype.draw = function (aCamera) {
-    this.mRenderComponent.draw(aCamera);
+SpriteSource.prototype.draw = function (aCameraVPM) {
+    this.mRenderComponent.draw(aCameraVPM);
 };
