@@ -14,6 +14,9 @@ var gEngine = gEngine || { };
 gEngine.Input = (function () {
     // Key code constants
     var kKeys = {
+        // EMACS (a little joke)
+        Shift: 16,
+        
         // arrows
         Left: 37,
         Up: 38,

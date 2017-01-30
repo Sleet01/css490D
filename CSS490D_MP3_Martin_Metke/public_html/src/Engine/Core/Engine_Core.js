@@ -17,13 +17,11 @@ gEngine.Core = (function () {
     // instance variables
     // The graphical context to draw to
     var mGL = null;
-    var mCanvas = null;
-    var mCanvasID = null;
     
     // initialize the WebGL, the vertex buffer and compile the shaders
     var _initializeWebGL = function (htmlCanvasID) {
-        mCanvasID = htmlCanvasID;
-        mCanvas = document.getElementById(mCanvasID);
+        
+        var mCanvas = document.getElementById(htmlCanvasID);
 
         // Get the standard or experimental webgl and binds to the Canvas area
         // store the results to the instance variable mGL
@@ -48,10 +46,6 @@ gEngine.Core = (function () {
     //
     // Accessor of the webgl context
     var getGL = function () { return mGL; };
-    var getCanvas = function () { 
-        mCanvas = document.getElementById(mCanvasID);
-        return mCanvas; 
-    };
 
     var startScene = function (scene) {
         scene.loadScene.call(scene); // Called in this way to keep correct context
@@ -90,7 +84,6 @@ gEngine.Core = (function () {
 
     var mPublic = {
         getGL: getGL,
-        getCanvas: getCanvas,
         initializeEngineCore: initializeEngineCore,
         clearCanvas: clearCanvas,
         inheritPrototype: inheritPrototype,

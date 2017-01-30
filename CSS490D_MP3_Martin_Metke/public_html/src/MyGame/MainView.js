@@ -38,7 +38,7 @@ MainView.prototype.initialize = function () {
     this.mGLViewPort = [0, //canvas x-orgin 
                         0, //canvas y-origin
                         gEngine.Core.getGL().canvas.width,
-                        window.innerHeight * 0.8];
+                        gEngine.Core.getGL().canvas.height];
 
     this.mCameras[0] = new Camera(
         vec2.fromValues(50, 40),   // position of the camera
@@ -80,6 +80,13 @@ MainView.prototype.draw = function () {
     }
 };
 
+/* @brief   Notifies all cameras / camera containers that the geometry of the screen
+ *          has been adjusted.
+ * @pre     A resize event has been detected
+ * @post    All cameras have been resized and repositioned to fully use the canvas
+ * @param   int width, height   the pixel width and height of the canvas and context
+ * 
+ */
 MainView.prototype.updateCameraGeometry = function (width, height) {
     
     this.mGLViewPort[2] = width;

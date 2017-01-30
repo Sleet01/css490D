@@ -173,8 +173,6 @@ InteractiveBound.prototype.sanitizePosition = function() {
         if (bottom < bEdge) { xForm.incYPosBy( bEdge - bottom ); }
         if (right > rEdge) {xForm.incXPosBy( rEdge - right); }
         if (top > tEdge) {xForm.incYPosBy( tEdge - top ); }
-        
-        
     }
     
 };
@@ -185,7 +183,8 @@ InteractiveBound.prototype.update = function () {
     var Xform = this.getXform();
     var clean = true;
     
-    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Space)){
+    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Space) ||
+       gEngine.Input.isKeyPressed(gEngine.Input.keys.Shift)){
         // Set space multiplier
         mDelta *= 0.01;
         sDelta *= 0.01;
@@ -213,7 +212,7 @@ InteractiveBound.prototype.update = function () {
         this.mHeight = Xform.getHeight();
         var clean = false;
     }
-    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Left)){
+    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Right)){
         Xform.incWidthBy(-sDelta);
         this.mWidth = Xform.getWidth();
         var clean = false;
@@ -223,7 +222,7 @@ InteractiveBound.prototype.update = function () {
         this.mHeight = Xform.getHeight();
         var clean = false;
     }
-    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Right)){
+    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Left)){
         Xform.incWidthBy(sDelta);
         this.mWidth = Xform.getWidth();
         var clean = false;
