@@ -103,24 +103,16 @@
 			resizeCanvas();
                     }
 				
-                    // Display custom canvas.
-                    // In this case it's a blue, 5 pixel border that 
-                    // resizes along with the browser window.					
-                    function redraw() {
-			context.strokeStyle = 'blue';
-			context.lineWidth = '5';
-			context.strokeRect(0, 0, window.innerWidth, window.innerHeight);
-                    }
-		
                     // Runs each time the DOM window resize event fires.
                     // Resets the canvas dimensions to match window,
                     // then draws the new borders accordingly.
                     function resizeCanvas() {
+                        
                         htmlCanvas.width = window.innerWidth * 0.6;
 			htmlCanvas.height = window.innerHeight * 0.8;
                         
-                        // Does not seem to be doing what I thought.
-                        //context.viewport(0, 0, htmlCanvas.width, htmlCanvas.height );
+                        // Sets the internal context resolution to match the canvas's style size
+                        context.viewport(0, 0, htmlCanvas.width, htmlCanvas.height );
                         //alert( htmlCanvas.width );
                         //alert( htmlCanvas.height );
                         //context.width = htmlCanvas.width;

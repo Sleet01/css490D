@@ -15,7 +15,6 @@
 /* InteractiveFontDisplay takes a text message
  */
 function InteractiveFontDisplay(message) {
-    this.mStatus = status;
     this.mText = message;
     this.mMsg = new FontRenderable(this.mText);
     // Call the superclass with the compiled message
@@ -36,7 +35,7 @@ InteractiveFontDisplay.prototype.update = function () {
 
 // Let other objects set our status any time.
 InteractiveFontDisplay.prototype.setMessage = function(message){
-    this.mStatus = message;
+    this.mText = message;
 };
 
 // Draw the TextureRenderable; additionally, if set, draw the animation frames
