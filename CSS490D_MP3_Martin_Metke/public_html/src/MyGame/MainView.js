@@ -50,8 +50,10 @@ MainView.prototype.initialize = function () {
     this.mCameras[0].setBackgroundColor([0.9, 0.9, 0.9, 1]);
             // sets the background to gray
       
-    this.mInteractiveBound = new InteractiveBound(new TextureRenderable(this.kTestSprite),
-                                            this.mCameras[0].getWCBounds());
+    this.mInteractiveBound = new InteractiveBound(
+                                    new TextureRenderable(this.kTestSprite),
+                                    this.mCameras[0]);
+    
     // Create a new InteractiveBoundDisplay to report data from the IB, and connect them
     this.objects[1] = new InteractiveBoundDisplay();
     this.mInteractiveBound.setReportObject(this.objects[1]);
@@ -94,8 +96,7 @@ MainView.prototype.updateCameraGeometry = function (width, height) {
     
     this.mGLViewPort[2] = width;
     this.mGLViewPort[3] = height;
-    this.mCameras[0].setViewport(this.mGLViewPort);
-    this.mInteractiveBound.setBounds(this.mCameras[0].getWCBounds());
+    this.mInteractiveBound.updateGeometry(this.mGLViewPort);
     this.objects[2].setMessage("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
     this.objects[3].setMessage("Canvas.clientX: " + this.mGLViewPort.toString());  
 };

@@ -33,12 +33,12 @@
         <script type="text/javascript" src="src/Engine/Renderables/SpriteAnimateRenderable.js"></script>
         <script type="text/javascript" src="src/Engine/Renderables/FontRenderable.js"></script>
         <!-- Game Object support -->
-        <script type="text/javascript" src="src/Engine/GameObjects/GameObject.js"></script>
-        <script type="text/javascript" src="src/Engine/GameObjects/InteractiveObject.js"></script>
-        <script type="text/javascript" src="src/Engine/GameObjects/InteractiveBound.js"></script>
-        <script type="text/javascript" src="src/Engine/GameObjects/SpriteSource.js"></script>
-        <script type="text/javascript" src="src/Engine/GameObjects/InteractiveFontDisplay.js"></script>
-        <script type="text/javascript" src="src/Engine/GameObjects/InteractiveBoundDisplay.js"></script>
+        <script type="text/javascript" src="src/MyGame/GameObjects/GameObject.js"></script>
+        <script type="text/javascript" src="src/MyGame/GameObjects/InteractiveObject.js"></script>
+        <script type="text/javascript" src="src/MyGame/GameObjects/InteractiveBound.js"></script>
+        <script type="text/javascript" src="src/MyGame/GameObjects/SpriteSource.js"></script>
+        <script type="text/javascript" src="src/MyGame/GameObjects/InteractiveFontDisplay.js"></script>
+        <script type="text/javascript" src="src/MyGame/GameObjects/InteractiveBoundDisplay.js"></script>
         <!-- Shaders -->
         <script type="text/javascript" src="src/Engine/Shaders/SimpleShader.js"></script>
         <script type="text/javascript" src="src/Engine/Shaders/TextureShader.js"></script>
@@ -79,6 +79,8 @@
         </canvas>
         
         <script>
+            // Added dynamic resizing a la this page: 
+            //  https://webglfundamentals.org/webgl/lessons/webgl-resizing-the-canvas.html
             (function() {
 		var 
                     // Obtain a reference to the canvas element
@@ -113,11 +115,6 @@
                         
                         // Sets the internal context resolution to match the canvas's style size
                         context.viewport(0, 0, htmlCanvas.width, htmlCanvas.height );
-                        //alert( htmlCanvas.width );
-                        //alert( htmlCanvas.height );
-                        //context.width = htmlCanvas.width;
-                        //context.height = htmlCanvas.height;
-			// redraw();
                     }
 		
 		})();

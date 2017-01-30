@@ -14,16 +14,17 @@
 
 /* InteractiveBound takes a renderableObj (which had better be a TextureRenderable)
  */
-function InteractiveBound(renderableObj, moveBounds = [], reportObject = null ) {
+function InteractiveBound(renderableObj, camera, reportObject = null ) {
     InteractiveObject.call(this, renderableObj);
     this.mWidth = 15;
     this.mHeight = 15;
     this.mDrawClones = false;
-    this.mMoveBounds = moveBounds;
     this.mReportObject = reportObject;
     this.mClones = [];
     this.mMarkers = [];
     this.mMarkersPos = [];
+    this.mCamera = camera;
+    this.mMoveBounds = this.mCamera.getWCBounds();
         
     renderableObj.setColor([1, 1, 1, 0]);
     renderableObj.getXform().setPosition(50, 25);
@@ -78,6 +79,14 @@ InteractiveBound.prototype.setReportObject = function (reportObject) {
     }
 };
 
+InteractiveBound.prototype.setCamera = function (aCamera) {
+    this.mCamera = aCamera;
+};
+
+InteractiveBound.prototype.getCamera = function () {
+    return (this.mCamera);
+};
+
 /*  @brief  Send compiled position/size data to the Report Object; call its update()
  *  @pre    reportObject has a setData() method
  *  @post   reportObject is updated with this' current position and size
@@ -127,6 +136,11 @@ InteractiveBound.prototype.updateMarkers = function() {
         // Set position
         this.mMarkers[j].getXform().setPosition( this.mMarkersPos[j][0], this.mMarkersPos[j][1]);
     }
+};
+
+InteractiveBound.prototype.updateGeometry = function(boundsArray) {
+    this.mCamera.setViewport(boundsArray);
+    this.setBounds(this.mCamera.getWCBounds());
 };
 
 /*  @brief  Make sure this' position is within the bounds passed in.
@@ -233,6 +247,14 @@ InteractiveBound.prototype.update = function () {
         var clean = false;
     }
     
+    if(gEngine.Input.isKeyClicked(gEngine.Input.keys.R)){
+        Xform.setWidth(15);
+        Xform.setHeight(15);
+        this.mHeight = 15;
+        this.mWidth = 15;
+        var clean = false;
+    }
+    
     // Send the text bar our info and have it update itself
     // *if* any updates have been made.
     if ( (this.mReportObject !== null) && !(clean) ){
@@ -245,14 +267,18 @@ InteractiveBound.prototype.update = function () {
 };
 
 // Draw the TextureRenderable; additionally, if set, draw the animation frames
-InteractiveBound.prototype.draw = function (aCameraVPM) {
-    this.mRenderComponent.draw(aCameraVPM);
+InteractiveBound.prototype.draw = function () {
+//InteractiveBound.prototype.draw = function (aCameraVPM) {
+            
+    var cameraVPM = this.mCamera.getVPMatrix();
+    this.mRenderComponent.draw(cameraVPM);
     if ( this.mDrawClones ) {
         for (var i = 0; i < this.mClones.length; i++){
-            this.mClones[i].draw(aCameraVPM);
+            this.mClones[i].draw(cameraVPM);
         }
     }
     for (var j = 0; j < this.mMarkers.length; j++){
-        this.mMarkers[j].draw(aCameraVPM);
+        this.mMarkers[j].draw(cameraVPM);
     }
+    
 };
