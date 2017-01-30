@@ -47,7 +47,8 @@ MainView.prototype.initialize = function () {
     );
     this.mCameras[0].setBackgroundColor([0.9, 0.9, 0.9, 1]);
             // sets the background to gray
-      
+    
+    // Main view camera.
     this.objects[0] = new InteractiveBound(new TextureRenderable(this.kTestSprite),
                                             this.mCameras[0].getWCBounds());
     // Create a new InteractiveBoundDisplay to report data from the IB, and connect them
@@ -62,8 +63,6 @@ MainView.prototype.initialize = function () {
     // I am severely regretting handling resizing at all.
     var _this = this;
     window.addEventListener('resize', function(){
-        console.log("Canvas width *should* be: " + (window.innerWidth * 0.6).toString());
-        console.log("Canvas height *should* be: " + (window.innerHeight * 0.8).toString());
         _this.updateCameraGeometry(window.innerWidth * 0.6, window.innerHeight * 0.8);
     });
 };
@@ -83,12 +82,16 @@ MainView.prototype.draw = function () {
 };
 
 MainView.prototype.updateCameraGeometry = function (width, height) {
-    
+    console.log("Canvas width *should* be: " + (width).toString());
+    console.log("Canvas height *should* be: " + (height).toString());
+    // var scale = this.mGLViewPort[2] / width;
     this.mGLViewPort[2] = width;
     this.mGLViewPort[3] = height;
     this.mCameras[0].setViewport(this.mGLViewPort);
+    //this.mCameras[0].setWCWidth(this.mCameras[0].getWCWidth() * scale);
+    this.objects[0].setBounds(this.mCameras[0].getWCBounds());
     this.objects[2].setMessage("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
-    this.objects[3].setMessage("Canvas.clientX: " + this.mGLViewPort.toString());  
+    this.objects[3].setMessage("Canvas.clientX: " + this.mGLViewPort.toString());
 };
 
 // The update function, updates the application state. Make sure to _NOT_ draw

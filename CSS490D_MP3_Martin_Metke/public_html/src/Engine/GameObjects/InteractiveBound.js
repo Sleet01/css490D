@@ -64,6 +64,7 @@ gEngine.Core.inheritPrototype(InteractiveBound, InteractiveObject);
  */
 InteractiveBound.prototype.setBounds = function (aBounds) {
     this.mMoveBounds = aBounds;
+    this.sanitizePosition();
 };
 
 /*  @brief  set the object that this will update when this is updated.
