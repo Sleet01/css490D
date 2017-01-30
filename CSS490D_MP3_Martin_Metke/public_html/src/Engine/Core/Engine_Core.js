@@ -17,13 +17,17 @@ gEngine.Core = (function () {
     // instance variables
     // The graphical context to draw to
     var mGL = null;
+    var mCanvas = null;
+    var mCanvasID = null;
+    
     // initialize the WebGL, the vertex buffer and compile the shaders
     var _initializeWebGL = function (htmlCanvasID) {
-        var canvas = document.getElementById(htmlCanvasID);
+        mCanvasID = htmlCanvasID;
+        mCanvas = document.getElementById(mCanvasID);
 
         // Get the standard or experimental webgl and binds to the Canvas area
         // store the results to the instance variable mGL
-        mGL = canvas.getContext("webgl", {alpha: false}) || canvas.getContext("experimental-webgl", {alpha: false});
+        mGL = mCanvas.getContext("webgl", {alpha: false}) || mCanvas.getContext("experimental-webgl", {alpha: false});
 
         // Allows transperency with textures.
         mGL.blendFunc(mGL.SRC_ALPHA, mGL.ONE_MINUS_SRC_ALPHA);
@@ -44,6 +48,10 @@ gEngine.Core = (function () {
     //
     // Accessor of the webgl context
     var getGL = function () { return mGL; };
+    var getCanvas = function () { 
+        mCanvas = document.getElementById(mCanvasID);
+        return mCanvas; 
+    };
 
     var startScene = function (scene) {
         scene.loadScene.call(scene); // Called in this way to keep correct context
@@ -59,6 +67,7 @@ gEngine.Core = (function () {
 
         // Inits DefaultResources, when done, invoke the anonymous function to call startScene(myGame).
         gEngine.DefaultResources.initialize(function () { startScene(myGame); });
+        
     };
 
     // Clears the draw area and draws one square
@@ -81,6 +90,7 @@ gEngine.Core = (function () {
 
     var mPublic = {
         getGL: getGL,
+        getCanvas: getCanvas,
         initializeEngineCore: initializeEngineCore,
         clearCanvas: clearCanvas,
         inheritPrototype: inheritPrototype,

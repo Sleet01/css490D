@@ -116,9 +116,15 @@
                     // Resets the canvas dimensions to match window,
                     // then draws the new borders accordingly.
                     function resizeCanvas() {
-			htmlCanvas.width = window.innerWidth * 0.6;
+                        htmlCanvas.width = window.innerWidth * 0.6;
 			htmlCanvas.height = window.innerHeight * 0.8;
-                        context.viewport(0, 0, htmlCanvas.width, htmlCanvas.height );
+                        
+                        // Does not seem to be doing what I thought.
+                        //context.viewport(0, 0, htmlCanvas.width, htmlCanvas.height );
+                        //alert( htmlCanvas.width );
+                        //alert( htmlCanvas.height );
+                        //context.width = htmlCanvas.width;
+                        //context.height = htmlCanvas.height;
 			// redraw();
                     }
 		

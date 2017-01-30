@@ -53,6 +53,7 @@ function InteractiveBound(renderableObj, moveBounds = [], reportObject = null ) 
         this.mMarkers[j].setColor(randColor);
         // Set position
         this.mMarkers[j].getXform().setPosition( this.mMarkersPos[j][0], this.mMarkersPos[j][1]);
+        this.mMarkers[j].getXform().setSize(2, 2);
     }
 }
 gEngine.Core.inheritPrototype(InteractiveBound, InteractiveObject);
@@ -97,11 +98,14 @@ InteractiveBound.prototype.updateReportObject = function() {
  *  @post   reportObject is updated with this' current position and size
  */
 InteractiveBound.prototype.updateClones = function() {
-  for (var i = 0; i < this.mClones.length; i++){
-    var xForm = this.mClones[i].getXform();
-    xForm.setXPos(this.getXform().getXPos() + ((i + 1) * this.mWidth));
-    xForm.setYPos(this.getXform().getYPos());
-    xForm.setSize(this.mWidth, this.mHeight);
+    var position = this.getXform().getPosition();
+    
+    for (var i = 0; i < this.mClones.length; i++){
+        var xForm = this.mClones[i].getXform();
+        xForm.setPosition(position[0] + ((i + 1) * this.mWidth),
+                          position[1]
+                         );
+        xForm.setSize(this.mWidth, this.mHeight);
   }
 };
 
@@ -111,17 +115,17 @@ InteractiveBound.prototype.updateClones = function() {
  */
 InteractiveBound.prototype.updateMarkers = function() {
         
-    var xForm = this.getXform();
-    this.mMarkersPos = [ [ xForm.getXPos() + (this.mWidth / 2.0 ), xForm.getYPos()  ],
-                         [ xForm.getXPos(), xForm.getYPos() + (this.mHeight / 2.0 ) ],
-                         [ xForm.getXPos() - (this.mWidth / 2.0 ), xForm.getYPos()  ],
-                         [ xForm.getXPos(), xForm.getYPos() - (this.mHeight / 2.0 )] 
+    var position = this.getXform().getPosition();
+    this.mMarkersPos = [ [ position[0] + (this.mWidth / 2.0 ), position[1]  ],
+                         [ position[0], position[1] + (this.mHeight / 2.0 ) ],
+                         [ position[0] - (this.mWidth / 2.0 ), position[1]  ],
+                         [ position[0], position[1] - (this.mHeight / 2.0 )] 
                         ];
     
     // Instantiate corner markers
     for (var j = 0; j < this.mMarkers.length; j++){
         // Set position
-        this.mMarkers[j].getXform().setPosition( mMarkersPos[j][0], mMarkersPos[j][1]);
+        this.mMarkers[j].getXform().setPosition( this.mMarkersPos[j][0], this.mMarkersPos[j][1]);
     }
 };
 
@@ -131,7 +135,7 @@ InteractiveBound.prototype.updateMarkers = function() {
  */
 InteractiveBound.prototype.sanitizePosition = function() {
     //debug
-    return;
+    //return;
     
     if (this.mMoveBounds.length !== 0 ){
         var xForm = this.getXform();

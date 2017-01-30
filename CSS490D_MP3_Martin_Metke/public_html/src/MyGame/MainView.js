@@ -37,8 +37,8 @@ MainView.prototype.initialize = function () {
     // Set up this.MGLViewPort for camera resizing
     this.mGLViewPort = [0, //canvas x-orgin 
                         0, //canvas y-origin
-                        gEngine.Core.getGL().canvas.clientWidth,
-                        gEngine.Core.getGL().canvas.clientHeight];
+                        window.innerWidth * 0.6,
+                        window.innerHeight * 0.8];
 
     this.mCameras[0] = new Camera(
         vec2.fromValues(50, 40),   // position of the camera
@@ -57,6 +57,15 @@ MainView.prototype.initialize = function () {
     this.objects[2].getXform().setPosition(10,12);
     this.objects[3] = new InteractiveFontDisplay("Canvas.clientX: " + this.mGLViewPort.toString());
     this.objects[3].getXform().setPosition(10,10);
+    
+    // Crappy hack to have a resize event fire *this* object's updateCameraGeometry
+    // I am severely regretting handling resizing at all.
+    var _this = this;
+    window.addEventListener('resize', function(){
+        console.log("Canvas width *should* be: " + (window.innerWidth * 0.6).toString());
+        console.log("Canvas height *should* be: " + (window.innerHeight * 0.8).toString());
+        _this.updateCameraGeometry(window.innerWidth * 0.6, window.innerHeight * 0.8);
+    });
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
@@ -73,20 +82,29 @@ MainView.prototype.draw = function () {
     }
 };
 
+MainView.prototype.updateCameraGeometry = function (width, height) {
+    
+    this.mGLViewPort[2] = width;
+    this.mGLViewPort[3] = height;
+    this.mCameras[0].setViewport(this.mGLViewPort);
+    this.objects[2].setMessage("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
+    this.objects[3].setMessage("Canvas.clientX: " + this.mGLViewPort.toString());  
+};
+
 // The update function, updates the application state. Make sure to _NOT_ draw
 // anything from this function!
 MainView.prototype.update = function () {
     // grab the latest GL canvas size info and update camera size if necessary
     // NEEDS WORK
     
-    this.mGLViewPort[2] = gEngine.Core.getGL().canvas.width;
-    this.mGLViewPort[3] = gEngine.Core.getGL().canvas.height;
-    var mCVP = this.mCameras[0].getViewport();
-    if ((mCVP[2] !== this.mGLViewPort[2]) || (mCVP[3] !== this.mGLViewPort[3])){
-        this.mCameras[0].setViewport(this.mGLViewPort);
-        this.objects[2].setMessage("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
-        this.objects[3].setMessage("Canvas.clientX: " + this.mGLViewPort.toString());
-    }
+//    this.mGLViewPort[2] = gEngine.Core.getCanvas().width;
+//    this.mGLViewPort[3] = gEngine.Core.getCanvas().height;
+//    var mCVP = this.mCameras[0].getViewport();
+//    if ((mCVP[2] !== this.mGLViewPort[2]) || (mCVP[3] !== this.mGLViewPort[3])){
+//        this.mCameras[0].setViewport(this.mGLViewPort);
+//        this.objects[2].setMessage("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
+//        this.objects[3].setMessage("Canvas.clientX: " + this.mGLViewPort.toString());
+//    }
         
     if(gEngine.Input.isKeyClicked(gEngine.Input.keys.P)){
         //this.unloadScene();
@@ -97,16 +115,3 @@ MainView.prototype.update = function () {
     this.objects[2].update();
     this.objects[3].update();
 };
-
-window.addEventListener('resize', function(event){
-    
-//    gEngine.VertexBuffer.initialize();
-//    this.mGLViewPort[2] = gEngine.Core.getGL().canvas.clientWidth;
-//    this.mGLViewPort[3] = gEngine.Core.getGL().canvas.clientHeight;
-//    var mCVP = this.mCameras[0].getViewport();
-//    if ((mCVP[2] !== this.mGLViewPort[2]) || (mCVP[3] !== this.mGLViewPort[3])){
-//        this.mCameras[0].setViewport(this.mGLViewPort);
-//        this.objects[2].setMessage("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
-//        this.objects[3].setMessage("Canvas.clientX: " + this.mGLViewPort.toString());
-//    }
-});
