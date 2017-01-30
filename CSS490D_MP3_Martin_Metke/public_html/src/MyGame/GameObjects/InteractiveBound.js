@@ -19,10 +19,11 @@ function InteractiveBound(renderableObj, camera, reportObject = null ) {
     this.mWidth = 15;
     this.mHeight = 15;
     this.mDrawClones = false;
-    this.mReportObject = reportObject;
     this.mClones = [];
+    this.mInvisibleClones = [];
     this.mMarkers = [];
     this.mMarkersPos = [];
+    this.mReportObject = reportObject;
     this.mCamera = camera;
     this.mMoveBounds = this.mCamera.getWCBounds();
         
@@ -187,6 +188,22 @@ InteractiveBound.prototype.sanitizePosition = function() {
         if (bottom < bEdge) { xForm.incYPosBy( bEdge - bottom ); }
         if (right > rEdge) {xForm.incXPosBy( rEdge - right); }
         if (top > tEdge) {xForm.incYPosBy( tEdge - top ); }
+        
+        // Set invisible clones - this will track which frames are off the map
+        for (var i = this.mClones.length - 1; i >= 0; i--){
+            if ((right + ((i + 1) * this.mWidth)) > rEdge ) {
+                if ((this.mInvisibleClones.indexOf(this.mClones[i]) === -1)) {
+                    this.mInvisibleClones.push(this.mClones[i]);
+                    console.log("Clone #" + i.toString() + ": off bounds");
+                    console.log("mInvisibleClones.length: " + this.mInvisibleClones.length.toString());
+                }
+            } else if (this.mInvisibleClones.indexOf(this.mClones[i]) !== -1) {
+                this.mInvisibleClones.pop();
+                console.log("Clone #" + i.toString() + ": back on");
+                console.log("mInvisibleClones.length: " + this.mInvisibleClones.length.toString());
+                break;
+            }
+        }
     }
     
 };
@@ -273,12 +290,15 @@ InteractiveBound.prototype.draw = function () {
     var cameraVPM = this.mCamera.getVPMatrix();
     this.mRenderComponent.draw(cameraVPM);
     if ( this.mDrawClones ) {
-        for (var i = 0; i < this.mClones.length; i++){
+        for (var i = 0; i < this.mClones.length - this.mInvisibleClones.length; i++){
             this.mClones[i].draw(cameraVPM);
         }
     }
     for (var j = 0; j < this.mMarkers.length; j++){
         this.mMarkers[j].draw(cameraVPM);
     }
+    
+    // draw our updates
+    this.mReportObject.draw(cameraVPM);
     
 };
