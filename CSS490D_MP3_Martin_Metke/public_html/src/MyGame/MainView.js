@@ -14,6 +14,8 @@ function MainView() {
     this.mMsg = null;
     this.objects = [];
     this.mGLViewPort = [];  //To support resizing, track the canvas size
+    this.mSpriteSource = null;
+    this.mInteractiveBound = null;
     
     //Test sprite textures
     this.kTestSprite = "assets/Bound.png";
@@ -48,11 +50,11 @@ MainView.prototype.initialize = function () {
     this.mCameras[0].setBackgroundColor([0.9, 0.9, 0.9, 1]);
             // sets the background to gray
       
-    this.objects[0] = new InteractiveBound(new TextureRenderable(this.kTestSprite),
+    this.mInteractiveBound = new InteractiveBound(new TextureRenderable(this.kTestSprite),
                                             this.mCameras[0].getWCBounds());
     // Create a new InteractiveBoundDisplay to report data from the IB, and connect them
     this.objects[1] = new InteractiveBoundDisplay();
-    this.objects[0].setReportObject(this.objects[1]);
+    this.mInteractiveBound.setReportObject(this.objects[1]);
     this.objects[2] = new InteractiveFontDisplay("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
     this.objects[2].getXform().setPosition(10,12);
     this.objects[3] = new InteractiveFontDisplay("Canvas.clientX: " + this.mGLViewPort.toString());
@@ -75,9 +77,10 @@ MainView.prototype.draw = function () {
     // Step  B: Activate the drawing Camera
     this.mCameras[0].setupViewProjection();
 //    this.mMsg.draw(this.mCamera.getVPMatrix());
-    for (var j=0; j<this.objects.length; j++) {
+    for (var j=1; j<this.objects.length; j++) {
         this.objects[j].draw(this.mCameras[0].getVPMatrix());
     }
+    this.mInteractiveBound.draw(this.mCameras[0].getVPMatrix());
 };
 
 /* @brief   Notifies all cameras / camera containers that the geometry of the screen
@@ -92,7 +95,7 @@ MainView.prototype.updateCameraGeometry = function (width, height) {
     this.mGLViewPort[2] = width;
     this.mGLViewPort[3] = height;
     this.mCameras[0].setViewport(this.mGLViewPort);
-    this.objects[0].setBounds(this.mCameras[0].getWCBounds());
+    this.mInteractiveBound.setBounds(this.mCameras[0].getWCBounds());
     this.objects[2].setMessage("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
     this.objects[3].setMessage("Canvas.clientX: " + this.mGLViewPort.toString());  
 };
@@ -117,7 +120,7 @@ MainView.prototype.update = function () {
         gEngine.GameLoop.stop();
     }
     
-    this.objects[0].update();
+    this.mInteractiveBound.update();
     this.objects[2].update();
     this.objects[3].update();
 };

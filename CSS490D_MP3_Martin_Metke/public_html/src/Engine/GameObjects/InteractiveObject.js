@@ -17,6 +17,13 @@ gEngine.Core.inheritPrototype(InteractiveObject, GameObject);
 
 InteractiveObject.prototype.getXform = function () { return this.mRenderComponent.getXform(); };
 
+// Allow subclasses to have their position set more easily.
+InteractiveObject.prototype.setPosition = function (xPos, yPos) {
+
+    this.getXform().setPosition(xPos, yPos);
+
+};
+
 InteractiveObject.prototype.update = function () {
     
 };

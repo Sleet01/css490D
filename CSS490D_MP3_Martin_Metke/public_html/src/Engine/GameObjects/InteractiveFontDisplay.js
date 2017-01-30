@@ -21,7 +21,7 @@ function InteractiveFontDisplay(message) {
     InteractiveObject.call(this, this.mMsg);
     
     this.mMsg.setColor([0, 0, 0, 1]);
-    this.mMsg.getXform().setPosition(10, 15);
+    this.setPosition(10, 15);
     this.mMsg.setTextHeight(2);
 
 }

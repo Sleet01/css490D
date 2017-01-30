@@ -48,7 +48,7 @@ function InteractiveBound(renderableObj, moveBounds = [], reportObject = null ) 
     
     // Instantiate corner markers
     for (var j = 0; j < 4; j++){
-        var randColor = [ j/4.0, j/4.0, j/4.0, 1];
+        var randColor = [ Math.random(), Math.random(), Math.random(), 1];
         this.mMarkers.push(new Renderable());
         this.mMarkers[j].setColor(randColor);
         // Set position

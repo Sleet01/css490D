@@ -14,7 +14,7 @@
 
 /* InteractiveBoundDisplay takes status, which is composed into its font object message
  */
-function InteractiveBoundDisplay(status = [0.0, 0.0, 0.0, 0.0]) {
+function InteractiveBoundDisplay(status = [0.0, 0.0, 0.0, 0.0], xPos=10, yPos=15) {
     this.mStatus = status;
     this.mText = 'Status:Bound Pos=(' + this.mStatus[0].toPrecision(4) +
                 ', ' + this.mStatus[1].toPrecision(4) + ') Size=(' +
@@ -22,6 +22,7 @@ function InteractiveBoundDisplay(status = [0.0, 0.0, 0.0, 0.0]) {
                 this.mStatus[3].toPrecision(4) + ')';
     // Call the superclass with the compiled message
     InteractiveFontDisplay.call(this, this.mText);
+    this.setPosition(xPos, yPos);
 }
 gEngine.Core.inheritPrototype(InteractiveBoundDisplay, InteractiveFontDisplay);
 
