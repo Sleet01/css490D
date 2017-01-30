@@ -22,6 +22,8 @@ function InteractiveBound(renderableObj, moveBounds = [], reportObject = null ) 
     this.mMoveBounds = moveBounds;
     this.mReportObject = reportObject;
     this.mClones = [];
+    this.mMarkers = [];
+    this.mMarkersPos = [];
         
     renderableObj.setColor([1, 1, 1, 0]);
     renderableObj.getXform().setPosition(50, 25);
@@ -35,6 +37,22 @@ function InteractiveBound(renderableObj, moveBounds = [], reportObject = null ) 
         xForm.setXPos(renderableObj.getXform().getXPos() + ((i + 1) * this.mWidth));
         xForm.setYPos(renderableObj.getXform().getYPos());
         xForm.setSize(this.mWidth, this.mHeight);
+    }
+    // Set positions of side markers
+    xForm = this.getXform();
+    this.mMarkersPos = [ [ xForm.getXPos() + (this.mWidth / 2.0 ), xForm.getYPos()  ],
+                         [ xForm.getXPos(), xForm.getYPos() + (this.mHeight / 2.0 ) ],
+                         [ xForm.getXPos() - (this.mWidth / 2.0 ), xForm.getYPos()  ],
+                         [ xForm.getXPos(), xForm.getYPos() - (this.mHeight / 2.0 )] 
+                        ];
+    
+    // Instantiate corner markers
+    for (var j = 0; j < 4; j++){
+        var randColor = [ j/4.0, j/4.0, j/4.0, 1];
+        this.mMarkers.push(new Renderable());
+        this.mMarkers[j].setColor(randColor);
+        // Set position
+        this.mMarkers[j].getXform().setPosition( this.mMarkersPos[j][0], this.mMarkersPos[j][1]);
     }
 }
 gEngine.Core.inheritPrototype(InteractiveBound, InteractiveObject);
@@ -87,11 +105,34 @@ InteractiveBound.prototype.updateClones = function() {
   }
 };
 
+/* @brief   Update the bound side markers with current extents of current InteractiveBound
+ * @pre     This' mMarkers are instantiated
+ * @post    This' mMarker Renderables are all in the correct position 
+ */
+InteractiveBound.prototype.updateMarkers = function() {
+        
+    var xForm = this.getXform();
+    this.mMarkersPos = [ [ xForm.getXPos() + (this.mWidth / 2.0 ), xForm.getYPos()  ],
+                         [ xForm.getXPos(), xForm.getYPos() + (this.mHeight / 2.0 ) ],
+                         [ xForm.getXPos() - (this.mWidth / 2.0 ), xForm.getYPos()  ],
+                         [ xForm.getXPos(), xForm.getYPos() - (this.mHeight / 2.0 )] 
+                        ];
+    
+    // Instantiate corner markers
+    for (var j = 0; j < this.mMarkers.length; j++){
+        // Set position
+        this.mMarkers[j].getXform().setPosition( mMarkersPos[j][0], mMarkersPos[j][1]);
+    }
+};
+
 /*  @brief  Make sure this' position is within the bounds passed in.
  *  @pre    this.mMoveBounds are sane and reflect camera bounds in WC.
  *  @post   this' is constrained within the boundaries of mMoveBounds
  */
 InteractiveBound.prototype.sanitizePosition = function() {
+    //debug
+    return;
+    
     if (this.mMoveBounds.length !== 0 ){
         var xForm = this.getXform();
         
@@ -195,6 +236,7 @@ InteractiveBound.prototype.update = function () {
         this.sanitizePosition();
         this.updateReportObject();
         this.updateClones();
+        this.updateMarkers();
         
     }
 };
@@ -206,5 +248,8 @@ InteractiveBound.prototype.draw = function (aCameraVPM) {
         for (var i = 0; i < this.mClones.length; i++){
             this.mClones[i].draw(aCameraVPM);
         }
+    }
+    for (var j = 0; j < this.mMarkers.length; j++){
+        this.mMarkers[j].draw(aCameraVPM);
     }
 };

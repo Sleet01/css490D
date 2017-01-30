@@ -99,7 +99,8 @@ MainView.prototype.update = function () {
 };
 
 window.addEventListener('resize', function(event){
-    gEngine.VertexBuffer.initialize();
+    
+//    gEngine.VertexBuffer.initialize();
 //    this.mGLViewPort[2] = gEngine.Core.getGL().canvas.clientWidth;
 //    this.mGLViewPort[3] = gEngine.Core.getGL().canvas.clientHeight;
 //    var mCVP = this.mCameras[0].getViewport();
