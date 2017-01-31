@@ -12,14 +12,13 @@
 function MainView() {
     this.mCameras = [];
     this.mMsg = null;
-    this.objects = [];
     this.mGLViewPort = [];  //To support resizing, track the canvas size
     this.mSpriteSource = null;
     this.mInteractiveBound = null;
     
     //Test sprite textures
     this.kTestSprite = "assets/Bound.png";
-    this.kSpriteSheet = "assets/minion_sprite.png"
+    this.kSpriteSheet = "assets/minion_sprite.png";
 }
 gEngine.Core.inheritPrototype(MainView, Scene);
 
@@ -49,7 +48,7 @@ MainView.prototype.initialize = function () {
         100,                       // width of camera
         this.mGLViewPort           // viewport (orgX, orgY, width, height)
     );
-    this.mCameras[0].setBackgroundColor([0.9, 0.9, 0.9, 1]);
+    this.mCameras[0].setBackgroundColor([0.8, 0.8, 0.8, 1]);
             // sets the background to gray
     
 
@@ -67,11 +66,6 @@ MainView.prototype.initialize = function () {
                                           this.mCameras[0],
                                           this.mInteractiveBound);
     
-    this.objects[2] = new InteractiveFontDisplay("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
-    this.objects[2].getXform().setPosition(10,12);
-    this.objects[3] = new InteractiveFontDisplay("Canvas.clientX: " + this.mGLViewPort.toString());
-    this.objects[3].getXform().setPosition(10,10);
-    
     // Crappy hack to have a resize event fire *this* object's updateCameraGeometry
     // I am severely regretting handling resizing at all.
     var _this = this;
@@ -88,11 +82,9 @@ MainView.prototype.draw = function () {
 
     // Step  B: Activate the drawing Camera
     this.mCameras[0].setupViewProjection();
-//    this.mMsg.draw(this.mCamera.getVPMatrix());
+
+    // Draw the main objects, and their contained Renderables
     this.mSpriteSource.draw();
-    for (var j=2; j<this.objects.length; j++) {
-        this.objects[j].draw(this.mCameras[0].getVPMatrix());
-    }
     this.mInteractiveBound.draw(this.mCameras[0].getVPMatrix());
 };
 
@@ -108,31 +100,16 @@ MainView.prototype.updateCameraGeometry = function (width, height) {
     this.mGLViewPort[2] = width;
     this.mGLViewPort[3] = height;
     this.mInteractiveBound.updateGeometry(this.mGLViewPort);
-    this.objects[2].setMessage("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
-    this.objects[3].setMessage("Canvas.clientX: " + this.mGLViewPort.toString());  
 };
 
 // The update function, updates the application state. Make sure to _NOT_ draw
 // anything from this function!
 MainView.prototype.update = function () {
-    // grab the latest GL canvas size info and update camera size if necessary
-    // NEEDS WORK
-    
-//    this.mGLViewPort[2] = gEngine.Core.getCanvas().width;
-//    this.mGLViewPort[3] = gEngine.Core.getCanvas().height;
-//    var mCVP = this.mCameras[0].getViewport();
-//    if ((mCVP[2] !== this.mGLViewPort[2]) || (mCVP[3] !== this.mGLViewPort[3])){
-//        this.mCameras[0].setViewport(this.mGLViewPort);
-//        this.objects[2].setMessage("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
-//        this.objects[3].setMessage("Canvas.clientX: " + this.mGLViewPort.toString());
-//    }
-        
+            
     if(gEngine.Input.isKeyClicked(gEngine.Input.keys.P)){
         //this.unloadScene();
         gEngine.GameLoop.stop();
     }
     
     this.mInteractiveBound.update();
-    this.objects[2].update();
-    this.objects[3].update();
 };

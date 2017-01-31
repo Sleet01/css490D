@@ -23,6 +23,7 @@ function InteractiveBound(renderableObj, camera, reportObject = null ) {
     this.mInvisibleClones = [];
     this.mMarkers = [];
     this.mMarkersPos = [];
+    this.mReportOffset = [2,2];
     this.mReportObject = reportObject;
     this.mCamera = camera;
     this.mMoveBounds = this.mCamera.getWCBounds();
@@ -56,6 +57,12 @@ function InteractiveBound(renderableObj, camera, reportObject = null ) {
         // Set position
         this.mMarkers[j].getXform().setPosition( this.mMarkersPos[j][0], this.mMarkersPos[j][1]);
         this.mMarkers[j].getXform().setSize(2, 2);
+    }
+    
+    if (this.mReportObject !== null){
+        var cBounds = this.mCamera.getWCBounds();
+        this.mReportObject.setPosition(cBounds[0] + this.mReportOffset[0], 
+                                       cBounds[1] + this.mReportOffset[1]);
     }
 }
 gEngine.Core.inheritPrototype(InteractiveBound, InteractiveObject);
@@ -140,7 +147,14 @@ InteractiveBound.prototype.updateMarkers = function() {
 };
 
 InteractiveBound.prototype.updateGeometry = function(boundsArray) {
+    
+    // Resize the attached camera
     this.mCamera.setViewport(boundsArray);
+    
+    // Move the InteractiveBoundDisplay to the bottom-left corner
+    var bounds = this.mCamera.getWCBounds();
+    this.mReportObject.setPosition(bounds[0] + this.mReportOffset[0],
+                                   bounds[1] + this.mReportOffset[1]);
 };
 
 /*  @brief  Make sure this' position is within the bounds passed in.
@@ -239,7 +253,7 @@ InteractiveBound.prototype.update = function () {
         this.mHeight = Xform.getHeight();
         var clean = false;
     }
-    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Right)){
+    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Left)){
         Xform.incWidthBy(-sDelta);
         this.mWidth = Xform.getWidth();
         var clean = false;
@@ -249,7 +263,7 @@ InteractiveBound.prototype.update = function () {
         this.mHeight = Xform.getHeight();
         var clean = false;
     }
-    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Left)){
+    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Right)){
         Xform.incWidthBy(sDelta);
         this.mWidth = Xform.getWidth();
         var clean = false;
