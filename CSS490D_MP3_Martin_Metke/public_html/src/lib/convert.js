@@ -44,6 +44,10 @@ Convert = function () {
         return (textureInfo.mWidth / (textureInfo.mHeight));
     };
     
+    cameraAR = function(camera){
+        return (camera.getWCWidth() / (camera.getWCHeight()));
+    };
+    
     getBounds = function(xForm) {
         var xFormPos = xForm.getPosition();
         var xFormSize = xForm.getSize();
@@ -60,6 +64,7 @@ Convert = function () {
         "wc2uv"  : wc2uv,
         "uv2wc"  : uv2wc,
         "textureAR" : textureAR,
+        "cameraAR"  : cameraAR,
         "getBounds" : getBounds
     };
     return mPublic;

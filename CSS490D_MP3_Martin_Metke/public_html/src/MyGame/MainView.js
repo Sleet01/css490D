@@ -10,26 +10,29 @@
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
 function MainView() {
+    this.mPaneOffset = 240;
     this.mCameras = [];
     this.mMsg = null;
-    this.mGLViewPort = [];  //To support resizing, track the canvas size
+    this.mMainViewPort = [];  //To support resizing, track the canvas size
     this.mSpriteSource = null;
     this.mInteractiveBound = null;
+    this.mZoomedViews = null;
     
     //Test sprite textures
-    this.kTestSprite = "assets/Bound.png";
+    this.kBoundSprite = "assets/Bound.png";
     this.kSpriteSheet = "assets/minion_sprite.png";
 }
 gEngine.Core.inheritPrototype(MainView, Scene);
 
 MainView.prototype.loadScene = function () {
-    gEngine.Textures.loadTexture(this.kTestSprite);
+    gEngine.Textures.loadTexture(this.kBoundSprite);
     gEngine.Textures.loadTexture(this.kSpriteSheet);
 };
 
 MainView.prototype.unloadScene = function () {
     // will be called from GameLoop.stop
-    gEngine.Textures.unloadTexture(this.kTestSprite);
+    gEngine.Textures.unloadTexture(this.kBoundSprite);
+    gEngine.Textures.unloadTexture(this.kSpriteSheet);
         
     var nextLevel = new GameOver();  // next level to be loaded
     gEngine.Core.startScene(nextLevel);
@@ -38,25 +41,24 @@ MainView.prototype.unloadScene = function () {
 MainView.prototype.initialize = function () {
     // Step A: set up the cameras
     // Set up this.MGLViewPort for camera resizing
-    this.mGLViewPort = [0, //canvas x-orgin 
+    this.mMainViewPort = [this.mPaneOffset, //canvas x-orgin 
                         0, //canvas y-origin
-                        gEngine.Core.getGL().canvas.width,
+                        gEngine.Core.getGL().canvas.width - this.mPaneOffset,
                         gEngine.Core.getGL().canvas.height];
-
+    
+    // Set up the initial "MainView" camera.
     this.mCameras[0] = new Camera(
         vec2.fromValues(50, 33),   // position of the camera
         100,                       // width of camera
-        this.mGLViewPort           // viewport (orgX, orgY, width, height)
+        this.mMainViewPort         // viewport (orgX, orgY, width, height)
     );
     this.mCameras[0].setBackgroundColor([0.8, 0.8, 0.8, 1]);
-            // sets the background to gray
-    
-
-    
+    // sets the background to gray
+        
     // Instantiate InteractiveBound, connect it to the first camera, and give it
     // an InteractiveBoundDisplay to report through.
     this.mInteractiveBound = new InteractiveBound(
-                                    new TextureRenderable(this.kTestSprite),
+                                    new TextureRenderable(this.kBoundSprite),
                                     this.mCameras[0],
                                     new InteractiveBoundDisplay());
     
@@ -66,12 +68,25 @@ MainView.prototype.initialize = function () {
                                           this.mCameras[0],
                                           this.mInteractiveBound);
     
+    
+    this.mZoomedViews = new ZoomedViews(new Renderable(), 
+                                        this.mInteractiveBound,
+                                        this,
+                                        [0, 0, 240, gEngine.Core.getGL().canvas.height * 0.5]);
+                                        
     // Crappy hack to have a resize event fire *this* object's updateCameraGeometry
     // I am severely regretting handling resizing at all.
     var _this = this;
     window.addEventListener('resize', function(){
         _this.updateCameraGeometry(window.innerWidth * 0.6, window.innerHeight * 0.8);
     });
+};
+
+// Allow other views to register themselves for drawing
+MainView.prototype.registerCamera = function(camera) {
+    if (this.mCameras.indexOf(camera) === -1){
+        this.mCameras.push(camera);
+    }
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
@@ -84,8 +99,17 @@ MainView.prototype.draw = function () {
     this.mCameras[0].setupViewProjection();
 
     // Draw the main objects, and their contained Renderables
-    this.mSpriteSource.draw();
+    this.mSpriteSource.draw(this.mCameras[0].getVPMatrix());
     this.mInteractiveBound.draw(this.mCameras[0].getVPMatrix());
+    
+    // If more views, e.g. ZoomedViews, are registered, then draw them as well
+    if (this.mCameras.length > 1){
+        for (var i = 1; i < this.mCameras.length; i++){
+            this.mCameras[i].setupViewProjection();
+            this.mSpriteSource.draw(this.mCameras[i].getVPMatrix());
+            this.mInteractiveBound.draw(this.mCameras[i].getVPMatrix());
+        }
+    }
 };
 
 /* @brief   Notifies all cameras / camera containers that the geometry of the screen
@@ -97,9 +121,10 @@ MainView.prototype.draw = function () {
  */
 MainView.prototype.updateCameraGeometry = function (width, height) {
     
-    this.mGLViewPort[2] = width;
-    this.mGLViewPort[3] = height;
-    this.mInteractiveBound.updateGeometry(this.mGLViewPort);
+    this.mMainViewPort[2] = width - this.mPaneOffset;
+    this.mMainViewPort[3] = height;
+    this.mInteractiveBound.updateGeometry(this.mMainViewPort);
+    this.mSpriteSource.scaleTexture();
 };
 
 // The update function, updates the application state. Make sure to _NOT_ draw

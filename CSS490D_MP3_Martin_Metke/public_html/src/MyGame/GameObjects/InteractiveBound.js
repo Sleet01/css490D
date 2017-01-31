@@ -27,6 +27,7 @@ function InteractiveBound(renderableObj, camera, reportObject = null ) {
     this.mReportObject = reportObject;
     this.mCamera = camera;
     this.mMoveBounds = this.mCamera.getWCBounds();
+    this.mZoomedViews = null;
         
     renderableObj.setColor([1, 1, 1, 0]);
     renderableObj.getXform().setPosition(50, 25);
@@ -41,15 +42,29 @@ function InteractiveBound(renderableObj, camera, reportObject = null ) {
         xForm.setYPos(renderableObj.getXform().getYPos());
         xForm.setSize(this.mWidth, this.mHeight);
     }
+
+    // Set up side markers
+    this._setupMarkers();
+    
+    if (this.mReportObject !== null){
+        var cBounds = this.mCamera.getWCBounds();
+        this.mReportObject.setPosition(cBounds[0] + this.mReportOffset[0], 
+                                       cBounds[1] + this.mReportOffset[1]);
+    }
+}
+gEngine.Core.inheritPrototype(InteractiveBound, InteractiveObject);
+
+InteractiveBound.prototype._setupMarkers = function() {
+    
     // Set positions of side markers
-    xForm = this.getXform();
-    this.mMarkersPos = [ [ xForm.getXPos() + (this.mWidth / 2.0 ), xForm.getYPos()  ],
-                         [ xForm.getXPos(), xForm.getYPos() + (this.mHeight / 2.0 ) ],
-                         [ xForm.getXPos() - (this.mWidth / 2.0 ), xForm.getYPos()  ],
-                         [ xForm.getXPos(), xForm.getYPos() - (this.mHeight / 2.0 )] 
+    var xForm = this.getXform();
+    this.mMarkersPos = [ [ xForm.getXPos() + (this.mWidth / 2.0 ), xForm.getYPos()  ], //  3 o'clock pos
+                         [ xForm.getXPos(), xForm.getYPos() + (this.mHeight / 2.0 ) ], // 12 o'clock pos
+                         [ xForm.getXPos() - (this.mWidth / 2.0 ), xForm.getYPos()  ], //  9 o'clock pos
+                         [ xForm.getXPos(), xForm.getYPos() - (this.mHeight / 2.0 )]   //  6 o'clock pos
                         ];
     
-    // Instantiate corner markers
+    // Instantiate side markers
     for (var j = 0; j < 4; j++){
         var randColor = [ Math.random(), Math.random(), Math.random(), 1];
         this.mMarkers.push(new Renderable());
@@ -59,13 +74,8 @@ function InteractiveBound(renderableObj, camera, reportObject = null ) {
         this.mMarkers[j].getXform().setSize(2, 2);
     }
     
-    if (this.mReportObject !== null){
-        var cBounds = this.mCamera.getWCBounds();
-        this.mReportObject.setPosition(cBounds[0] + this.mReportOffset[0], 
-                                       cBounds[1] + this.mReportOffset[1]);
-    }
-}
-gEngine.Core.inheritPrototype(InteractiveBound, InteractiveObject);
+    
+};
 
 /* @brief   set the allowable bounds for movement.  Required for constrained scrolling
  * @param   {Number array} aBounds    [xOrigin, yOrigin, width, height] of bounds  
@@ -91,8 +101,20 @@ InteractiveBound.prototype.setCamera = function (aCamera) {
     this.mCamera = aCamera;
 };
 
+InteractiveBound.prototype.registerZViews = function (zoomedViews){
+    this.mZoomedViews = zoomedViews;
+};
+
+InteractiveBound.prototype.getWidth = function () {
+    return this.mWidth;
+};
+
 InteractiveBound.prototype.getCamera = function () {
     return (this.mCamera);
+};
+
+InteractiveBound.prototype.getMarkerPositions = function() {
+    return this.mMarkersPos;
 };
 
 /*  @brief  Send compiled position/size data to the Report Object; call its update()
@@ -289,15 +311,16 @@ InteractiveBound.prototype.update = function () {
         this.updateReportObject();
         this.updateClones();
         this.updateMarkers();
-        
+        if (this.mZoomedViews !== null){
+            this.mZoomedViews.update();
+        }
     }
 };
 
 // Draw the TextureRenderable; additionally, if set, draw the animation frames
-InteractiveBound.prototype.draw = function () {
-//InteractiveBound.prototype.draw = function (aCameraVPM) {
+InteractiveBound.prototype.draw = function (cameraVPM) {
             
-    var cameraVPM = this.mCamera.getVPMatrix();
+    //var cameraVPM = this.mCamera.getVPMatrix();
     this.mRenderComponent.draw(cameraVPM);
     if ( this.mDrawClones ) {
         for (var i = 0; i < this.mClones.length - this.mInvisibleClones.length; i++){
