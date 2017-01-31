@@ -27,6 +27,7 @@ function InteractiveBound(renderableObj, camera, reportObject = null ) {
     this.mReportObject = reportObject;
     this.mCamera = camera;
     this.mMoveBounds = this.mCamera.getWCBounds();
+    this.mAnimationView = null;
     this.mZoomedViews = null;
         
     renderableObj.setColor([1, 1, 1, 0]);
@@ -85,6 +86,14 @@ InteractiveBound.prototype.setBounds = function (aBounds) {
     this.mMoveBounds = aBounds;
 };
 
+/* @brief   Return the WC bounds [xOrigin, yOrigin, width, height] that constrain
+ *          this IB's movements; also == to the displayed size of sprite sheet
+ * @returns {array} aBounds
+ */
+ InteractiveBound.prototype.getBounds = function () {
+     return this.mMoveBounds;
+ };
+
 /*  @brief  set the object that this will update when this is updated.
  *  @param  {InteractiveBoundDisplay} reportObject
  *  @pre    reportObject has a setData() method
@@ -101,6 +110,10 @@ InteractiveBound.prototype.setCamera = function (aCamera) {
     this.mCamera = aCamera;
 };
 
+InteractiveBound.prototype.registerAView = function (animationView){
+    this.mAnimationView = animationView;
+};
+
 InteractiveBound.prototype.registerZViews = function (zoomedViews){
     this.mZoomedViews = zoomedViews;
 };
@@ -115,6 +128,11 @@ InteractiveBound.prototype.getCamera = function () {
 
 InteractiveBound.prototype.getMarkerPositions = function() {
     return this.mMarkersPos;
+};
+
+// Accessor to find out how many frames the AnimationView should use.
+InteractiveBound.prototype.getFrames = function() {
+    return (this.mClones.length - this.mInvisibleClones.length) + 1;
 };
 
 /*  @brief  Send compiled position/size data to the Report Object; call its update()
@@ -306,13 +324,18 @@ InteractiveBound.prototype.update = function () {
     
     // Send the text bar our info and have it update itself
     // *if* any updates have been made.
-    if ( (this.mReportObject !== null) && !(clean) ){
+    if ( !(clean) ){
         this.sanitizePosition();
-        this.updateReportObject();
         this.updateClones();
         this.updateMarkers();
+        if (this.mReportObject !== null){
+            this.updateReportObject();
+        }
         if (this.mZoomedViews !== null){
             this.mZoomedViews.update();
+        }
+        if (this.mAnimationView !== null){
+            this.mAnimationView.update();
         }
     }
 };

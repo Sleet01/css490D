@@ -17,6 +17,7 @@ function MainView() {
     this.mSpriteSource = null;
     this.mInteractiveBound = null;
     this.mZoomedViews = null;
+    this.mAnimationView = null;
     
     //Test sprite textures
     this.kBoundSprite = "assets/Bound.png";
@@ -75,6 +76,14 @@ MainView.prototype.initialize = function () {
                                         [0, 0,
                                          this.mPaneOffset, 
                                          gEngine.Core.getGL().canvas.height * 0.5]);
+                                     
+    this.mAnimationView = new AnimationView(new SpriteAnimateRenderable(this.kSpriteSheet), 
+                                        this.mInteractiveBound,
+                                        this,
+                                        [0, 
+                                         1 + gEngine.Core.getGL().canvas.height * 0.5,
+                                         this.mPaneOffset, 
+                                         gEngine.Core.getGL().canvas.height * 0.5]);
                                         
     // Crappy hack to have a resize event fire *this* object's updateCameraGeometry
     // I am severely regretting handling resizing at all.
@@ -113,6 +122,9 @@ MainView.prototype.draw = function () {
             this.mInteractiveBound.draw(this.mCameras[i].getVPMatrix());
         }
     }
+    
+    // Finally, draw this AnimationView if it is defined.
+    if ( this.mAnimationView !== null ){this.mAnimationView.draw();}
 };
 
 /* @brief   Notifies all cameras / camera containers that the geometry of the screen
@@ -129,6 +141,10 @@ MainView.prototype.updateCameraGeometry = function (width, height) {
     this.mInteractiveBound.updateGeometry(this.mMainViewPort);
     this.mSpriteSource.scaleTexture();
     this.mZoomedViews.updateGeometry([0, 0, this.mPaneOffset, height * 0.5]);
+    this.mAnimationView.updateGeometry([0, 
+                                        1 + gEngine.Core.getGL().canvas.height * 0.5,
+                                        this.mPaneOffset, 
+                                        gEngine.Core.getGL().canvas.height * 0.5]);
 };
 
 // The update function, updates the application state. Make sure to _NOT_ draw

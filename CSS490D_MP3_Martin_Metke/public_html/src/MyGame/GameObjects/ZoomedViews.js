@@ -44,8 +44,8 @@ ZoomedViews.prototype._initialize = function(){
 
 ZoomedViews.prototype.getVPArrays = function () {
     
-    var pWidth = this.mPaneArea[2] - this.mPaneArea[0]; //canvas space width (px)
-    var pHeight = this.mPaneArea[3] - this.mPaneArea[1];//canvas space height (px)
+    var pWidth = this.mPaneArea[2]; //canvas space width (px)
+    var pHeight = this.mPaneArea[3];//canvas space height (px)
     //var pCenter = [this.mPaneArea[0] + (pWidth / 2),
     //               this.mPaneArea[1] + (pHeight / 2)];
     var cWidth = pWidth / 2;

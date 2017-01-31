@@ -97,6 +97,27 @@ SpriteAnimateRenderable.prototype.setSpriteSequence = function (
     this._initAnimation();
 };
 
+// UV-specified sequence; per MP3 notes.
+// Always set the left-most element to be the first
+// HOLY CRAP DO YOU KNOW HOW MUCH HAIR I LOST LOOKING FOR THE ISSUE HERE?!
+// WHY IN THE NAME OF ALL THAT IS HOLY WOULD YOU SWITCH THE COORD ORDER?!
+SpriteAnimateRenderable.prototype.setSpriteSequenceUV = function (
+    leftUV, // offset from top-left
+    topUV,   // offset from top-left
+    elmWidthInUV,
+    elmHeightInUV,
+    numElements,      // number of elements in sequence
+    wPaddingInUV  // left/right padding
+) {
+    this.mNumElems = numElements;   // number of elements in animation
+    this.mFirstElmLeft = leftUV;
+    this.mElmTop = topUV;
+    this.mElmWidth = elmWidthInUV;
+    this.mElmHeight = elmHeightInUV;
+    this.mWidthPadding = wPaddingInUV;
+    this._initAnimation();
+};
+
 SpriteAnimateRenderable.prototype.setAnimationSpeed = function (
     tickInterval   // number of update calls before advancing the animation
 ) {
