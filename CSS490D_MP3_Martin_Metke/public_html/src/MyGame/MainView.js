@@ -19,6 +19,7 @@ function MainView() {
     
     //Test sprite textures
     this.kTestSprite = "assets/Bound.png";
+    this.kSpriteSheet = "assets/minion_sprite.png"
 }
 gEngine.Core.inheritPrototype(MainView, Scene);
 
@@ -49,6 +50,11 @@ MainView.prototype.initialize = function () {
     );
     this.mCameras[0].setBackgroundColor([0.9, 0.9, 0.9, 1]);
             // sets the background to gray
+    
+    // Instantiate SpriteSource which fully contains a png sprite sheet, fully
+    // covering a TextureRenderable.
+    this.mSpriteSource = new SpriteSource(new TextureRenderable(this.kSpriteSheet),
+                                          this.mCameras[0] );
     
     // Instantiate InteractiveBound, connect it to the first camera, and give it
     // an InteractiveBoundDisplay to report through.
