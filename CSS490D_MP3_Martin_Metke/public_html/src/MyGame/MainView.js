@@ -66,8 +66,6 @@ MainView.prototype.initialize = function () {
     this.mSpriteSource = new SpriteSource(new TextureRenderable(this.kSpriteSheet),
                                           this.mCameras[0],
                                           this.mInteractiveBound);
-    this.mSpriteSource.getXform().setPosition(50, 33);
-    this.mSpriteSource.getXform().setSize(80, 60);
     
     this.objects[2] = new InteractiveFontDisplay("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
     this.objects[2].getXform().setPosition(10,12);

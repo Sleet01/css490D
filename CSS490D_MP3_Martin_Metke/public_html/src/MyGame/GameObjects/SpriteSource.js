@@ -20,6 +20,8 @@ function SpriteSource(renderableObj, camera, ib = null) {
     var mAR = Convert.textureAR(this.info);
     var Xform = this.getXform();
     
+    // Center the sprite sheet texture in the provided camera
+    Xform.setPosition(this.mCamera.getWCXPos(), this.mCamera.getWCYPos());
     // If the image is wider than it is tall:
     if (mAR > 1) {
         Xform.setWidth(this.mCamera.getWCWidth() * 0.95);

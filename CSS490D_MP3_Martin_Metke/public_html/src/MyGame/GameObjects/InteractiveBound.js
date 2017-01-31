@@ -163,7 +163,7 @@ InteractiveBound.prototype.sanitizePosition = function() {
             this.mHeight = xForm.getHeight();
         }
         
-        // Assume bounds are [Xorigin, Yorigin, Xwidth, Ywidth]
+        // Assume bounds are WC [ Xmin, Ymin, XWidth, YWidth ]
         var hWidth = this.mWidth/2.0;
         var hHeight = this.mHeight/2.0;
         var left = ( xForm.getXPos() - hWidth );
