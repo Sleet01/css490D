@@ -25,6 +25,7 @@ gEngine.Core.inheritPrototype(MainView, Scene);
 
 MainView.prototype.loadScene = function () {
     gEngine.Textures.loadTexture(this.kTestSprite);
+    gEngine.Textures.loadTexture(this.kSpriteSheet);
 };
 
 MainView.prototype.unloadScene = function () {
@@ -55,6 +56,8 @@ MainView.prototype.initialize = function () {
     // covering a TextureRenderable.
     this.mSpriteSource = new SpriteSource(new TextureRenderable(this.kSpriteSheet),
                                           this.mCameras[0] );
+    this.mSpriteSource.getXform().setPosition(50, 33);
+    this.mSpriteSource.getXform().setSize(80, 60);
     
     // Instantiate InteractiveBound, connect it to the first camera, and give it
     // an InteractiveBoundDisplay to report through.
@@ -85,6 +88,7 @@ MainView.prototype.draw = function () {
     // Step  B: Activate the drawing Camera
     this.mCameras[0].setupViewProjection();
 //    this.mMsg.draw(this.mCamera.getVPMatrix());
+    this.mSpriteSource.draw();
     for (var j=2; j<this.objects.length; j++) {
         this.objects[j].draw(this.mCameras[0].getVPMatrix());
     }

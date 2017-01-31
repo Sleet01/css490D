@@ -13,7 +13,7 @@
 function SpriteSource(renderableObj, camera, ib = null) {
     GameObject.call(this, renderableObj);
     this.mCamera = camera;
-    this.info = gEngine.Textures.getTextureInfo(this.renderComponent.mTexture);
+    this.info = gEngine.Textures.getTextureInfo(this.mRenderComponent.getTexture());
     this.mInteractiveBound = ib;
 }
 gEngine.Core.inheritPrototype(SpriteSource, GameObject);
