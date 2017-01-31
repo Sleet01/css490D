@@ -71,7 +71,7 @@ InteractiveBound.prototype._setupMarkers = function() {
         this.mMarkers[j].setColor(randColor);
         // Set position
         this.mMarkers[j].getXform().setPosition( this.mMarkersPos[j][0], this.mMarkersPos[j][1]);
-        this.mMarkers[j].getXform().setSize(2, 2);
+        this.mMarkers[j].getXform().setSize(1, 1);
     }
     
     

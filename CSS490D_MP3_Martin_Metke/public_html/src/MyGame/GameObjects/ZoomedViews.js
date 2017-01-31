@@ -26,23 +26,11 @@ ZoomedViews.prototype._initialize = function(){
     // mPaneArea describes an area in which we can draw our four cameras
     // height of each camera is mPaneArea height / 3; width is
     // mPaneArea width / 2.  
-    var pWidth = this.mPaneArea[2] - this.mPaneArea[0]; //canvas space width (px)
-    var pHeight = this.mPaneArea[3] - this.mPaneArea[1];//canvas space height (px)
-    var pCenter = [this.mPaneArea[0] + (pWidth / 2),
-                   this.mPaneArea[1] + (pHeight / 2)];
-    var cWidth = pWidth / 2;
-    var cHeight = pHeight / 3;
-    var viewportArrays = [[ this.mPaneArea[0]+(cWidth), this.mPaneArea[1] + cHeight, cWidth, cHeight],
-                          [ this.mPaneArea[0]+(cWidth/2), this.mPaneArea[1] + (2 * cHeight), cWidth, cHeight],
-                          [ this.mPaneArea[0], this.mPaneArea[1] + cHeight, cWidth, cHeight],
-                          [ this.mPaneArea[0] + (cWidth/2), this.mPaneArea[1], cWidth, cHeight]
-                         ];
-//    var viewportArrays = [[pCenter[0], pCenter[1]-(cHeight/2), cWidth, cHeight],
-//                          [pCenter[0] - (cWidth/2), pCenter[1] + cHeight, cWidth, cHeight],
-//                          [pCenter[0] - cWidth, pCenter[1]-(cHeight/2), cWidth, cHeight],
-//                          [pCenter[0] - (cWidth/2), pCenter[1] -(cHeight * 1.5), cWidth, cHeight]];
+    var viewportArrays = this.getVPArrays();
+
     var ibPoints = this.mInteractiveBound.getMarkerPositions();
-        
+    
+    // Create each camera
     for (var i = 0; i < 4; i++){
         
         // Create a camera at the InteractiveBound side marker [i],
@@ -51,6 +39,38 @@ ZoomedViews.prototype._initialize = function(){
                                        this.mInteractiveBound.getWidth() * 0.5,
                                        viewportArrays[i]);
         this.mMainView.registerCamera(this.mCameras[i]);
+    }
+};
+
+ZoomedViews.prototype.getVPArrays = function () {
+    
+    var pWidth = this.mPaneArea[2] - this.mPaneArea[0]; //canvas space width (px)
+    var pHeight = this.mPaneArea[3] - this.mPaneArea[1];//canvas space height (px)
+    //var pCenter = [this.mPaneArea[0] + (pWidth / 2),
+    //               this.mPaneArea[1] + (pHeight / 2)];
+    var cWidth = pWidth / 2;
+    var cHeight = pHeight / 3;
+    var viewportArrays = [[ this.mPaneArea[0]+(cWidth), this.mPaneArea[1] + cHeight, cWidth, cHeight],
+                          [ this.mPaneArea[0]+(cWidth/2), this.mPaneArea[1] + (2 * cHeight), cWidth, cHeight],
+                          [ this.mPaneArea[0], this.mPaneArea[1] + cHeight, cWidth, cHeight],
+                          [ this.mPaneArea[0] + (cWidth/2), this.mPaneArea[1], cWidth, cHeight]
+                         ];
+    return viewportArrays;  
+};
+
+// Handle changing the size of the canvas; called by eventhandler in MainView
+ZoomedViews.prototype.updateGeometry = function(paneArea){
+    
+    this.mPaneArea = paneArea;
+    var viewportArrays = this.getVPArrays();
+        
+    // Update each camera
+    for (var i = 0; i < 4; i++){
+              
+        if(typeof this.mCameras[i] !== 'undefined') {
+                        
+            this.mCameras[i].setViewport(viewportArrays[i]);
+        }
     }
 };
 

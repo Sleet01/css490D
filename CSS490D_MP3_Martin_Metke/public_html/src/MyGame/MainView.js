@@ -72,13 +72,16 @@ MainView.prototype.initialize = function () {
     this.mZoomedViews = new ZoomedViews(new Renderable(), 
                                         this.mInteractiveBound,
                                         this,
-                                        [0, 0, 240, gEngine.Core.getGL().canvas.height * 0.5]);
+                                        [0, 0,
+                                         this.mPaneOffset, 
+                                         gEngine.Core.getGL().canvas.height * 0.5]);
                                         
     // Crappy hack to have a resize event fire *this* object's updateCameraGeometry
     // I am severely regretting handling resizing at all.
     var _this = this;
     window.addEventListener('resize', function(){
-        _this.updateCameraGeometry(window.innerWidth * 0.6, window.innerHeight * 0.8);
+        _this.updateCameraGeometry( gEngine.Core.getGL().canvas.width, 
+                                    gEngine.Core.getGL().canvas.height );
     });
 };
 
@@ -125,6 +128,7 @@ MainView.prototype.updateCameraGeometry = function (width, height) {
     this.mMainViewPort[3] = height;
     this.mInteractiveBound.updateGeometry(this.mMainViewPort);
     this.mSpriteSource.scaleTexture();
+    this.mZoomedViews.updateGeometry([0, 0, this.mPaneOffset, height * 0.5]);
 };
 
 // The update function, updates the application state. Make sure to _NOT_ draw
