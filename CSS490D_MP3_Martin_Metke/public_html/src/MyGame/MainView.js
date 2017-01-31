@@ -52,12 +52,7 @@ MainView.prototype.initialize = function () {
     this.mCameras[0].setBackgroundColor([0.9, 0.9, 0.9, 1]);
             // sets the background to gray
     
-    // Instantiate SpriteSource which fully contains a png sprite sheet, fully
-    // covering a TextureRenderable.
-    this.mSpriteSource = new SpriteSource(new TextureRenderable(this.kSpriteSheet),
-                                          this.mCameras[0] );
-    this.mSpriteSource.getXform().setPosition(50, 33);
-    this.mSpriteSource.getXform().setSize(80, 60);
+
     
     // Instantiate InteractiveBound, connect it to the first camera, and give it
     // an InteractiveBoundDisplay to report through.
@@ -65,6 +60,14 @@ MainView.prototype.initialize = function () {
                                     new TextureRenderable(this.kTestSprite),
                                     this.mCameras[0],
                                     new InteractiveBoundDisplay());
+    
+    // Instantiate SpriteSource which fully contains a png sprite sheet, fully
+    // covering a TextureRenderable.
+    this.mSpriteSource = new SpriteSource(new TextureRenderable(this.kSpriteSheet),
+                                          this.mCameras[0],
+                                          this.mInteractiveBound);
+    this.mSpriteSource.getXform().setPosition(50, 33);
+    this.mSpriteSource.getXform().setSize(80, 60);
     
     this.objects[2] = new InteractiveFontDisplay("Camera Bounds:" + this.mCameras[0].getWCBounds().toString());
     this.objects[2].getXform().setPosition(10,12);

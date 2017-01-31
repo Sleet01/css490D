@@ -141,7 +141,6 @@ InteractiveBound.prototype.updateMarkers = function() {
 
 InteractiveBound.prototype.updateGeometry = function(boundsArray) {
     this.mCamera.setViewport(boundsArray);
-    this.setBounds(this.mCamera.getWCBounds());
 };
 
 /*  @brief  Make sure this' position is within the bounds passed in.
@@ -164,6 +163,7 @@ InteractiveBound.prototype.sanitizePosition = function() {
             this.mHeight = xForm.getHeight();
         }
         
+        // Assume bounds are [Xorigin, Yorigin, Xwidth, Ywidth]
         var hWidth = this.mWidth/2.0;
         var hHeight = this.mHeight/2.0;
         var left = ( xForm.getXPos() - hWidth );
@@ -194,13 +194,9 @@ InteractiveBound.prototype.sanitizePosition = function() {
             if ((right + ((i + 1) * this.mWidth)) > rEdge ) {
                 if ((this.mInvisibleClones.indexOf(this.mClones[i]) === -1)) {
                     this.mInvisibleClones.push(this.mClones[i]);
-                    console.log("Clone #" + i.toString() + ": off bounds");
-                    console.log("mInvisibleClones.length: " + this.mInvisibleClones.length.toString());
                 }
             } else if (this.mInvisibleClones.indexOf(this.mClones[i]) !== -1) {
                 this.mInvisibleClones.pop();
-                console.log("Clone #" + i.toString() + ": back on");
-                console.log("mInvisibleClones.length: " + this.mInvisibleClones.length.toString());
                 break;
             }
         }
