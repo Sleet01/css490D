@@ -16,8 +16,9 @@
  */
 function InteractiveBound(renderableObj, camera, reportObject = null ) {
     InteractiveObject.call(this, renderableObj);
-    this.mWidth = 15;
-    this.mHeight = 15;
+    this.kDefSize = 15;
+    this.mWidth = this.kDefSize;
+    this.mHeight = this.kDefSize;
     this.mDrawClones = false;
     this.mClones = [];
     this.mInvisibleClones = [];
@@ -26,10 +27,11 @@ function InteractiveBound(renderableObj, camera, reportObject = null ) {
     this.mReportOffset = [2,2];
     this.mReportObject = reportObject;
     this.mCamera = camera;
-    this.mMoveBounds = this.mCamera.getWCBounds();
+    this.mMoveBounds = [];
     this.mAnimationView = null;
     this.mZoomedViews = null;
-        
+    
+    // Set the transparent border color, location, and shape
     renderableObj.setColor([1, 1, 1, 0]);
     renderableObj.getXform().setPosition(50, 25);
     renderableObj.getXform().setSize(this.mWidth, this.mHeight);
@@ -47,6 +49,8 @@ function InteractiveBound(renderableObj, camera, reportObject = null ) {
     // Set up side markers
     this._setupMarkers();
     
+    // Locate the Report Object (InteractiveBoundDisplay) in the lower-left corner
+    // of the camera's view.
     if (this.mReportObject !== null){
         var cBounds = this.mCamera.getWCBounds();
         this.mReportObject.setPosition(cBounds[0] + this.mReportOffset[0], 
@@ -55,6 +59,10 @@ function InteractiveBound(renderableObj, camera, reportObject = null ) {
 }
 gEngine.Core.inheritPrototype(InteractiveBound, InteractiveObject);
 
+/** @brief  Create and locate four markers at the edges of this boundary object
+ *  @pre    This object is instantiated and has created its own boundary object
+ *  @post   Four randomly-colored squares are attached to the middles of each side of the bounds
+ */
 InteractiveBound.prototype._setupMarkers = function() {
     
     // Set positions of side markers
@@ -106,31 +114,61 @@ InteractiveBound.prototype.setReportObject = function (reportObject) {
     }
 };
 
+/*  @brief  Assign a camera to this object for drawing.
+ *  @param  {Camera} aCamera
+ *  @pre    Camera is instantiated and covers the same general WC as this object
+ *  @post   this.mCamera points to aCamera
+ */
 InteractiveBound.prototype.setCamera = function (aCamera) {
     this.mCamera = aCamera;
 };
 
+/*  @brief  Assign an AnimationView to this object to update its frame area.
+ *  @param  {AnimationView} animationView
+ *  @pre    animationView is instantiated and configured
+ *  @post   this.mAnimationView points to animationView
+ */
 InteractiveBound.prototype.registerAView = function (animationView){
     this.mAnimationView = animationView;
 };
 
+/*  @brief  Assign an ZoomedViews to this object to update their WC coordinates.
+ *  @param  {ZoomedViews} zoomedViews
+ *  @pre    zoomedViews is instantiated and configured
+ *  @post   this.mZoomedViews points to zoomedViews
+ */
 InteractiveBound.prototype.registerZViews = function (zoomedViews){
     this.mZoomedViews = zoomedViews;
 };
 
+/*  @brief  Return the WC width of this object's bounds
+ * 
+ * @returns {Number} mWidth
+ */
 InteractiveBound.prototype.getWidth = function () {
     return this.mWidth;
 };
 
+/*  @brief  Return the camera this object is using for IBD locating
+ * 
+ * @returns {Camera} mCamera
+ */
 InteractiveBound.prototype.getCamera = function () {
     return (this.mCamera);
 };
 
+/*  @brief  Return the WC coords of all side markers as an array of arrays
+ * 
+ * @returns {Array} mMarkersPos
+ */
 InteractiveBound.prototype.getMarkerPositions = function() {
     return this.mMarkersPos;
 };
 
-// Accessor to find out how many frames the AnimationView should use.
+/*  @brief  Returns the number of frames to be animated
+ * 
+ *  @returns {Number} (total# of clones - invisible clones) == frames to display
+ */
 InteractiveBound.prototype.getFrames = function() {
     return (this.mClones.length - this.mInvisibleClones.length) + 1;
 };
@@ -186,9 +224,13 @@ InteractiveBound.prototype.updateMarkers = function() {
     }
 };
 
+/* @brief  Update the attached camera and move the IBD to its lower-left corner
+ * 
+ * @param {array} boundsArray   WC [xOrigin, yOrigin, width, height] of part of canvas
+ */
 InteractiveBound.prototype.updateGeometry = function(boundsArray) {
     
-    // Resize the attached camera
+    // Resize the attached camera; could be moved to mSpriteSource
     this.mCamera.setViewport(boundsArray);
     
     // Move the InteractiveBoundDisplay to the bottom-left corner
@@ -258,6 +300,9 @@ InteractiveBound.prototype.sanitizePosition = function() {
     
 };
 
+/** @brief  Handle keyboard input; fire updates on attached objects / views
+ * 
+ */
 InteractiveBound.prototype.update = function () {
     var mDelta = 1;
     var sDelta = 1;
@@ -316,10 +361,10 @@ InteractiveBound.prototype.update = function () {
     }
     
     if(gEngine.Input.isKeyClicked(gEngine.Input.keys.R)){
-        Xform.setWidth(15);
-        Xform.setHeight(15);
-        this.mHeight = 15;
-        this.mWidth = 15;
+        Xform.setWidth(this.kDefSize);
+        Xform.setHeight(this.kDefSize);
+        this.mHeight = this.kDefSize;
+        this.mWidth = this.kDefSize;
         clean = false;
     }
     
@@ -361,7 +406,6 @@ InteractiveBound.prototype.update = function () {
 // ("clones").
 InteractiveBound.prototype.draw = function (cameraVPM) {
             
-    //var cameraVPM = this.mCamera.getVPMatrix();
     this.mRenderComponent.draw(cameraVPM);
     if ( this.mDrawClones ) {
         for (var i = 0; i < this.mClones.length - this.mInvisibleClones.length; i++){

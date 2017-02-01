@@ -1,9 +1,8 @@
 /* File: InteractiveFontDisplay.js 
  *
  * Inherits from InteractiveObject
- * This is a specific InteractiveObject which displays a bounding box
- * and can move around.  It also reports its computed sprite animation info
- * based on its size, and will return (U,V) or (pixelx, pixely) coordinates.
+ * A generalized font display mainly used for debugging; 
+ * extended by InteractiveBoundDisplay
  */
 
 /*jslint node: true, vars: true */
@@ -12,7 +11,10 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-/* InteractiveFontDisplay takes a text message
+/**@brief   A moveable text object that can be updated on the fly and moved around
+ * 
+ * @param {string} message
+ * @returns {InteractiveFontDisplay}
  */
 function InteractiveFontDisplay(message) {
     this.mText = message;

@@ -1,7 +1,7 @@
 /* File: SpriteSource.js 
  *
  * Inherits from GameObject
- * Sounded useful in class, so...
+ * Sets up a view of a spritesheet
  */
 
 /*jslint node: true, vars: true */
@@ -9,7 +9,14 @@
 /* find out more about jslint: http://www.jslint.com/help.html */
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
-
+/** @brief  Create a texture sheet and constrain it (and possibly an InteractiveBound)
+ *          within a given camera.s
+ * 
+ * @param {TextureRenderable} renderableObj
+ * @param {Camera} camera
+ * @param {InteractiveBound} ib
+ * @returns {SpriteSource}
+ */
 function SpriteSource(renderableObj, camera, ib = null) {
     GameObject.call(this, renderableObj);
     this.mCamera = camera;
@@ -20,6 +27,7 @@ function SpriteSource(renderableObj, camera, ib = null) {
     this.mMarkers = [];
     this.mMarkersPos = [];
     
+    // Set colors for background and border Renderables
     this.mBorder.setColor([0.1, 0.1, 0.1, 1]);
     this.mBackground.setColor([0.5, 0.5, 0.5, 1]);
     
@@ -38,6 +46,9 @@ function SpriteSource(renderableObj, camera, ib = null) {
 }
 gEngine.Core.inheritPrototype(SpriteSource, GameObject);
 
+/**@brief   Create the corner markers marking bounds of this' sprite sheet 
+ * 
+ */
 SpriteSource.prototype._setupMarkers = function() {
     
     // Set positions of corner markers
@@ -80,11 +91,6 @@ SpriteSource.prototype.scaleTexture = function() {
             Xform.setHeight(Xform.getWidth() / mAR);
         } else {
             Xform.setHeight(this.mCamera.getWCHeight() * 0.95);
-            console.log("Camera WCHeight, Texture WCHeight: " + 
-                       this.mCamera.getWCHeight() + ", " + Xform.getHeight());
-            Xform.setWidth(Xform.getHeight() * mAR);
-            console.log("Camera WCWidth, Texture WCWidth: " + 
-                       this.mCamera.getWCWidth() + ", " + Xform.getWidth());
         }
     }else{
         if (mAR <= cAR){
@@ -103,6 +109,10 @@ SpriteSource.prototype.scaleTexture = function() {
     this.mBorder.getXform().setPosition(Xform.getXPos(), Xform.getYPos());
 };
 
+/**@brief   Assign an InteractiveBound object to this.
+ * 
+ * @param {InteractiveBound} ib
+ */
 SpriteSource.prototype.setInteractiveBound = function(ib) {
     if (!(this.mInteractiveBound === null)) {
         this.mInteractiveBound = ib;
@@ -110,23 +120,29 @@ SpriteSource.prototype.setInteractiveBound = function(ib) {
     }
 };
 
+/**@brief   Grab the bounds info from this' sprite sheet, as WC coordinates
+ * 
+ * @returns {Array} WC bounds in [xOrigin, yOrigin, width, height] format
+ */
 SpriteSource.prototype.getTextureBounds = function (){
     var Xform = this.getXform();
     return [0, 0, Xform.getWidth(), Xform.getHeight()];
 };
 
-SpriteSource.prototype.getXform = function () { return this.mRenderComponent.getXform(); };
-
-SpriteSource.prototype.update = function () {};
-
-SpriteSource.prototype.getRenderable = function () { return this.mRenderComponent; };
+/**@brief   Assign a new texture to this object's TextureRenderable
+ * @pre     Texture must already be loaded in the engine
+ * @param {Texture} t
+ */
 SpriteSource.prototype.setTexture = function (t) { 
     this.renderComponent.mTexture = t;
     
 };
-
+/**@brief   This object draws its own background, corner markers, and texture
+ * @pre     All objects must be instantiated
+ * @param {ViewPortMatrix} cameraVPM
+ */
 SpriteSource.prototype.draw = function (cameraVPM) {
-    //var cameraVPM = this.mCamera.getVPMatrix();
+
     this.mBorder.draw(cameraVPM);
     this.mBackground.draw(cameraVPM);
     this.mRenderComponent.draw(cameraVPM);

@@ -1,6 +1,6 @@
 /* File: AnimationView.js 
  *
- * Inherits from AnimationView
+ * Inherits from InteractiveObject
  * An object that hosts a sprite-animated view of a spritesheet
   */
 
@@ -10,6 +10,15 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
+/**@brief   A view of a SpriteAnimateRenderable with animation updates ~every second
+ * 
+ * @param {SpriteAnimateRenderable} renderableObj
+ * @param {InteractiveBound} ibObject
+ * @param {MainView} mvObject
+ * @param {Array} paneArea
+ * @returns {AnimationView}
+ */
+
 function AnimationView(renderableObj, ibObject, mvObject, paneArea) {
     InteractiveObject.call(this, renderableObj);
     this.mInteractiveBound = ibObject;
@@ -17,7 +26,7 @@ function AnimationView(renderableObj, ibObject, mvObject, paneArea) {
     this.mPaneArea = paneArea;
     this.mCameras = [];
     this.kSize = 2;
-    this.kSpeed = 30;
+    this.kSpeed = 25;
     this.info = gEngine.Textures.getTextureInfo(this.mRenderComponent.getTexture());
     
     this.mInteractiveBound.registerAView(this);
@@ -25,6 +34,11 @@ function AnimationView(renderableObj, ibObject, mvObject, paneArea) {
 }
 gEngine.Core.inheritPrototype(AnimationView, InteractiveObject);
 
+/**@brief   Set up the view, and make sure the SpriteAnimateRenderable fits in the camera 
+ * 
+ * @pre     PaneArea is within the canvas
+ * @post    This' camera will be filled by the SpriteAnimateRenderable, and fill its portion of the canvas
+ */
 AnimationView.prototype._initialize = function(){
     // mPaneArea describes an area in which we can draw our four cameras
     // height of each camera is mPaneArea height / 3; width is
@@ -40,9 +54,6 @@ AnimationView.prototype._initialize = function(){
     var viewportArray = this.getVPArray();
     
     // Configure this camera to view
-//    this.mCameras[0] = new Camera([Xform.getXPos(), Xform.getYPos() ],
-//                                   Xform.getWidth(),
-//                                   viewportArray);
     this.mCameras[0] = new Camera([1, 1],
                                    this.kSize,
                                    viewportArray);
@@ -54,18 +65,18 @@ AnimationView.prototype._initialize = function(){
     
 };
 
+/** @brief Returns the area which the camera's ViewPort should completely cover 
+ * 
+ * @returns {Array} Canvas space [xOrigin, yOrigin, width, height]
+ */
 AnimationView.prototype.getVPArray = function () {
     
-    //var pWidth = this.mPaneArea[2] - this.mPaneArea[0]; //canvas space width (px)
-    //var pHeight = this.mPaneArea[3] - this.mPaneArea[1];//canvas space height (px)
-    //var pCenter = [this.mPaneArea[0] + (pWidth / 2),
-    //               this.mPaneArea[1] + (pHeight / 2)];
     var viewportArray = [ this.mPaneArea[0], this.mPaneArea[1],
                           this.mPaneArea[2], this.mPaneArea[3]];
     return viewportArray;
 };
 
-// Handle changing the size of the canvas; called by eventhandler in MainView
+// Handle changing the size of the canvas; called by ans eventhandler in MainView
 AnimationView.prototype.updateGeometry = function(paneArea){
     
     this.mPaneArea = paneArea;
@@ -86,6 +97,9 @@ AnimationView.prototype.setAnimationType = function (type) {
     }
 };
 
+/** @brief  Update the state of the animation, including frame position and count
+ * 
+ */
 AnimationView.prototype.update = function () {
 
     var sprite = this.getRenderable();
@@ -93,20 +107,13 @@ AnimationView.prototype.update = function () {
     // Set up initial Sprite Sequence based on InteractiveBound pos, size
     var ibXform = this.mInteractiveBound.getXform();
     var ibBound = this.mInteractiveBound.getBounds();
+    
     // We need the bottom^w top-left (?!?!) position of the IB, in UV, 
     // to set the Sprite location
-//    var ibBottomLeft = [ ibXform.getXPos() - (ibXform.getWidth() * 0.5),
-//                         ibXform.getYPos() - (ibXform.getHeight() * 0.5)];
-//    var uvBottomLeft = Convert.wc2uv(ibBottomLeft, ibBound);
     var ibTopLeft = [ ibXform.getXPos() - (ibXform.getWidth() * 0.5),
                          ibXform.getYPos() + (ibXform.getHeight() * 0.5)];
     var uvTopLeft = Convert.wc2uv(ibTopLeft, ibBound);
-    
-    console.log("Projected UV coordinates are: " + uvTopLeft.toString());
-    console.log("Projected UV width, height are: (" + 
-                Convert.wcScalar2uv(ibXform.getWidth(), ibBound[2]).toPrecision(6) +
-                ", " + Convert.wcScalar2uv(ibXform.getHeight(), ibBound[3]).toPrecision(6));
-    
+ 
     sprite.setSpriteSequenceUV( uvTopLeft[0],
                                 uvTopLeft[1],
                                 Convert.wcScalar2uv(ibXform.getWidth(), ibBound[2]),

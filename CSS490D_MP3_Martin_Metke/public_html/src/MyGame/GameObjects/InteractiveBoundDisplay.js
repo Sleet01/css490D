@@ -1,9 +1,7 @@
 /* File: InteractiveBoundDisplay.js 
  *
- * Inherits from InteractiveObject
- * This is a specific InteractiveObject which displays a bounding box
- * and can move around.  It also reports its computed sprite animation info
- * based on its size, and will return (U,V) or (pixelx, pixely) coordinates.
+ * Inherits from InteractiveFontDisplay
+ * Reports the location and size of an InteractiveBound object.
  */
 
 /*jslint node: true, vars: true */
@@ -26,6 +24,7 @@ function InteractiveBoundDisplay(status = [0.0, 0.0, 0.0, 0.0], xPos=10, yPos=15
 }
 gEngine.Core.inheritPrototype(InteractiveBoundDisplay, InteractiveFontDisplay);
 
+// Recreate this' message and set the text on this' font object to that message
 InteractiveBoundDisplay.prototype.update = function () {
 
     this.mText = 'Status:Bound Pos=(' + this.mStatus[0].toPrecision(4) +

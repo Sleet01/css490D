@@ -48,8 +48,6 @@
         <script type="text/javascript" src="src/Engine/Shaders/SpriteShader.js"></script>
 
         <!-- Client game code -->
-        <script type="text/javascript" src="src/MyGame/MyGame.js"></script>
-        <script type="text/javascript" src="src/MyGame/GameOver.js"></script>
         <script type="text/javascript" src="src/MyGame/MainView.js"></script> 
         <style type = "text/css">  
             body {
@@ -80,17 +78,21 @@
             }
 
             /* The navigation menu links */
-            .sidenav a {
+            .sidenav ul{
                 padding: 8px 8px 8px 32px;
                 text-decoration: none;
-                font-size: 25px;
+                font-size: 16px;
                 color: #818181;
                 display: block;
                 transition: 0.3s
             }
-
+            
+            .sidenav ul li    {
+                padding:0;
+                text-align: left;
+            }
             /* When you mouse over the navigation links, change their color */
-            .sidenav a:hover, .offcanvas a:focus{
+            .sidenav ul:hover, .offcanvas ul:focus{
                 color: #f1f1f1;
             }
 
@@ -101,6 +103,8 @@
                 right: 25px;
                 font-size: 36px;
                 margin-left: 50px;
+                font-size: 25px;
+                color: #818181;
             }
 
             /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
@@ -108,7 +112,9 @@
                 transition: margin-left .5s;
                 padding: 20px;
             }
-
+            #left {
+                text-align:left;
+            }
             /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
             @media screen and (max-height: 450px) {
                 .sidenav {padding-top: 15px;}
@@ -121,25 +127,33 @@
         var myGame = new MainView();
         gEngine.Core.initializeEngineCore('GLCanvas', myGame);
      ">
+        <!-- Sidenav bar with information about controls -->
         <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-            <a href="#">About</a>
-            <a href="#">Services</a>
-            <a href="#">Clients</a>
-            <a href="#">Contact</a>
+            <ul>
+                <li>WASD - Move bound</li>
+                <li>&larr;&darr; / &rarr;&uarr; - shrink / grow bound</li>
+                <li>Q - Toggle frames</li>
+                <li>&lt;SHIFT&gt; - 10&percnt; speed</li>
+                <li>&lt;SPACE&gt; - 1&percnt; speed</li>
+                <li>R - Reset bound</li>
+                <li>1 - L to R anim &#123;default&#125;</li>
+                <li>2 - R to L animation</li>
+                <li>3 - Swing animation</li>
+            </ul>
+            <h1>Try resizing browser!</h1>
         </div>
                
         <!-- We are going to attempt to make the GLCanvas variable in size -->
                 
         <canvas id="GLCanvas" style='margin-top: 5%'>
-            <!-- Add back 'width="640" height="480"' to fix size -->
-            <!-- GLCanvas is the area we will draw in: a 640x480 area. -->
             Your browser does not support the HTML5 canvas.
             <!-- this message will show only if WebGL clearing failed -->
         </canvas>
         
-         <!-- Use any element to open the sidenav -->
-        <span onclick="openNav()">open</span>
+        <div id="bottom">
+            <button type="button" id="controlButton1" onclick="openNav()">Instructions</button>
+        </div>
         
         <script>
             // Added dynamic resizing a la this page: 
