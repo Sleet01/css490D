@@ -17,6 +17,7 @@ function AnimationView(renderableObj, ibObject, mvObject, paneArea) {
     this.mPaneArea = paneArea;
     this.mCameras = [];
     this.kSize = 2;
+    this.kSpeed = 30;
     this.info = gEngine.Textures.getTextureInfo(this.mRenderComponent.getTexture());
     
     this.mInteractiveBound.registerAView(this);
@@ -47,7 +48,7 @@ AnimationView.prototype._initialize = function(){
                                    viewportArray);
     this.mCameras[0].setBackgroundColor([0.2, 0.7, 0.7, 0.9]);
     
-    this.getRenderable().setAnimationSpeed(6);
+    this.getRenderable().setAnimationSpeed(this.kSpeed);
     
     this.update();
     
