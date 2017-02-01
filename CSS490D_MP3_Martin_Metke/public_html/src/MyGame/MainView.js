@@ -53,7 +53,7 @@ MainView.prototype.initialize = function () {
         100,                       // width of camera
         this.mMainViewPort         // viewport (orgX, orgY, width, height)
     );
-    this.mCameras[0].setBackgroundColor([0.8, 0.8, 0.8, 1]);
+    this.mCameras[0].setBackgroundColor([0.8, 0.8, 0.8, 0.8]);
     // sets the background to gray
         
     // Instantiate InteractiveBound, connect it to the first camera, and give it

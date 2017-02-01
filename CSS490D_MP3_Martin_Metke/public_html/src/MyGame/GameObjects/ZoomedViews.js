@@ -38,6 +38,7 @@ ZoomedViews.prototype._initialize = function(){
         this.mCameras[i] = new Camera([ ibPoints[i][0], ibPoints[i][1] ],
                                        this.mInteractiveBound.getWidth() * 0.5,
                                        viewportArrays[i]);
+        this.mCameras[0].setBackgroundColor([1, 1, 1, 1]);
         this.mMainView.registerCamera(this.mCameras[i]);
     }
 };

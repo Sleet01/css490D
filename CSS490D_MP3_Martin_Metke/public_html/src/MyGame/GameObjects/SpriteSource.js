@@ -20,8 +20,8 @@ function SpriteSource(renderableObj, camera, ib = null) {
     this.mMarkers = [];
     this.mMarkersPos = [];
     
-    this.mBorder.setColor([0.2, 0.2, 0.2, 1]);
-    this.mBackground.setColor([0.9, 0.9, 0.9, 1]);
+    this.mBorder.setColor([0.1, 0.1, 0.1, 1]);
+    this.mBackground.setColor([0.5, 0.5, 0.5, 1]);
     
     // Center the sprite sheet texture in the provided camera
     this.scaleTexture();

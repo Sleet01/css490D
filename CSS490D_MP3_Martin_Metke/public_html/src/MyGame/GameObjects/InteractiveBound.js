@@ -264,54 +264,55 @@ InteractiveBound.prototype.update = function () {
     var Xform = this.getXform();
     var clean = true;
     
-    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Space) ||
-       gEngine.Input.isKeyPressed(gEngine.Input.keys.Shift)){
+    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Space)){
         // Set space multiplier
         mDelta *= 0.01;
         sDelta *= 0.01;
+    } else if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Shift)){
+        mDelta *= 0.1;
+        sDelta *= 0.1;
     }
     
     if(gEngine.Input.isKeyPressed(gEngine.Input.keys.W)){
         Xform.incYPosBy(mDelta);
-        var clean = false;
+        clean = false;
     }
     if(gEngine.Input.isKeyPressed(gEngine.Input.keys.A)){
         Xform.incXPosBy(-mDelta);
-        var clean = false;
+        clean = false;
     }
     if(gEngine.Input.isKeyPressed(gEngine.Input.keys.S)){
         Xform.incYPosBy(-mDelta);
-        var clean = false;
+        clean = false;
     }
     if(gEngine.Input.isKeyPressed(gEngine.Input.keys.D)){
         Xform.incXPosBy(mDelta);
-        var clean = false;
+        clean = false;
     }
     
     if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Up)){
         Xform.incHeightBy(sDelta);
         this.mHeight = Xform.getHeight();
-        var clean = false;
+        clean = false;
     }
     if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Left)){
         Xform.incWidthBy(-sDelta);
         this.mWidth = Xform.getWidth();
-        var clean = false;
+        clean = false;
     }
     if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Down)){
         Xform.incHeightBy(-sDelta);
         this.mHeight = Xform.getHeight();
-        var clean = false;
+        clean = false;
     }
     if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Right)){
         Xform.incWidthBy(sDelta);
         this.mWidth = Xform.getWidth();
-        var clean = false;
+        clean = false;
     }
     
     if(gEngine.Input.isKeyClicked(gEngine.Input.keys.Q)){
         this.mDrawClones = !(this.mDrawClones);
-        var clean = false;
     }
     
     if(gEngine.Input.isKeyClicked(gEngine.Input.keys.R)){
@@ -319,11 +320,27 @@ InteractiveBound.prototype.update = function () {
         Xform.setHeight(15);
         this.mHeight = 15;
         this.mWidth = 15;
-        var clean = false;
+        clean = false;
     }
     
-    // Send the text bar our info and have it update itself
-    // *if* any updates have been made.
+    // See if the user is happy with their animation order choice!
+    if (this.mAnimationView !== null){
+        if(gEngine.Input.isKeyClicked(gEngine.Input.keys.One)){
+            this.mAnimationView.setAnimationType(0);
+            clean = false;
+        } else if(gEngine.Input.isKeyClicked(gEngine.Input.keys.Two)){
+            this.mAnimationView.setAnimationType(1);
+            clean = false;
+        } else if(gEngine.Input.isKeyClicked(gEngine.Input.keys.Three)){
+            this.mAnimationView.setAnimationType(2);
+            clean = false;
+        }
+    }
+    
+    // If any updates/changes have been made, then update internal state
+    // and notify other display objects to update theirs in turn.
+    // Notably, turning Clone visibility on/off does not require changing any
+    // states so does unset clean.
     if ( !(clean) ){
         this.sanitizePosition();
         this.updateClones();
@@ -341,6 +358,7 @@ InteractiveBound.prototype.update = function () {
 };
 
 // Draw the TextureRenderable; additionally, if set, draw the animation frames
+// ("clones").
 InteractiveBound.prototype.draw = function (cameraVPM) {
             
     //var cameraVPM = this.mCamera.getVPMatrix();

@@ -16,6 +16,7 @@ function AnimationView(renderableObj, ibObject, mvObject, paneArea) {
     this.mMainView = mvObject;
     this.mPaneArea = paneArea;
     this.mCameras = [];
+    this.kSize = 2;
     this.info = gEngine.Textures.getTextureInfo(this.mRenderComponent.getTexture());
     
     this.mInteractiveBound.registerAView(this);
@@ -31,7 +32,7 @@ AnimationView.prototype._initialize = function(){
     // Initialize the SpriteAnimateRenderable
     var Xform = this.getXform();
     
-    Xform.setSize(2, 2);
+    Xform.setSize(this.kSize, this.kSize/(this.mPaneArea[2]/this.mPaneArea[3]));
     Xform.setPosition(1, 1);
         
     // Create our camera
@@ -42,9 +43,9 @@ AnimationView.prototype._initialize = function(){
 //                                   Xform.getWidth(),
 //                                   viewportArray);
     this.mCameras[0] = new Camera([1, 1],
-                                   3,
+                                   this.kSize,
                                    viewportArray);
-    this.mCameras[0].setBackgroundColor([0.0, 0.3, 0.7, 0.7]);
+    this.mCameras[0].setBackgroundColor([0.2, 0.7, 0.7, 0.9]);
     
     this.getRenderable().setAnimationSpeed(6);
     
@@ -67,15 +68,27 @@ AnimationView.prototype.getVPArray = function () {
 AnimationView.prototype.updateGeometry = function(paneArea){
     
     this.mPaneArea = paneArea;
-            
+    var Xform = this.getXform();            
     // Update the camera
     this.mCameras[0].setViewport(this.getVPArray());
+    // Update the AR of the object to fill the camera area after resizing    
+    Xform.setSize(this.kSize, this.kSize/(this.mPaneArea[2]/this.mPaneArea[3]));
+};
+
+// Let the user switch animation directions if they want.
+// 0: left to right
+// 1: right to left
+// 2: swing left->right->left->right->etc.
+AnimationView.prototype.setAnimationType = function (type) {
+    if ((type >= 0 ) && (type < 3)){
+        this.mRenderComponent.setAnimationType(type);
+    }
 };
 
 AnimationView.prototype.update = function () {
 
     var sprite = this.getRenderable();
-    
+            
     // Set up initial Sprite Sequence based on InteractiveBound pos, size
     var ibXform = this.mInteractiveBound.getXform();
     var ibBound = this.mInteractiveBound.getBounds();
