@@ -98,7 +98,7 @@ SpriteSource.prototype.scaleTexture = function() {
             Xform.setWidth(Xform.getHeight() * mAR);
         } else {
             Xform.setWidth(this.mCamera.getWCWidth() * 0.95);
-            Xform.setHeight(Xform.getWidth * mAR);
+            Xform.setHeight(Xform.getWidth() * mAR);
         }
     } 
     
