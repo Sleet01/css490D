@@ -21,7 +21,7 @@ function MainView() {
     
     //Test sprite textures
     this.kBoundSprite = "assets/Bound.png";
-    this.kSpriteSheet = "assets/minion_sprite.png";
+    this.kSpriteSheet = "assets/ttXm6.png";
 }
 gEngine.Core.inheritPrototype(MainView, Scene);
 
