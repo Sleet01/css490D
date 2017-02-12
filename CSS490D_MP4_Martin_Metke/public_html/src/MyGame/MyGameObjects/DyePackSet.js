@@ -23,15 +23,23 @@ DyePackSet.prototype.update = function () {
     for (i = 0; i < this.mSet.length; i++) {
         this.mSet[i].update();
     }
-    if (this.mBBox !== null){
-        for (i = 0; i < this.mSet.length; i++){
-            if ( this.mBBox.boundCollideStatus(this.mSet[i].getBBox()) 
-                    === BoundingBox.eboundCollideStatus.eOutside){
-                this.mSet.splice(i, 1);
-            } else
-            {
-                break;
-            }
+    for (i = 0; i < this.mSet.length; i++){
+        if (this.mSet[i].isDead()){
+            this.mSet.splice(i, 1);
+        }
+        else{
+            break;
         }
     }
+//    if (this.mBBox !== null){
+//        for (i = 0; i < this.mSet.length; i++){
+//            if ( this.mBBox.boundCollideStatus(this.mSet[i].getBBox()) 
+//                    === BoundingBox.eboundCollideStatus.eOutside){
+//                this.mSet.splice(i, 1);
+//            } else
+//            {
+//                break;
+//            }
+//        }
+//    }
 };

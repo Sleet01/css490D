@@ -13,5 +13,20 @@ function DyePack(renderableObj) {
     GameObject.call(this, renderableObj);
     this.mCurrentFrontDir = vec2.fromValues(1, 0);
     this.mSpeed = 10;
+    this.lifetime = 0;
+    this.maxLifeTime = 120;
+    this.dead = false;
 }
 gEngine.Core.inheritPrototype(DyePack, GameObject);
+
+DyePack.prototype.update = function() {
+    GameObject.prototype.update.call(this);
+    this.lifetime += 1;
+    if (this.lifetime >= this.maxLifeTime){
+        this.dead = true;
+    }
+};
+
+DyePack.prototype.isDead = function() {
+    return this.dead;
+};

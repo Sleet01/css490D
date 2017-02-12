@@ -85,7 +85,7 @@ MyGame.prototype.update = function () {
     var echo = "";
     var x, y;
 
-    if (gEngine.Input.isButtonPressed(gEngine.Input.mouseButton.Left)) {
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Space)) {
 //        var len = this.mLineSet.length;
 //        if (len > 0) {
 //            this.mCurrentLine = this.mLineSet[len - 1];
