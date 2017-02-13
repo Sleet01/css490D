@@ -102,7 +102,7 @@ MyGame.prototype.update = function () {
         // Instantiate a new dyepack
         var newDyePack = new DyePack(new TextureRenderable( this.kDyeSprite ));
         newDyePack.getXform().setPosition(this.mCamera.mouseWCX(), this.mCamera.mouseWCY());
-        newDyePack.getXform().setSize(5, 5);
+        newDyePack.getXform().setSize(2, 3.5);
         this.mDyePackSet.addToSet(newDyePack);
     }
     
