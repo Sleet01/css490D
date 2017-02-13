@@ -27,7 +27,7 @@ function MyGame() {
     
     // Instantiate a new DyePackSet to track dyepacks; set its bounding box after
     // the main camera is instantiated.
-    this.mDyePackSet = new DyePackSet( null );
+    this.mDyePackSet = new DyePackSet( );
     
     // Instantiate a new Hero after other entities are set up
     this.mHero = null;

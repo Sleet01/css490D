@@ -1,4 +1,4 @@
-/* File: Hero.js 
+/* File: Patrol.js 
  *
  * Abstracts a game object's behavior and apparance
  */
@@ -9,35 +9,28 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function Hero(texture, center, game) {
-    this.mWidth = 9;
-    this.mHeight = 12;
-    
-    // Set up SpriteRenderable to use passed location and size
-    var dims = [5, 5, 116, 172];
-    var renderableObj = new SpriteRenderable(texture);
-    var Xform = renderableObj.getXform();
-    renderableObj.setElementPixelPositions(
-               dims[0], dims[0] + dims[2], dims[1], dims[1] + dims[3]);
-    renderableObj.setColor([1, 1, 1, 0]);
-    Xform.setPosition(center[0], center[1]);
-    Xform.setSize(this.mWidth, this.mHeight);
-    
+function Patrol(texture, center, game) {
+    this.mWidth = 0;
+    this.mHeight = 0;
+    this.mCenter = center;
+         
     // Set up the object
     GameObject.call(this, renderableObj);
     
-    // Customize for Hero functionality
-    this.mController = null;
+    // Customize for Patrol functionality
+    this.mController = this.defaultController;
     this.mHitLoc = null;
     this.mShotOffset = [this.mWidth/2 - 0.5, (this.mHeight/2) - 2];
     this.mGame = game;
+    this.mCurrentFrontDir = vec2.fromValues(1, 0);
+    this.mSpeed = 0.0;    
     this.mHit = false;
     this.mTarget = vec2.fromValues(center[0], center[1]);
     
 }
-gEngine.Core.inheritPrototype(Hero, GameObject);
+gEngine.Core.inheritPrototype(Patrol, GameObject);
 
-Hero.prototype.update = function(x, y) {  
+Patrol.prototype.update = function(x, y) {  
     
     var Xform = this.getXform();
     
@@ -72,7 +65,7 @@ Hero.prototype.update = function(x, y) {
     
 };
 
-Hero.prototype.follow = function(x, y){
+Patrol.prototype.follow = function(x, y){
     
     var Xform = this.getXform();
     // If we have removed our controller, never been assigned one, or are now
@@ -90,7 +83,7 @@ Hero.prototype.follow = function(x, y){
     this.mController.updateInterpolation();
     var nextPos = this.mController.getValue();
     
-    // Don't let the Hero leave the screen, though.
+    // Don't let the Patrol leave the screen, though.
     var screenBBox = this.mGame.mDyePackSet.getBBox();
     if (screenBBox.containsPoint(nextPos[0] + this.mWidth/2, nextPos[1]) &&
         screenBBox.containsPoint(nextPos[0] - this.mWidth/2, nextPos[1]) &&
@@ -108,18 +101,18 @@ Hero.prototype.follow = function(x, y){
     
 };
 
-Hero.prototype.activateHit = function(){
+Patrol.prototype.activateHit = function(){
     this.mHit = true;
     this.mHitLoc = [ this.getXform().getXPos(), this.getXform().getYPos()];
     this.mSpeed = 0;
     this.mController = new ShakePosition(this.mWidth/2, this.mHeight/2, 4, 60);
 };
 
-Hero.prototype.setSpeed = function(velocity){
+Patrol.prototype.setSpeed = function(velocity){
     this.mSpeed = velocity;
 };
 
-Hero.prototype.changeSpeed = function(deltaV){
+Patrol.prototype.changeSpeed = function(deltaV){
     this.mSpeed += deltaV;
     if (this.mSpeed < 0){
         this.mSpeed = 0;

@@ -27,10 +27,12 @@ function Hero(texture, center, game) {
     GameObject.call(this, renderableObj);
     
     // Customize for Hero functionality
-    this.mController = null;
+    this.mController = this.defaultController;
     this.mHitLoc = null;
     this.mShotOffset = [this.mWidth/2 - 0.5, (this.mHeight/2) - 2];
     this.mGame = game;
+    this.mCurrentFrontDir = vec2.fromValues(1, 0);
+    this.mSpeed = 0.0;    
     this.mHit = false;
     this.mTarget = vec2.fromValues(center[0], center[1]);
     
