@@ -69,7 +69,7 @@ MyGame.prototype.initialize = function () {
             // sets the background to gray
     
     this.mBackgroundObj = new TextureRenderable(this.kBackground);
-    this.mBackgroundObj.getXform().setSize(200, 150);
+    this.mBackgroundObj.getXform().setSize(300, 150);
     this.mBackgroundObj.getXform().setPosition(100, 75);
     
     // Make the DyePackSet remove DyePacks that exit the main camera's bounds
@@ -84,7 +84,7 @@ MyGame.prototype.initialize = function () {
                           this);
     
     this.mMsg = new FontRenderable("Status Message");
-    this.mMsg.setColor([0, 0, 0, 1]);
+    this.mMsg.setColor([1, 1, 1, 0.7]);
     this.mMsg.getXform().setPosition(10, 10);
     this.mMsg.setTextHeight(6);
 };

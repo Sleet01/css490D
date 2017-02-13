@@ -77,6 +77,8 @@ Hero.prototype.update = function(x, y) {
 Hero.prototype.follow = function(x, y){
     
     var Xform = this.getXform();
+    // If we have removed our controller, never been assigned one, or are now
+    // tracking to a new (x, y) coordinate, make a new Controller!
     if (this.mController === null || 
             (x !== this.mTarget[0] || y !== this.mTarget[1])){
         this.mTarget = vec2.fromValues(x, y);
@@ -89,8 +91,18 @@ Hero.prototype.follow = function(x, y){
     // get its next position value.
     this.mController.updateInterpolation();
     var nextPos = this.mController.getValue();
-    Xform.setPosition(nextPos[0], nextPos[1]);
     
+    // Don't let the Hero leave the screen, though.
+    var screenBBox = this.mGame.mDyePackSet.getBBox();
+    if (screenBBox.containsPoint(nextPos[0] + this.mWidth/2, nextPos[1]) &&
+        screenBBox.containsPoint(nextPos[0] - this.mWidth/2, nextPos[1]) &&
+        screenBBox.containsPoint(nextPos[0], nextPos[1] + this.mHeight/2) &&
+        screenBBox.containsPoint(nextPos[0], nextPos[1] - this.mHeight/2)) { 
+        Xform.setPosition(nextPos[0], nextPos[1]);
+    }
+    else{
+        this.mController = null;
+    }
     // If we've arrived, remove the controller
     if (Xform.getXPos() === this.mTarget[0] && Xform.getYPos() === this.mTarget[1]){
         this.mController = null;

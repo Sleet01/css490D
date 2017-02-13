@@ -22,6 +22,10 @@ DyePackSet.prototype.setBBox = function (bbox) {
     this.mBBox = bbox;
 };
 
+DyePackSet.prototype.getBBox = function () {
+    return this.mBBox;
+};
+
 // Override to support deleting dead / out-of-bounds 
 DyePackSet.prototype.update = function () {
     var i;
