@@ -1,6 +1,7 @@
 /* File: DyePack.js 
  *
- * Abstracts a game object's behavior and apparance
+ * A "bullet" object that spawns somewhere and flies to the right.
+ * Extends GameObject
  */
 
 /*jslint node: true, vars: true */
@@ -9,8 +10,10 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function DyePack(renderableObj) {
+function DyePack(renderableObj, x, y) {
     GameObject.call(this, renderableObj);
+    renderableObj.getXform().setPosition(x, y);
+    renderableObj.getXform().setSize(2, 3.5);
     this.mController = null;
     this.mHitLoc = null;
     this.mCurrentFrontDir = vec2.fromValues(1, 0);

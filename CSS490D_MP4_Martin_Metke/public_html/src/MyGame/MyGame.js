@@ -21,7 +21,10 @@ function MyGame() {
     this.mCurrentLine = null;
     this.mP1 = null;
     
-    this.mDyePackSet = new DyePackSet();
+    // Instantiate a new DyePackSet to track dyepacks; set its bounding box after
+    // the main camera is instantiated.
+    this.mDyePackSet = new DyePackSet( null );
+    this.mHero = null;
     
     //Resources (sprite textures)
     this.kSpriteSheet = "assets/SpriteSheet.png";
@@ -55,7 +58,18 @@ MyGame.prototype.initialize = function () {
     );
     this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
             // sets the background to gray
-
+    
+    // Make the DyePackSet remove DyePacks that exit the main camera's bounds
+    this.mDyePackSet.setBBox(new BoundingBox(
+                             this.mCamera.getWCCenter(),
+                             this.mCamera.getWCWidth(), 
+                             this.mCamera.getWCHeight()));
+    
+    // Instantiate a new hero.  Give it the 
+    this.mHero = new Hero(this.kSpriteSheet, 
+                          this.mCamera.getWCCenter(),
+                          this);
+    
     this.mMsg = new FontRenderable("Status Message");
     this.mMsg.setColor([0, 0, 0, 1]);
     this.mMsg.getXform().setPosition(10, 10);
@@ -75,6 +89,7 @@ MyGame.prototype.draw = function () {
         l.draw(this.mCamera);
     }
     this.mMsg.draw(this.mCamera);   // only draw status in the main camera
+    this.mHero.draw(this.mCamera);
     this.mDyePackSet.draw(this.mCamera);
 };
 
@@ -84,28 +99,15 @@ MyGame.prototype.update = function () {
     var msg = "DyePacks: " + this.mDyePackSet.size() + " ";
     var echo = "";
     var x, y;
-
-    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Space)) {
-//        var len = this.mLineSet.length;
-//        if (len > 0) {
-//            this.mCurrentLine = this.mLineSet[len - 1];
-//            x = this.mCamera.mouseWCX();
-//            y = this.mCamera.mouseWCY();
-//            echo += "Selected " + len + " ";
-//            echo += "[" + x.toPrecision(2) + " " + y.toPrecision(2) + "]";
-//            this.mCurrentLine.setFirstVertex(x, y);
-//        }
-        x = this.mCamera.mouseWCX();
-        y = this.mCamera.mouseWCY();
-        echo += "[" + x.toPrecision(2) + " " + y.toPrecision(2) + "]";
-        
-        // Instantiate a new dyepack
-        var newDyePack = new DyePack(new TextureRenderable( this.kDyeSprite ));
-        newDyePack.getXform().setPosition(this.mCamera.mouseWCX(), this.mCamera.mouseWCY());
-        newDyePack.getXform().setSize(2, 3.5);
-        this.mDyePackSet.addToSet(newDyePack);
-    }
     
+    // We need the X/Y mouse coords
+    x = this.mCamera.mouseWCX();
+    y = this.mCamera.mouseWCY();
+    echo += "[" + x.toPrecision(3) + " " + y.toPrecision(3) + "]";
+
+    msg += echo;
+    
+    this.mHero.update(x, y);
     this.mDyePackSet.update();
     
     this.mMsg.setText(msg);

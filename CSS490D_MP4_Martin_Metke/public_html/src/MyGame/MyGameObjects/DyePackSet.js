@@ -11,13 +11,18 @@
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
 
-function DyePackSet() {
+function DyePackSet( bbox ) {
     GameObjectSet.call(this);
-    this.mBBox = new BoundingBox([100,75], 220, 165);
+    this.mBBox = bbox;
 }
 gEngine.Core.inheritPrototype(DyePackSet, GameObjectSet);
 
-// Override to support deleting external 
+DyePackSet.prototype.setBBox = function (bbox) {
+  
+    this.mBBox = bbox;
+};
+
+// Override to support deleting dead / out-of-bounds 
 DyePackSet.prototype.update = function () {
     var i;
     var cleanup = [];
@@ -34,12 +39,13 @@ DyePackSet.prototype.update = function () {
             cleanup.push(i);
         }
         // May need to remove break; consider edge cases.
-        else{
-            break;
-        }
+        //else{
+        //    break;
+        //}
     }
     // Cut out all dead objects registered so far
     for (i = 0; i < cleanup.length; i++) {
         this.mSet.splice(cleanup[i],1);
     }
+    
 };
