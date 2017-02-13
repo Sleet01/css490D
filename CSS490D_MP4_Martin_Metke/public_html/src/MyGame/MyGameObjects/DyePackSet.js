@@ -20,26 +20,26 @@ gEngine.Core.inheritPrototype(DyePackSet, GameObjectSet);
 // Override to support deleting external 
 DyePackSet.prototype.update = function () {
     var i;
+    var cleanup = [];
     for (i = 0; i < this.mSet.length; i++) {
         this.mSet[i].update();
     }
+    //Check all objects for dead/out-of-bounds state
     for (i = 0; i < this.mSet.length; i++){
         if (this.mSet[i].isDead()){
-            this.mSet.splice(i, 1);
+            cleanup.push(i);
         }
+        else if (this.mBBox.boundCollideStatus(this.mSet[i].getBBox()) 
+                    === BoundingBox.eboundCollideStatus.eOutside){
+            cleanup.push(i);
+        }
+        // May need to remove break; consider edge cases.
         else{
             break;
         }
     }
-//    if (this.mBBox !== null){
-//        for (i = 0; i < this.mSet.length; i++){
-//            if ( this.mBBox.boundCollideStatus(this.mSet[i].getBBox()) 
-//                    === BoundingBox.eboundCollideStatus.eOutside){
-//                this.mSet.splice(i, 1);
-//            } else
-//            {
-//                break;
-//            }
-//        }
-//    }
+    // Cut out all dead objects registered so far
+    for (i = 0; i < cleanup.length; i++) {
+        this.mSet.splice(cleanup[i],1);
+    }
 };
