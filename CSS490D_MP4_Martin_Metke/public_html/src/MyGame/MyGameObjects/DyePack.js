@@ -40,7 +40,7 @@ DyePack.prototype.update = function() {
         } else {
             // If the object is still alive after the update, handle key presses
             if (gEngine.Input.isKeyPressed(gEngine.Input.keys.D)){
-                this.changeSpeed(-0.1);
+                this.incSpeedBy(-0.1);
             }
             if (gEngine.Input.isKeyClicked(gEngine.Input.keys.S)){
                 if (!this.hit){
@@ -72,11 +72,7 @@ DyePack.prototype.isDead = function() {
     return this.mDead;
 };
 
-DyePack.prototype.setSpeed = function(velocity){
-    this.mSpeed = velocity;
-};
-
-DyePack.prototype.changeSpeed = function(deltaV){
+DyePack.prototype.incSpeedBy = function(deltaV){
     this.mSpeed += deltaV;
     if (this.mSpeed < 0){
         this.mSpeed = 0;

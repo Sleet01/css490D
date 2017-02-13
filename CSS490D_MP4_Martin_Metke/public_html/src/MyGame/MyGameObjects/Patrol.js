@@ -10,12 +10,13 @@
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
 function Patrol(texture, center, game) {
+    
+    this.mCenter = center;
+    this.head = new PatrolHead();
+    
     this.mWidth = 0;
     this.mHeight = 0;
-    this.mCenter = center;
-         
-    // Set up the object
-    GameObject.call(this, renderableObj);
+    
     
     // Customize for Patrol functionality
     this.mController = this.defaultController;

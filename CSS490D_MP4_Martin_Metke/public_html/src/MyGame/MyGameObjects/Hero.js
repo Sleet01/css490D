@@ -12,6 +12,10 @@
 function Hero(texture, center, game) {
     this.mWidth = 9;
     this.mHeight = 12;
+    this.kCycle = 120;
+    this.kRate = 0.05;
+    this.kBounceFreq = 4;
+    this.kBounceFrames = 60;
     
     // Set up SpriteRenderable to use passed location and size
     var dims = [5, 5, 116, 172];
@@ -27,7 +31,10 @@ function Hero(texture, center, game) {
     GameObject.call(this, renderableObj);
     
     // Customize for Hero functionality
-    this.mController = null;
+    this.mMController = new MouseFollowController(this, center[0], center[1], 
+                                                  this.kCycle, this.kRate);
+    this.mAController = new SizeBounceController(this, this.mWidth/2, this.mHeight/2,
+                                                 this.kBounceFreq, this.kBounceFrames);
     this.mHitLoc = null;
     this.mShotOffset = [this.mWidth/2 - 0.5, (this.mHeight/2) - 2];
     this.mGame = game;
@@ -47,14 +54,10 @@ Hero.prototype.update = function(x, y) {
     
     // If we're dealing with a hit state, don't allow following or firing
     if (this.mHit){
-        if (this.mController.shakeDone()){
+        if (this.mAController.getDone()){
             this.mHit = false;
-            this.mController = null;
-            this.follow(x, y);
         }else{
-            var aDXDY = this.mController.getShakeResults();
-            Xform.setPosition(this.mHitLoc[0] + aDXDY[0],
-                              this.mHitLoc[1] + aDXDY[1]);
+            this.mAController.update();
         }
     }
     else{
@@ -67,52 +70,14 @@ Hero.prototype.update = function(x, y) {
             this.mGame.mDyePackSet.addToSet(newDyePack);
         }
         
-        this.follow(x, y);
     }
-    
+    this.mMController.update(x, y);
 };
 
-Hero.prototype.follow = function(x, y){
-    
-    var Xform = this.getXform();
-    // If we have removed our controller, never been assigned one, or are now
-    // tracking to a new (x, y) coordinate, make a new Controller!
-    if (this.mController === null || 
-            (x !== this.mTarget[0] || y !== this.mTarget[1])){
-        this.mTarget = vec2.fromValues(x, y);
-        this.mController = new InterpolateVec2(
-                            vec2.fromValues(Xform.getXPos(), Xform.getYPos()), 
-                            120, 0.05);
-        this.mController.setFinalValue(vec2.fromValues(x, y));    
-    }
-    // We now have a new controller, or are already equipped with one, so
-    // get its next position value.
-    this.mController.updateInterpolation();
-    var nextPos = this.mController.getValue();
-    
-    // Don't let the Hero leave the screen, though.
-    var screenBBox = this.mGame.mDyePackSet.getBBox();
-    if (screenBBox.containsPoint(nextPos[0] + this.mWidth/2, nextPos[1]) &&
-        screenBBox.containsPoint(nextPos[0] - this.mWidth/2, nextPos[1]) &&
-        screenBBox.containsPoint(nextPos[0], nextPos[1] + this.mHeight/2) &&
-        screenBBox.containsPoint(nextPos[0], nextPos[1] - this.mHeight/2)) { 
-        Xform.setPosition(nextPos[0], nextPos[1]);
-    }
-    else{
-        this.mController = null;
-    }
-    // If we've arrived, remove the controller
-    if (Xform.getXPos() === this.mTarget[0] && Xform.getYPos() === this.mTarget[1]){
-        this.mController = null;
-    }
-    
-};
-
+// Needs to be updated to do size
 Hero.prototype.activateHit = function(){
     this.mHit = true;
-    this.mHitLoc = [ this.getXform().getXPos(), this.getXform().getYPos()];
-    this.mSpeed = 0;
-    this.mController = new ShakePosition(this.mWidth/2, this.mHeight/2, 4, 60);
+    this.mAController.restart();
 };
 
 Hero.prototype.setSpeed = function(velocity){
