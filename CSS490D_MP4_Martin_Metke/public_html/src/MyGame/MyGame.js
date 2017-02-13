@@ -15,20 +15,27 @@ function MyGame() {
     // The camera to view the scene
     this.mCamera = null;
 
+    // Text output on-camera
     this.mMsg = null;
 
     this.mLineSet = [];
     this.mCurrentLine = null;
     this.mP1 = null;
     
+    // Create a backdrop object to fill the cameras
+    this.mBackgroundObj = null;
+    
     // Instantiate a new DyePackSet to track dyepacks; set its bounding box after
     // the main camera is instantiated.
     this.mDyePackSet = new DyePackSet( null );
+    
+    // Instantiate a new Hero after other entities are set up
     this.mHero = null;
     
     //Resources (sprite textures)
     this.kSpriteSheet = "assets/SpriteSheet.png";
     this.kDyeSprite = "assets/Dye_Yellow.png";
+    this.kBackground = "assets/starfield.png";
 }
 gEngine.Core.inheritPrototype(MyGame, Scene);
 
@@ -39,12 +46,14 @@ MyGame.prototype.loadScene = function () {
     // Load the 
     gEngine.Textures.loadTexture(this.kSpriteSheet);
     gEngine.Textures.loadTexture(this.kDyeSprite);
+    gEngine.Textures.loadTexture(this.kBackground);
 };
 
 MyGame.prototype.unloadScene = function () {
     // will be called from GameLoop.stop
     gEngine.Textures.unloadTexture(this.kDyeSprite);
     gEngine.Textures.unloadTexture(this.kSpriteSheet);
+    gEngine.Textures.unloadTexture(this.kBackground);
         
     gEngine.GameLoop.stop();
 };
@@ -58,6 +67,10 @@ MyGame.prototype.initialize = function () {
     );
     this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
             // sets the background to gray
+    
+    this.mBackgroundObj = new TextureRenderable(this.kBackground);
+    this.mBackgroundObj.getXform().setSize(200, 150);
+    this.mBackgroundObj.getXform().setPosition(100, 75);
     
     // Make the DyePackSet remove DyePacks that exit the main camera's bounds
     this.mDyePackSet.setBBox(new BoundingBox(
@@ -88,6 +101,7 @@ MyGame.prototype.draw = function () {
         l = this.mLineSet[i];
         l.draw(this.mCamera);
     }
+    this.mBackgroundObj.draw(this.mCamera);
     this.mMsg.draw(this.mCamera);   // only draw status in the main camera
     this.mHero.draw(this.mCamera);
     this.mDyePackSet.draw(this.mCamera);
