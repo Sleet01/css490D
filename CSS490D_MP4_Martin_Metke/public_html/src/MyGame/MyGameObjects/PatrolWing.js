@@ -1,4 +1,4 @@
-/* File: Hero.js 
+/* File: PatrolWing.js 
  *
  * Abstracts a game object's behavior and apparance
  */
@@ -9,7 +9,7 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function Hero(texture, center, game) {
+function PatrolWing(texture, center, game) {
     this.mWidth = 9;
     this.mHeight = 12;
     
@@ -26,7 +26,7 @@ function Hero(texture, center, game) {
     // Set up the object
     GameObject.call(this, renderableObj);
     
-    // Customize for Hero functionality
+    // Customize for PatrolWing functionality
     this.mController = this.defaultController;
     this.mHitLoc = null;
     this.mShotOffset = [this.mWidth/2 - 0.5, (this.mHeight/2) - 2];
@@ -37,9 +37,9 @@ function Hero(texture, center, game) {
     this.mTarget = vec2.fromValues(center[0], center[1]);
     
 }
-gEngine.Core.inheritPrototype(Hero, GameObject);
+gEngine.Core.inheritPrototype(PatrolWing, GameObject);
 
-Hero.prototype.update = function(x, y) {  
+PatrolWing.prototype.update = function(x, y) {  
     
     var Xform = this.getXform();
     
@@ -74,7 +74,7 @@ Hero.prototype.update = function(x, y) {
     
 };
 
-Hero.prototype.follow = function(x, y){
+PatrolWing.prototype.follow = function(x, y){
     
     var Xform = this.getXform();
     // If we have removed our controller, never been assigned one, or are now
@@ -92,7 +92,7 @@ Hero.prototype.follow = function(x, y){
     this.mController.updateInterpolation();
     var nextPos = this.mController.getValue();
     
-    // Don't let the Hero leave the screen, though.
+    // Don't let the PatrolWing leave the screen, though.
     var screenBBox = this.mGame.mDyePackSet.getBBox();
     if (screenBBox.containsPoint(nextPos[0] + this.mWidth/2, nextPos[1]) &&
         screenBBox.containsPoint(nextPos[0] - this.mWidth/2, nextPos[1]) &&
@@ -110,18 +110,18 @@ Hero.prototype.follow = function(x, y){
     
 };
 
-Hero.prototype.activateHit = function(){
+PatrolWing.prototype.activateHit = function(){
     this.mHit = true;
     this.mHitLoc = [ this.getXform().getXPos(), this.getXform().getYPos()];
     this.mSpeed = 0;
     this.mController = new ShakePosition(this.mWidth/2, this.mHeight/2, 4, 60);
 };
 
-Hero.prototype.setSpeed = function(velocity){
+PatrolWing.prototype.setSpeed = function(velocity){
     this.mSpeed = velocity;
 };
 
-Hero.prototype.changeSpeed = function(deltaV){
+PatrolWing.prototype.changeSpeed = function(deltaV){
     this.mSpeed += deltaV;
     if (this.mSpeed < 0){
         this.mSpeed = 0;
