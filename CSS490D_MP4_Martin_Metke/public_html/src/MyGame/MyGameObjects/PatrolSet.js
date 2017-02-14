@@ -33,6 +33,7 @@ PatrolSet.prototype.update = function () {
     var i;
     var cleanup = [];
     var reverse = [];
+    var bbox = null;
     // Do the actual updates
     for (i = 0; i < this.mSet.length; i++) {
         this.mSet[i].update();
@@ -42,23 +43,28 @@ PatrolSet.prototype.update = function () {
         if (this.mSet[i].isDead()){
             cleanup.push(i);
         }
-        else if (this.mBBox.boundCollideStatus(this.mSet[i].getBBox()) 
-                    !== BoundingBox.eboundCollideStatus.eOutside){
-            if( this.mBBox.boundCollideStatus(this.mSet[i].getBBox())
-                    !== BoundingBox.eboundCollideStatus.eOutside){
+        else {
+            
+            bbox = this.mSet[i].getBBox();
+            if (this.mBBox.boundCollideStatus(bbox) === BoundingBox.eboundCollideStatus.eOutside){
                 cleanup.push(i);
             } else{
-                reverse.push(i);
+                if( this.mBBox.boundCollideStatus(bbox) !== BoundingBox.eboundCollideStatus.eInside){
+                    reverse.push(i);
+                }   
             }
         }
     }
+    
+    // Tell all the edge-touching patrols to reverse
+    for (i = 0; i < reverse.length; i++) {
+        this.mSet[reverse[i]].reverse(this.mBBox);
+    }
+    
     // Cut out all dead objects registered so far
     for (i = 0; i < cleanup.length; i++) {
         this.mSet.splice(cleanup[i],1);
     }
-    // Tell all the edge-touching patrols to reverse
-    for (i = 0; i < reverse.length; i++) {
-        this.mSet[i].reverse(this.mBBox);
-    }
+    
     
 };

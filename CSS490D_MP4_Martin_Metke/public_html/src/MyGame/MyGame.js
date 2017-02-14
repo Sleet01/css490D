@@ -28,6 +28,7 @@ function MyGame() {
     // Instantiate a new DyePackSet to track dyepacks; set its bounding box after
     // the main camera is instantiated.
     this.mDyePackSet = new DyePackSet( );
+    this.mPatrolSet = new PatrolSet( );
     
     // Instantiate a new Hero after other entities are set up
     this.mHero = null;
@@ -72,13 +73,17 @@ MyGame.prototype.initialize = function () {
     this.mBackgroundObj.getXform().setSize(300, 150);
     this.mBackgroundObj.getXform().setPosition(100, 75);
     
-    // Make the DyePackSet remove DyePacks that exit the main camera's bounds
-    this.mDyePackSet.setBBox(new BoundingBox(
+    // Bounding box for the DyePackSet and PatrolSet to track bounds with
+    var camBBox = new BoundingBox(
                              this.mCamera.getWCCenter(),
                              this.mCamera.getWCWidth(), 
-                             this.mCamera.getWCHeight()));
+                             this.mCamera.getWCHeight());
+                             
+    // Make the DyePackSet remove DyePacks that exit the main camera's bounds
+    this.mDyePackSet.setBBox(camBBox);
+    this.mPatrolSet.setBBox(camBBox);
     
-    // Instantiate a new hero.  Give it the 
+    // Instantiate a new hero.  Give it the sprite sheet, the center position, and this game instance. 
     this.mHero = new Hero(this.kSpriteSheet, 
                           this.mCamera.getWCCenter(),
                           this);
@@ -105,6 +110,7 @@ MyGame.prototype.draw = function () {
     this.mMsg.draw(this.mCamera);   // only draw status in the main camera
     this.mHero.draw(this.mCamera);
     this.mDyePackSet.draw(this.mCamera);
+    
 };
 
 // The Update function, updates the application state. Make sure to _NOT_ draw

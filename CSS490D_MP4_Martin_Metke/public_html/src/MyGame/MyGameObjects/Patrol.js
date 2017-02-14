@@ -11,6 +11,7 @@
 
 function Patrol(texture, center, game) {
     
+    this.mDead = false;
     // Store the game scene for later member access
     this.mGame = game;
     
@@ -47,6 +48,31 @@ function Patrol(texture, center, game) {
     }
 }
 gEngine.Core.inheritPrototype(Patrol, GameObject);
+
+// Handle some key clicks, manage sub-entities, check for OOB.
+Patrol.prototype.update = function() {  
+    
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.B)) {
+        this.setVisibility(!this.getVisibility());
+        for (var i = 0; i < this.mEntities.length; i++){
+            this.mEntities[i].setVisibilty(this.mVisible);
+        }
+    }    
+    
+    // Check if we're dead (only possible if a wing was shot off)
+    for (var i = 0; i < this.mEntities.length; i++){
+        this.mEntities[i].update();
+        if ( this.mEntities[i].dead() ){
+            this.mDead = true;
+        }
+    }
+    
+    this.mWidth = this._getPatrolWidth();
+    this.mHeight = this._getPatrolHeight();
+    this.mCenter = this._getPatrolCenter();
+    this._updateExtents();
+    
+};
 
 // Must be called after mWidth, mHeight are set
 Patrol.prototype._updateExtents = function () {
@@ -147,24 +173,16 @@ Patrol.prototype._getPatrolHeight = function () {
     return height * 1.5;
 };
 
-Patrol.prototype.update = function() {  
+Patrol.prototype.reverse = function ( bbox ) {
     
-    for (var i = 0; i < this.mEntities.length; i++){
-        this.mEntities.update();
-    }
-    
-    this.mWidth = this._getPatrolWidth();
-    this.mHeight = this._getPatrolHeight();
-    this.mCenter = this._getPatrolCenter();
-    this._updateExtents();
+    this.mEntities[0].reverse(bbox.boundCollideStatus(this.getBBox()));
     
 };
-
 
 Patrol.prototype.activateHit = function () {
     
     for (var i = 0; i < this.mEntities.length; i++){
-        this.mEntities.activateHit();
+        this.mEntities[i].activateHit();
     }
 };
 
@@ -172,12 +190,12 @@ Patrol.prototype.activateHit = function () {
 Patrol.prototype.draw = function(aCamera){
     
     for (var i = 0; i < this.mEntities.length; i++){
-        this.mEntities.draw(aCamera);
+        this.mEntities[i].draw(aCamera);
     }
     
     if(this.mVisible){
         for (var j = 0; j < this.mExtents.length; j++) {
-            this.mExtents[i].draw();
+            this.mExtents[j].draw();
         }
     }
     
