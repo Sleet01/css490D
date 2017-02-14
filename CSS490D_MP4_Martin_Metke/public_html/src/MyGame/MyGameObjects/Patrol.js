@@ -11,111 +11,174 @@
 
 function Patrol(texture, center, game) {
     
-    this.mCenter = center;
-    this.head = new PatrolHead();
+    // Store the game scene for later member access
+    this.mGame = game;
     
-    this.mWidth = 0;
-    this.mHeight = 0;
+    // Instantiate the entities of this patrol.
+    this.kWingOffset = 6;
+    this.mEntities = [];
+    this.mEntities.push(this.mHead = new PatrolHead(texture, center, game));
+    this.mEntities.push(new PatrolWing(texture, 0, this.mHead, this.kWingOffset, game));
+    this.mEntities.push(new PatrolWing(texture, 1, this.mHead, -this.kWingOffset, game));
     
+    // Get this patrol's extents, based off of member entities
+    this.mWidth = this._getPatrolWidth();
+    this.mHeight = this._getPatrolHeight();
+    this.mCenter = this._getPatrolCenter();
     
     // Customize for Patrol functionality
-    this.mController = this.defaultController;
-    this.mHitLoc = null;
-    this.mShotOffset = [this.mWidth/2 - 0.5, (this.mHeight/2) - 2];
-    this.mGame = game;
-    this.mCurrentFrontDir = vec2.fromValues(1, 0);
-    this.mSpeed = 0.0;    
-    this.mHit = false;
-    this.mTarget = vec2.fromValues(center[0], center[1]);
     
+    // Set up the bounding box that this patrol will use, via a basic Renderable
+    var renderable = new Renderable();
+    renderable.setColor([0,0,0,0]);
+    renderable.getXform().setSize(this.mWidth, this.mHeight);
+    GameObject.call(renderable);
+    this.mVisible = false;
+    
+    // Set up extent objects (LineRenderables based on this object's bounding box
+    this.mExtents = [];
+    var bbox = this.getBBox();
+    this.mExtents.push(new LineRenderable(bbox.minX(), bbox.minY(), bbox.maxX(), bbox.minY()));
+    this.mExtents.push(new LineRenderable(bbox.maxX(), bbox.minY(), bbox.maxX(), bbox.maxY()));
+    this.mExtents.push(new LineRenderable(bbox.maxX(), bbox.maxY(), bbox.minX(), bbox.maxY()));
+    this.mExtents.push(new LineRenderable(bbox.minX(), bbox.maxY(), bbox.minX(), bbox.minY()));
+    for (var j = 0; j < this.mExtents.length; j++) {
+            this.mExtents[j].setColor([1, 1, 1, 1]);
+    }
 }
 gEngine.Core.inheritPrototype(Patrol, GameObject);
 
-Patrol.prototype.update = function(x, y) {  
+// Must be called after mWidth, mHeight are set
+Patrol.prototype._updateExtents = function () {
     
-    var Xform = this.getXform();
+    var bbox = this.getBBox();
+    this.mExtents[0].setVertices(bbox.minX(), bbox.minY(), bbox.maxX(), bbox.minY());
+    this.mExtents[1].setVertices(bbox.maxX(), bbox.minY(), bbox.maxX(), bbox.maxY());
+    this.mExtents[2].setVertices(bbox.maxX(), bbox.maxY(), bbox.minX(), bbox.maxY());
+    this.mExtents[3].setVertices(bbox.minX(), bbox.maxY(), bbox.minX(), bbox.minY());
     
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Q)) {
-        this.activateHit();
-    }
+};
+
+// This will likely need to be updated to be more performant.
+// Running this set of functions 60 times a second... the body shudders.
+// This function requires mWidth and mHeight to be updated.
+Patrol.prototype.getPatrolCenter = function () {
     
-    // If we're dealing with a hit state, don't allow following or firing
-    if (this.mHit){
-        if (this.mController.shakeDone()){
-            this.mHit = false;
-            this.mController = null;
-            this.follow(x, y);
-        }else{
-            var aDXDY = this.mController.getShakeResults();
-            Xform.setPosition(this.mHitLoc[0] + aDXDY[0],
-                              this.mHitLoc[1] + aDXDY[1]);
-        }
-    }
-    else{
-        if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Space)) {        
-            // Instantiate a new dyepack
-            var newDyePack = new DyePack(
-                                new TextureRenderable( this.mGame.kDyeSprite ), 
-                                Xform.getXPos() + this.mShotOffset[0],
-                                Xform.getYPos() + this.mShotOffset[1]);
-            this.mGame.mDyePackSet.addToSet(newDyePack);
+    var x, y = 0;
+    x = this.mWidth/2 + this.mEntities[0].getBBox().minX();
+    
+    // Figure out what the minimum Y value of the patrol members' bboxes is.
+    if (this.mEntities.length > 0){
+        
+        var bbox = null;
+        var Ymin = Number.MAX_SAFE_INTEGER;
+        var bMinY = 0;
+        
+        for (var i = 0; i < this.mEntities.length; i++ ){
+            bbox = this.mEntities[i].getBBox();
+            bMinY = bbox.minY();
+            Ymin = ((bMinY < Ymin) ? bMinY : Ymin);
         }
         
-        this.follow(x, y);
+        y = this.mHeight/2 + Ymin;
     }
+    
+    return [x, y];
+};
+
+Patrol.prototype.getWidth = function () {
+    return this.mWidth;
+};
+
+Patrol.prototype.getHeight = function () {
+    return this.mHeight;
+};
+
+Patrol.prototype._getPatrolWidth = function () {
+  
+    var width = 0;
+    
+    if (this.mEntities.length > 0){
+        
+        var bbox = null;
+        var Xmax = 0;
+        var Xmin = Number.MAX_SAFE_INTEGER;
+        var bMinX = 0;
+        var bMaxX = 0;
+        
+        for (var i = 0; i < this.mEntities.length; i++ ){
+            bbox = this.mEntities[i].getBBox();
+            bMinX = bbox.minX();
+            bMaxX = bbox.maxX();
+            Xmax = ((bMaxX > Xmax) ? bMaxX : Xmax);
+            Xmin = ((bMinX < Xmin) ? bMinX : Xmin);
+        }
+        
+        width = Xmax - Xmin;
+    }
+    
+    return width;
+};
+
+// Probably should just roll all of these into one massive updateGeometry function
+Patrol.prototype._getPatrolHeight = function () {
+  
+    var height = 0;
+    
+    if (this.mEntities.length > 0){
+        
+        var bbox = null;
+        var Ymax = 0;
+        var Ymin = Number.MAX_SAFE_INTEGER;
+        var bMinY = 0;
+        var bMaxY = 0;
+        
+        for (var i = 0; i < this.mEntities.length; i++ ){
+            bbox = this.mEntities[i].getBBox();
+            bMinY = bbox.minY();
+            bMaxY = bbox.maxY();
+            Ymax = ((bMaxY > Ymax) ? bMaxY : Ymax);
+            Ymin = ((bMinY < Ymin) ? bMinY : Ymin);
+        }
+        
+        height = Ymax - Ymin;
+    }
+    
+    return height * 1.5;
+};
+
+Patrol.prototype.update = function() {  
+    
+    for (var i = 0; i < this.mEntities.length; i++){
+        this.mEntities.update();
+    }
+    
+    this.mWidth = this._getPatrolWidth();
+    this.mHeight = this._getPatrolHeight();
+    this.mCenter = this._getPatrolCenter();
+    this._updateExtents();
     
 };
 
-Patrol.prototype.follow = function(x, y){
+
+Patrol.prototype.activateHit = function () {
     
-    var Xform = this.getXform();
-    // If we have removed our controller, never been assigned one, or are now
-    // tracking to a new (x, y) coordinate, make a new Controller!
-    if (this.mController === null || 
-            (x !== this.mTarget[0] || y !== this.mTarget[1])){
-        this.mTarget = vec2.fromValues(x, y);
-        this.mController = new InterpolateVec2(
-                            vec2.fromValues(Xform.getXPos(), Xform.getYPos()), 
-                            120, 0.05);
-        this.mController.setFinalValue(vec2.fromValues(x, y));    
+    for (var i = 0; i < this.mEntities.length; i++){
+        this.mEntities.activateHit();
     }
-    // We now have a new controller, or are already equipped with one, so
-    // get its next position value.
-    this.mController.updateInterpolation();
-    var nextPos = this.mController.getValue();
-    
-    // Don't let the Patrol leave the screen, though.
-    var screenBBox = this.mGame.mDyePackSet.getBBox();
-    if (screenBBox.containsPoint(nextPos[0] + this.mWidth/2, nextPos[1]) &&
-        screenBBox.containsPoint(nextPos[0] - this.mWidth/2, nextPos[1]) &&
-        screenBBox.containsPoint(nextPos[0], nextPos[1] + this.mHeight/2) &&
-        screenBBox.containsPoint(nextPos[0], nextPos[1] - this.mHeight/2)) { 
-        Xform.setPosition(nextPos[0], nextPos[1]);
-    }
-    else{
-        this.mController = null;
-    }
-    // If we've arrived, remove the controller
-    if (Xform.getXPos() === this.mTarget[0] && Xform.getYPos() === this.mTarget[1]){
-        this.mController = null;
-    }
-    
 };
 
-Patrol.prototype.activateHit = function(){
-    this.mHit = true;
-    this.mHitLoc = [ this.getXform().getXPos(), this.getXform().getYPos()];
-    this.mSpeed = 0;
-    this.mController = new ShakePosition(this.mWidth/2, this.mHeight/2, 4, 60);
-};
 
-Patrol.prototype.setSpeed = function(velocity){
-    this.mSpeed = velocity;
-};
-
-Patrol.prototype.changeSpeed = function(deltaV){
-    this.mSpeed += deltaV;
-    if (this.mSpeed < 0){
-        this.mSpeed = 0;
+Patrol.prototype.draw = function(aCamera){
+    
+    for (var i = 0; i < this.mEntities.length; i++){
+        this.mEntities.draw(aCamera);
     }
+    
+    if(this.mVisible){
+        for (var j = 0; j < this.mExtents.length; j++) {
+            this.mExtents[i].draw();
+        }
+    }
+    
 };

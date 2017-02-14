@@ -44,6 +44,10 @@ function Hero(texture, center, game) {
 }
 gEngine.Core.inheritPrototype(Hero, GameObject);
 
+// On update, check if the Hero has been hit.
+// If so, update the Animation Controller (mAController) through a size bounce
+// cycle.
+// Otherwise, allow Hero to fire.
 Hero.prototype.update = function(x, y) {  
     
     var Xform = this.getXform();
@@ -78,15 +82,4 @@ Hero.prototype.update = function(x, y) {
 Hero.prototype.activateHit = function(){
     this.mHit = true;
     this.mAController.restart();
-};
-
-Hero.prototype.setSpeed = function(velocity){
-    this.mSpeed = velocity;
-};
-
-Hero.prototype.changeSpeed = function(deltaV){
-    this.mSpeed += deltaV;
-    if (this.mSpeed < 0){
-        this.mSpeed = 0;
-    }
 };
