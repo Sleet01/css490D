@@ -85,7 +85,7 @@ PatrolWing.prototype.dead = function () { return this.mDead; };
 PatrolWing.prototype.collides = function (oGameObject) {
   
     if (this.getBBox().intersectsBound(oGameObject.getBBox())){
-        this.activateHit();
+        //this.activateHit();
         return true;
     }
     return false;

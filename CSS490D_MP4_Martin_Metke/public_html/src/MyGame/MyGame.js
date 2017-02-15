@@ -38,7 +38,6 @@ function MyGame() {
     
     //Resources (sprite textures)
     this.kSpriteSheet = "assets/SpriteSheet.png";
-    this.kDyeSprite = "assets/Dye_Yellow.png";
     this.kBackground = "assets/starfield.png";
 }
 gEngine.Core.inheritPrototype(MyGame, Scene);
@@ -49,13 +48,11 @@ gEngine.Core.inheritPrototype(MyGame, Scene);
 MyGame.prototype.loadScene = function () {
     // Load the 
     gEngine.Textures.loadTexture(this.kSpriteSheet);
-    gEngine.Textures.loadTexture(this.kDyeSprite);
     gEngine.Textures.loadTexture(this.kBackground);
 };
 
 MyGame.prototype.unloadScene = function () {
     // will be called from GameLoop.stop
-    gEngine.Textures.unloadTexture(this.kDyeSprite);
     gEngine.Textures.unloadTexture(this.kSpriteSheet);
     gEngine.Textures.unloadTexture(this.kBackground);
         
@@ -86,10 +83,10 @@ MyGame.prototype.initialize = function () {
     this.mDyePackSet.setBBox(camBBox);
     this.mPatrolSet.setBBox(camBBox);
     
-    // Instantiate a new hero.  Give it the sprite sheet, the center position, and this game instance. 
+    // Instantiate a new hero.  Give it the sprite sheet and the center position. 
     this.mHero = new Hero(this.kSpriteSheet, 
                           this.mCamera.getWCCenter(),
-                          this);
+                          this.mDyePackSet);
     
     //Set up the ZoomCams and register the hero
     this.mZoomCams = new SecondaryCameraSet(this.mHero, this.mCamera.getWCCenter(), 
@@ -115,14 +112,16 @@ MyGame.prototype.draw = function () {
     // Step A: clear the canvas
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
 
+    // Main view drawing phase
     this.mCamera.setupViewProjection();
     
     this.mBackgroundObj.draw(this.mCamera);
     this.mMsg.draw(this.mCamera);   // only draw status in the main camera
-    this.mHero.draw(this.mCamera);
     this.mDyePackSet.draw(this.mCamera);
     this.mPatrolSet.draw(this.mCamera);
+    this.mHero.draw(this.mCamera);
     
+    // Tell the SecondaryCameraSet to draw (iff its cameras are active)
     this.mZoomCams.draw();
 
 };
@@ -169,11 +168,12 @@ MyGame.prototype.update = function () {
         
     }
     
+    // Status message construction
     msg = "DyePacks: " + this.mDyePackSet.size() + " ";
     msg += "|| Patrols: " + this.mPatrolSet.size() + " ";
-    
     msg += ((this.mSpawnPatrols ) ? " || AutoSpawn: on (" + (this.mTTSpawn/60).toFixed(1) +")" : " || AutoSpawn: off ");
     
+    // Update hero and object sets
     this.mHero.update(x, y);
     this.mDyePackSet.update();
     this.mPatrolSet.update();

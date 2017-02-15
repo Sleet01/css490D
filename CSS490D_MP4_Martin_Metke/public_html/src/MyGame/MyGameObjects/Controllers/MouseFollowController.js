@@ -43,7 +43,7 @@ MouseFollowController.prototype.update = function ( x, y ) {
     var nextPos = this.mInterpolator.getValue();
     
     // Don't let the Hero leave the screen, though.
-    var screenBBox = this.mGO.mGame.mDyePackSet.getBBox();
+    var screenBBox = this.mGO.mDyePackSet.getBBox();
     if (screenBBox.containsPoint(nextPos[0] + this.mWidth/2, nextPos[1]) &&
         screenBBox.containsPoint(nextPos[0] - this.mWidth/2, nextPos[1]) &&
         screenBBox.containsPoint(nextPos[0], nextPos[1] + this.mHeight/2) &&

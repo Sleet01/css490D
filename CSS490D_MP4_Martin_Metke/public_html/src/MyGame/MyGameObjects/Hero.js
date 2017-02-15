@@ -9,7 +9,7 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function Hero(texture, center, game) {
+function Hero(texture, center, dps) {
     this.mWidth = 9;
     this.mHeight = 12;
     this.kCycle = 120;
@@ -17,6 +17,8 @@ function Hero(texture, center, game) {
     this.kBounceFreq = 4;
     this.kBounceFrames = 60;
     this.mZoomCams = null;
+    this.mTexture = texture;
+    this.mDyePackSet = dps;
     
     // Set up SpriteRenderable to use passed location and size
     var dims = [5, 5, 116, 172];
@@ -38,7 +40,6 @@ function Hero(texture, center, game) {
                                                  this.kBounceFreq, this.kBounceFrames);
     this.mHitLoc = null;
     this.mShotOffset = [this.mWidth/2 - 0.5, (this.mHeight/2) - 2];
-    this.mGame = game;
     this.mHit = false;
     this.mTarget = vec2.fromValues(center[0], center[1]);
     
@@ -72,15 +73,19 @@ Hero.prototype.update = function(x, y) {
         if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space)) {        
             // Instantiate a new dyepack
             var newDyePack = new DyePack(
-                                new TextureRenderable( this.mGame.kDyeSprite ), 
+                                this.mTexture, 
                                 Xform.getXPos() + this.mShotOffset[0],
                                 Xform.getYPos() + this.mShotOffset[1],
                                 this.mZoomCams);
-            this.mGame.mDyePackSet.addToSet(newDyePack);
+            this.mDyePackSet.addToSet(newDyePack);
         }
         
     }
     this.mMController.update(x, y);
+};
+
+Hero.prototype.setDyePackSet = function (dps){
+    this.mDyePackSet = dps;
 };
 
 Hero.prototype.setZoomCams = function( camSet ) {
@@ -101,11 +106,13 @@ Hero.prototype.collide = function (oGameObject) {
 // Needs to be updated to do size
 Hero.prototype.activateHit = function(){
     
-    this.mHit = true;
-    
-    this.mAController.restart();
-    
-    if (this.mZoomCams !== null ) {
-        this.mZoomCams.registerHitHero();
+    if (!this.mHit) {
+        this.mHit = true;
+
+        this.mAController.restart();
+
+        if (this.mZoomCams !== null ) {
+            this.mZoomCams.registerHitHero();
+        }
     }
 };

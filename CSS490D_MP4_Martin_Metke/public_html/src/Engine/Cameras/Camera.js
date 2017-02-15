@@ -58,8 +58,14 @@ Camera.prototype.setWCCenter = function (xPos, yPos) {
     this.mCameraState.setCenter(p);
 };
 
+// New mutator to set the WC directly with a Vec2
 Camera.prototype.setCameraStateWCCenter = function (p) {
     this.mCameraState.setCenter(p);
+};
+
+// New mutator to set stiffness, duration on a camera
+Camera.prototype.configCameraStateInterpolation = function (stiffness, duration){
+    this.mCameraState.configInterpolation(stiffness, duration);
 };
 
 Camera.prototype.getWCCenter = function () { return this.mCameraState.getCenter(); };

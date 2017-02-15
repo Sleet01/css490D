@@ -62,21 +62,24 @@ Patrol.prototype.update = function() {
         }
     }
     
+    // Check our patrol's size
     this.mWidth = this._getPatrolWidth();
     this.mHeight = this._getPatrolHeight();
     this.mCenter = this._getPatrolCenter();
     
+    // Re-center the BBox around the patrol members
     var Xform = this.getXform();
     Xform.setSize(this.mWidth, this.mHeight);
     Xform.setPosition(this.mCenter[0], this.mCenter[1]);
     
+    // Update the lines
     this._updateExtents();
     
 };
 
 Patrol.prototype.dead = function () { return this.mDead; };
 
-
+// Set Visibility (that is, turn on or off the BBox bound lines).
 Patrol.prototype.setVisibility = function ( f ) {
   
     if (f !== this.mVisible){
@@ -90,6 +93,18 @@ Patrol.prototype.setVisibility = function ( f ) {
     
 };
 
+// Actually prosecute a collision between another object and a member of this patrol
+Patrol.prototype.collide = function (oGameObject) {
+    
+    for ( var i = 0; i < this.mEntities.length; i++){
+        if (this.mEntities[i].collides(oGameObject)){
+            this.mEntities[i].activateHit();
+            break;
+        }
+    }
+};
+
+// Check if any member of the patrol collides with the passed object
 Patrol.prototype.collides = function (oGameObject) {
     
     var result = false;
@@ -150,6 +165,7 @@ Patrol.prototype.getHeight = function () {
     return this.mHeight;
 };
 
+// Calculate the total width of this patrol, for BBox sizing
 Patrol.prototype._getPatrolWidth = function () {
   
     var width = 0;
@@ -203,6 +219,7 @@ Patrol.prototype._getPatrolHeight = function () {
     return height * 1.5;
 };
 
+// Reverse away from a BBox edge
 Patrol.prototype.reverse = function ( bbox ) {
     
     var reverseSide = bbox.boundCollideStatus(this.getBBox());
@@ -223,6 +240,7 @@ Patrol.prototype.clearReverse = function ( ) {
     
 };
 
+// ActivateHit on all entities.  Currently only does anything to Wings.
 Patrol.prototype.activateHit = function () {
     
     for (var i = 0; i < this.mEntities.length; i++){
@@ -230,7 +248,7 @@ Patrol.prototype.activateHit = function () {
     }
 };
 
-
+// Draw objects in this Patrol.  Also, draw BBox bounds if turned to visible
 Patrol.prototype.draw = function(aCamera){
     
     for (var i = 0; i < this.mEntities.length; i++){

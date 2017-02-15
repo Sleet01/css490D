@@ -4,7 +4,7 @@
  */
 
 /*jslint node: true, vars: true */
-/*global  gEngine*/
+/*global  gEngine, vec2*/
 /* find out more about jslint: http://www.jslint.com/help.html */
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
@@ -20,17 +20,26 @@ function SecondaryCameraSet( hero, WCCenter, bounds, background, game ) {
     //Canvas left, right, top, bottom bounds of the mini-cam area
     this.mBounds = bounds;
     this.mBackground = background;
+    this.kEdgeOffset = 1;
     this.kHeroCamWidth = 15;
     this.kPackCamWidth = 6;
     
     // Camera 0 gets special setup.  Cameras 1-3 are generic
+    // Use kEdgeOffset to create boundaries around the cameras
     this.mSet[0] = new Camera(hero.getXform().getPosition(), 
                               this.kHeroCamWidth, 
-                              [ bounds[0], bounds[3], bounds[2] - bounds[3], bounds[1]/4 ]);
+                              [ bounds[0] + this.kEdgeOffset, 
+                                bounds[3] + this.kEdgeOffset, 
+                               (bounds[2] - bounds[3]) - 2 * this.kEdgeOffset, 
+                               bounds[1]/4 - 2 * this.kEdgeOffset ]);
     for (var i = 1; i < 4; i++ ){
         this.mSet[i] = new Camera(vec2.fromValues(WCCenter[0], WCCenter[1]), 
                               this.kPackCamWidth, 
-                              [ bounds[0] + (i * (bounds[1]/4)), bounds[3], bounds[2] - bounds[3], bounds[1]/4 ]);
+                              [ bounds[0] + (i * (bounds[1]/4)) + this.kEdgeOffset, 
+                                bounds[3] + this.kEdgeOffset, 
+                               (bounds[2] - bounds[3]) - 2 * this.kEdgeOffset, 
+                               bounds[1]/4 - 2 * this.kEdgeOffset ]);
+        this.mSet[i].configCameraStateInterpolation(.85, 5);   
     }
     
 }
@@ -118,9 +127,9 @@ SecondaryCameraSet.prototype.draw = function () {
             
             this.mBackground.draw(this.mSet[i]);
             
-            this.mGame.mHero.draw(this.mSet[i]);
             this.mGame.mDyePackSet.draw(this.mSet[i]);
             this.mGame.mPatrolSet.draw(this.mSet[i]);
+            this.mGame.mHero.draw(this.mSet[i]);
            
         }
     }

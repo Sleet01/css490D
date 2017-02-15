@@ -10,19 +10,34 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function DyePack(renderableObj, x, y, zoomCams) {
-    GameObject.call(this, renderableObj);
-    renderableObj.getXform().setPosition(x, y);
-    renderableObj.getXform().setSize(2, 3.5);
+function DyePack(texture, x, y, zoomCams) {
+
     this.mZoomCams = zoomCams;
     this.mController = null;
     this.mHitLoc = null;
-    this.mCurrentFrontDir = vec2.fromValues(1, 0);
-    this.mSpeed = 2;
     this.mLifetime = 0;
     this.kMaxLifetime = 300;
     this.mHit = false;
     this.mDead = false;
+    
+    // Create Sprite
+    var renderableObj = new SpriteRenderable(texture);
+    var dims = [510, 23, 83, 126];
+    renderableObj.setElementPixelPositions(
+               dims[0], dims[0] + dims[2], dims[1], dims[1] + dims[3]);
+    renderableObj.setColor([1, 1, 1, 0]);
+    
+    // Set position
+    var Xform = renderableObj.getXform();
+    Xform.setPosition(x, y);
+    Xform.setSize(2, 3.5);
+    Xform.setRotationInDegree(90);
+    
+    GameObject.call(this, renderableObj);
+    
+    this.mCurrentFrontDir = vec2.fromValues(1, 0);
+    this.mSpeed = 2;
+    console.log(this.mSpeed);
 }
 gEngine.Core.inheritPrototype(DyePack, GameObject);
 
@@ -80,13 +95,16 @@ DyePack.prototype.collide = function (oGameObject){
     //Break out if this DyePack has already collided with something!
     if (this.mHit) {return; };
     
+    // Slow down DyePack if it's in the bounding box of the patrol
     var bbox = this.getBBox();
     var oBBox = oGameObject.getBBox();
     var result = oBBox.boundCollideStatus(bbox);
     if(result !== BoundingBox.eboundCollideStatus.eOutside ){
         
         this.incSpeedBy(-0.1);
+        
         if (oGameObject.collides(this)){
+            oGameObject.collide(this);
             this.activateHit();
         }
     }
