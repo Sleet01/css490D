@@ -98,6 +98,16 @@ PatrolHead.prototype.reverse = function ( rCase ) {
     }
 };
 
+// Return whether this object is collided with by the other object
+PatrolHead.prototype.collides = function (oGameObject) {
+  
+    if (this.getBBox().intersectsBound(oGameObject.getBBox())){
+        this.activateHit();
+        return true;
+    }
+    return false;
+};
+
 PatrolHead.prototype.activateHit = function(){
     
     this.getXform().incXPosBy(5);

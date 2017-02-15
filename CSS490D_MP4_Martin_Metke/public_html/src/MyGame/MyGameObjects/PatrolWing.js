@@ -81,6 +81,16 @@ PatrolWing.prototype.update = function() {
 
 PatrolWing.prototype.dead = function () { return this.mDead; };
 
+// Return whether this object is collided with by the other object
+PatrolWing.prototype.collides = function (oGameObject) {
+  
+    if (this.getBBox().intersectsBound(oGameObject.getBBox())){
+        this.activateHit();
+        return true;
+    }
+    return false;
+};
+
 PatrolWing.prototype._updateExtents = function () {
     
     var bbox = this.getBBox();

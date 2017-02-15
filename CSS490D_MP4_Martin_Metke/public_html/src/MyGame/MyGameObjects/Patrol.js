@@ -90,6 +90,20 @@ Patrol.prototype.setVisibility = function ( f ) {
     
 };
 
+Patrol.prototype.collides = function (oGameObject) {
+    
+    var result = false;
+    
+    for ( var i = 0; i < this.mEntities.length; i++){
+        if (this.mEntities[i].collides(oGameObject)){
+            result = true;
+            break;
+        }
+    }
+    
+    return result;
+};
+
 // Must be called after mWidth, mHeight are set
 Patrol.prototype._updateExtents = function () {
     

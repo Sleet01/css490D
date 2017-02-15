@@ -19,6 +19,7 @@ function MyGame() {
     this.mMsg = null;
 
     this.mSpawnPatrols = false;
+    this.mTTSpawn = 0;
     
     // Create a backdrop object to fill the cameras
     this.mBackgroundObj = null;
@@ -119,6 +120,8 @@ MyGame.prototype.draw = function () {
 MyGame.prototype.update = function () {
     var msg = "";
     var echo = "";
+    var cWidth = this.mCamera.getWCWidth();
+    var cHeight = this.mCamera.getWCHeight();
     var x, y;
     
     // We need the X/Y mouse coords
@@ -126,24 +129,55 @@ MyGame.prototype.update = function () {
     y = this.mCamera.mouseWCY();
     echo += "[" + x.toPrecision(3) + " " + y.toPrecision(3) + "]";
     
+    // Spawn a new Patrol if "C" is pressed
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.C)) {
-        var cWidth = this.mCamera.getWCWidth();
-        var cHeight = this.mCamera.getWCHeight();
         this.mPatrolSet.addToSet( new Patrol(this.kSpriteSheet, 
-                                [(Math.random() * (cWidth/2) + cWidth/2),
+                                [(Math.random() * (cWidth/2) + (cWidth/2 - 50)),
                                  (Math.random() * (cHeight/2) + cWidth/4)], this) );
+    }
+    
+    // Toggle auto-spawning of patrols
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.P)) {
+        this.mSpawnPatrols = !this.mSpawnPatrols;
+    }
+    
+    // If auto-spawning is on, check if countdown has reached 0;
+    // if so, spawn a new patrol and reset the clock.
+    if ( this.mSpawnPatrols ) {
+        
+        if ( this.mTTSpawn === 0) {
+            this.mPatrolSet.addToSet( new Patrol(this.kSpriteSheet, 
+                                [(Math.random() * (cWidth/2) + (cWidth/2 - 50)),
+                                 (Math.random() * (cHeight/2) + cWidth/4)], this) );
+            this.mTTSpawn = Math.floor((Math.random() * (180 - 120) + 120));
+        }
+        else{
+            this.mTTSpawn -= 1;
+        }
+        
     }
     
     msg = "DyePacks: " + this.mDyePackSet.size() + " ";
     msg += "|| Patrols: " + this.mPatrolSet.size() + " ";
-    msg += echo;
+    
+    msg += ((this.mSpawnPatrols ) ? " || AutoSpawn: on (" + (this.mTTSpawn/60).toFixed(1) +")" : " || AutoSpawn: off ");
     
     this.mHero.update(x, y);
     this.mDyePackSet.update();
     this.mPatrolSet.update();
     
-    //this.mTestPatrolHead.update();
-    //this.mTestPatrolWing.update();
+    // The big kahuna: collision checking.
+    for (var i = 0; i < this.mPatrolSet.size(); i++){
+        
+        var cPatrol = this.mPatrolSet.getObjectAt(i);
+        
+        for (var j = 0; j < this.mDyePackSet.size(); j++ ){
+            this.mDyePackSet.getObjectAt(j).collide(cPatrol);
+        }
+        
+        //this.mHero.collide(cPatrol);
+        
+    }
     
     this.mMsg.setText(msg);
 };

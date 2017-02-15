@@ -65,7 +65,7 @@ Hero.prototype.update = function(x, y) {
         }
     }
     else{
-        if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Space)) {        
+        if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space)) {        
             // Instantiate a new dyepack
             var newDyePack = new DyePack(
                                 new TextureRenderable( this.mGame.kDyeSprite ), 
@@ -76,6 +76,15 @@ Hero.prototype.update = function(x, y) {
         
     }
     this.mMController.update(x, y);
+};
+
+// Check if this object collides with the other object
+Hero.prototype.collide = function (oGameObject) {
+  
+  if (oGameObject.collidesWith(this)) {
+      this.activateHit();
+  }
+    
 };
 
 // Needs to be updated to do size

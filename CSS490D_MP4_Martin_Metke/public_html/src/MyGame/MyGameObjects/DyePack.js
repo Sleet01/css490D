@@ -68,6 +68,24 @@ DyePack.prototype.activateHit = function(){
     this.mController = new ShakePosition(4, 0.2, 20, 300);
 };
 
+// Perform collision check against oGameObject.
+DyePack.prototype.collide = function (oGameObject){
+    
+    //Break out if this DyePack has already collided with something!
+    if (this.mHit) {return; };
+    
+    var bbox = this.getBBox();
+    var oBBox = oGameObject.getBBox();
+    var result = oBBox.boundCollideStatus(bbox);
+    if(result !== BoundingBox.eboundCollideStatus.eOutside ){
+        
+        this.incSpeedBy(-0.1);
+        if (oGameObject.collides(this)){
+            this.activateHit();
+        }
+    }
+};
+
 DyePack.prototype.isDead = function() {
     return this.mDead;
 };
