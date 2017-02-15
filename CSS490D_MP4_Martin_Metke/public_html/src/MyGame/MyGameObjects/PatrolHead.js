@@ -28,10 +28,21 @@ function PatrolHead(texture, center, game) {
     GameObject.call(this, renderableObj);
     
     this.mGame = game;
-    this.mCurrentFrontDir = vec2.normalize( vec2.fromValues( 
+    this.mCurrentFrontDir = vec2.normalize( this.mCurrentFrontDir, vec2.fromValues( 
                                 Math.random(), Math.random() ) );
     this.mSpeed = (Math.random() * (10 - 5) + 5) / 60.0;    
     this.mHit = false;
+    
+    // Set up extent objects (LineRenderables based on this object's bounding box
+    this.mExtents = [];
+    var bbox = this.getBBox();
+    this.mExtents.push(new LineRenderable(bbox.minX(), bbox.minY(), bbox.maxX(), bbox.minY()));
+    this.mExtents.push(new LineRenderable(bbox.maxX(), bbox.minY(), bbox.maxX(), bbox.maxY()));
+    this.mExtents.push(new LineRenderable(bbox.maxX(), bbox.maxY(), bbox.minX(), bbox.maxY()));
+    this.mExtents.push(new LineRenderable(bbox.minX(), bbox.maxY(), bbox.minX(), bbox.minY()));
+    for (var j = 0; j < this.mExtents.length; j++) {
+            this.mExtents[j].setColor([1, 1, 1, 1]);
+    }
     
 }
 gEngine.Core.inheritPrototype(PatrolHead, GameObject);
@@ -42,7 +53,11 @@ PatrolHead.prototype.update = function() {
         this.activateHit();
     }
     
-    GameObject.prototype.update(this);
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.R)) {
+        this.reverse(2);
+    }
+    
+    GameObject.prototype.update.call(this);
     this._updateExtents();
 };
 
@@ -64,15 +79,15 @@ PatrolHead.prototype.reverse = function ( rCase ) {
             break;
         case BoundingBox.eboundCollideStatus.eCollideLeft:
         case BoundingBox.eboundCollideStatus.eCollideRight:
-            this.setCurrentFrontDir(vec2.fromValues(-1 * this.mCurrentFrontDir[0], this.mCurrentFrontDir[0] ) );
+            this.setCurrentFrontDir(vec2.fromValues(-1 * this.mCurrentFrontDir[0], this.mCurrentFrontDir[1] ) );
             break;
         case BoundingBox.eboundCollideStatus.eCollideTop:
         case BoundingBox.eboundCollideStatus.eCollideBottom:    
-            this.setCurrentFrontDir(vec2.fromValues(this.mCurrentFrontDir[0], -1 * this.mCurrentFrontDir[0] ) );
+            this.setCurrentFrontDir(vec2.fromValues(this.mCurrentFrontDir[0], -1 * this.mCurrentFrontDir[1] ) );
             break;
         default:
-            this.setCurrentFrontDir(vec2.fromValues(-1 * this.mCurrentFrontDir[0], this.mCurrentFrontDir[0] ) );
-            this.setCurrentFrontDir(vec2.fromValues(this.mCurrentFrontDir[0], -1 * this.mCurrentFrontDir[0] ) );
+            this.setCurrentFrontDir(vec2.fromValues(-1 * this.mCurrentFrontDir[0], this.mCurrentFrontDir[1] ) );
+            this.setCurrentFrontDir(vec2.fromValues(this.mCurrentFrontDir[0], -1 * this.mCurrentFrontDir[1] ) );
             break;
     }
 };
@@ -89,7 +104,7 @@ PatrolHead.prototype.draw = function( aCamera ) {
     
     if(this.mVisible){
         for (var j = 0; j < this.mExtents.length; j++) {
-            this.mExtents[j].draw();
+            this.mExtents[j].draw( aCamera );
         }
     }
     

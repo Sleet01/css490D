@@ -33,6 +33,8 @@ function MyGame() {
     // Instantiate a new Hero after other entities are set up
     this.mHero = null;
     
+    this.mTestPatrolHead = null;
+    
     //Resources (sprite textures)
     this.kSpriteSheet = "assets/SpriteSheet.png";
     this.kDyeSprite = "assets/Dye_Yellow.png";
@@ -92,6 +94,8 @@ MyGame.prototype.initialize = function () {
     this.mMsg.setColor([1, 1, 1, 0.7]);
     this.mMsg.getXform().setPosition(10, 10);
     this.mMsg.setTextHeight(6);
+    
+    this.mTestPatrolHead = new PatrolHead(this.kSpriteSheet, [75, 50], this);
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
@@ -110,7 +114,8 @@ MyGame.prototype.draw = function () {
     this.mMsg.draw(this.mCamera);   // only draw status in the main camera
     this.mHero.draw(this.mCamera);
     this.mDyePackSet.draw(this.mCamera);
-    
+
+    this.mTestPatrolHead.draw(this.mCamera);
 };
 
 // The Update function, updates the application state. Make sure to _NOT_ draw
@@ -129,6 +134,7 @@ MyGame.prototype.update = function () {
     
     this.mHero.update(x, y);
     this.mDyePackSet.update();
+    this.mTestPatrolHead.update();
     
     this.mMsg.setText(msg);
 };

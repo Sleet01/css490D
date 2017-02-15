@@ -195,7 +195,7 @@ Patrol.prototype.draw = function(aCamera){
     
     if(this.mVisible){
         for (var j = 0; j < this.mExtents.length; j++) {
-            this.mExtents[j].draw();
+            this.mExtents[j].draw(aCamera);
         }
     }
     
