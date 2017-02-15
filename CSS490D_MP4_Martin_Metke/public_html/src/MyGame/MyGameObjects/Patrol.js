@@ -14,7 +14,8 @@ function Patrol(texture, center, game) {
     this.mDead = false;
     // Store the game scene for later member access
     this.mGame = game;
-    
+    this.mReverseStates = {};
+        
     // Instantiate the entities of this patrol.
     this.kWingOffset = 6;
     this.mEntities = [];
@@ -33,7 +34,7 @@ function Patrol(texture, center, game) {
     var renderable = new Renderable();
     renderable.setColor([0,0,0,0]);
     renderable.getXform().setSize(this.mWidth, this.mHeight);
-    GameObject.call(renderable);
+    GameObject.call(this, renderable);
     this.mVisible = false;
     
     // Set up extent objects (LineRenderables based on this object's bounding box
@@ -50,27 +51,42 @@ function Patrol(texture, center, game) {
 gEngine.Core.inheritPrototype(Patrol, GameObject);
 
 // Handle some key clicks, manage sub-entities, check for OOB.
-Patrol.prototype.update = function() {  
-    
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.B)) {
-        this.setVisibility(!this.getVisibility());
-        for (var i = 0; i < this.mEntities.length; i++){
-            this.mEntities[i].setVisibilty(this.mVisible);
-        }
-    }    
+Patrol.prototype.update = function() {    
     
     // Check if we're dead (only possible if a wing was shot off)
     for (var i = 0; i < this.mEntities.length; i++){
         this.mEntities[i].update();
         if ( this.mEntities[i].dead() ){
             this.mDead = true;
+            break;
         }
     }
     
     this.mWidth = this._getPatrolWidth();
     this.mHeight = this._getPatrolHeight();
     this.mCenter = this._getPatrolCenter();
+    
+    var Xform = this.getXform();
+    Xform.setSize(this.mWidth, this.mHeight);
+    Xform.setPosition(this.mCenter[0], this.mCenter[1]);
+    
     this._updateExtents();
+    
+};
+
+Patrol.prototype.dead = function () { return this.mDead; };
+
+
+Patrol.prototype.setVisibility = function ( f ) {
+  
+    if (f !== this.mVisible){
+      
+        this.mVisible = f;
+      
+        for (var i = 0; i < this.mEntities.length; i++ ) {
+            this.mEntities[i].setVisibility(f);
+        }
+    }
     
 };
 
@@ -88,7 +104,7 @@ Patrol.prototype._updateExtents = function () {
 // This will likely need to be updated to be more performant.
 // Running this set of functions 60 times a second... the body shudders.
 // This function requires mWidth and mHeight to be updated.
-Patrol.prototype.getPatrolCenter = function () {
+Patrol.prototype._getPatrolCenter = function () {
     
     var x, y = 0;
     x = this.mWidth/2 + this.mEntities[0].getBBox().minX();
@@ -175,7 +191,21 @@ Patrol.prototype._getPatrolHeight = function () {
 
 Patrol.prototype.reverse = function ( bbox ) {
     
-    this.mEntities[0].reverse(bbox.boundCollideStatus(this.getBBox()));
+    var reverseSide = bbox.boundCollideStatus(this.getBBox());
+    
+    // Only execute a reverse if this Patrol is not already reversing on the specified
+    // side.
+    if (!(this.mReverseStates.hasOwnProperty(reverseSide.toString()))){
+        this.mEntities[0].reverse(reverseSide);
+        this.mReverseStates[reverseSide.toString()] = 'true';
+    }
+    
+};
+
+// Remove all stored Reverse-holds
+Patrol.prototype.clearReverse = function ( ) {
+    
+    this.mReverseStates = {};
     
 };
 

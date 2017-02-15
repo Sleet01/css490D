@@ -14,6 +14,7 @@
 function PatrolSet( bbox = null ) {
     GameObjectSet.call(this);
     this.mBBox = bbox;
+    this.mVisible = false;
 }
 gEngine.Core.inheritPrototype(PatrolSet, GameObjectSet);
 
@@ -34,24 +35,35 @@ PatrolSet.prototype.update = function () {
     var cleanup = [];
     var reverse = [];
     var bbox = null;
+    var result = 0;
+    
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.B)) {
+        this.mVisible = !this.mVisible;
+    }
+    
     // Do the actual updates
     for (i = 0; i < this.mSet.length; i++) {
+        this.mSet[i].setVisibility(this.mVisible);
         this.mSet[i].update();
     }
     //Check all objects for dead/out-of-bounds state
     for (i = 0; i < this.mSet.length; i++){
-        if (this.mSet[i].isDead()){
+        if (this.mSet[i].dead()){
             cleanup.push(i);
         }
         else {
             
             bbox = this.mSet[i].getBBox();
-            if (this.mBBox.boundCollideStatus(bbox) === BoundingBox.eboundCollideStatus.eOutside){
+            result = this.mBBox.boundCollideStatus(bbox);
+            if ( result === BoundingBox.eboundCollideStatus.eOutside){
                 cleanup.push(i);
             } else{
-                if( this.mBBox.boundCollideStatus(bbox) !== BoundingBox.eboundCollideStatus.eInside){
+                if( result !== BoundingBox.eboundCollideStatus.eInside){
                     reverse.push(i);
-                }   
+                }
+                else{
+                    this.mSet[i].clearReverse();
+                }
             }
         }
     }

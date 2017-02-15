@@ -18,9 +18,7 @@ function MyGame() {
     // Text output on-camera
     this.mMsg = null;
 
-    this.mLineSet = [];
-    this.mCurrentLine = null;
-    this.mP1 = null;
+    this.mSpawnPatrols = false;
     
     // Create a backdrop object to fill the cameras
     this.mBackgroundObj = null;
@@ -32,8 +30,6 @@ function MyGame() {
     
     // Instantiate a new Hero after other entities are set up
     this.mHero = null;
-    
-    this.mTestPatrolHead = null;
     
     //Resources (sprite textures)
     this.kSpriteSheet = "assets/SpriteSheet.png";
@@ -95,7 +91,8 @@ MyGame.prototype.initialize = function () {
     this.mMsg.getXform().setPosition(10, 10);
     this.mMsg.setTextHeight(6);
     
-    this.mTestPatrolHead = new PatrolHead(this.kSpriteSheet, [75, 50], this);
+    //this.mTestPatrolHead = new PatrolHead(this.kSpriteSheet, [75, 50], this);
+    //this.mTestPatrolWing = new PatrolWing(this.kSpriteSheet, 0, this.mTestPatrolHead, -6, this);
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
@@ -105,23 +102,22 @@ MyGame.prototype.draw = function () {
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
 
     this.mCamera.setupViewProjection();
-    var i, l;
-    for (i = 0; i < this.mLineSet.length; i++) {
-        l = this.mLineSet[i];
-        l.draw(this.mCamera);
-    }
+    
     this.mBackgroundObj.draw(this.mCamera);
     this.mMsg.draw(this.mCamera);   // only draw status in the main camera
     this.mHero.draw(this.mCamera);
     this.mDyePackSet.draw(this.mCamera);
+    this.mPatrolSet.draw(this.mCamera);
 
-    this.mTestPatrolHead.draw(this.mCamera);
+    //this.mTestPatrol.draw(this.mCamera);
+    //this.mTestPatrolHead.draw(this.mCamera);
+    //this.mTestPatrolWing.draw(this.mCamera);
 };
 
 // The Update function, updates the application state. Make sure to _NOT_ draw
 // anything from this function!
 MyGame.prototype.update = function () {
-    var msg = "DyePacks: " + this.mDyePackSet.size() + " ";
+    var msg = "";
     var echo = "";
     var x, y;
     
@@ -129,12 +125,25 @@ MyGame.prototype.update = function () {
     x = this.mCamera.mouseWCX();
     y = this.mCamera.mouseWCY();
     echo += "[" + x.toPrecision(3) + " " + y.toPrecision(3) + "]";
-
+    
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.C)) {
+        var cWidth = this.mCamera.getWCWidth();
+        var cHeight = this.mCamera.getWCHeight();
+        this.mPatrolSet.addToSet( new Patrol(this.kSpriteSheet, 
+                                [(Math.random() * (cWidth/2) + cWidth/2),
+                                 (Math.random() * (cHeight/2) + cWidth/4)], this) );
+    }
+    
+    msg = "DyePacks: " + this.mDyePackSet.size() + " ";
+    msg += "|| Patrols: " + this.mPatrolSet.size() + " ";
     msg += echo;
     
     this.mHero.update(x, y);
     this.mDyePackSet.update();
-    this.mTestPatrolHead.update();
+    this.mPatrolSet.update();
+    
+    //this.mTestPatrolHead.update();
+    //this.mTestPatrolWing.update();
     
     this.mMsg.setText(msg);
 };

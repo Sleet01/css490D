@@ -28,6 +28,7 @@ function PatrolHead(texture, center, game) {
     GameObject.call(this, renderableObj);
     
     this.mGame = game;
+    this.mVisible = false;
     this.mCurrentFrontDir = vec2.normalize( this.mCurrentFrontDir, vec2.fromValues( 
                                 Math.random(), Math.random() ) );
     this.mSpeed = (Math.random() * (10 - 5) + 5) / 60.0;    
@@ -54,12 +55,17 @@ PatrolHead.prototype.update = function() {
     }
     
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.R)) {
-        this.reverse(2);
+        this.reverse(BoundingBox.eboundCollideStatus.eCollideLeft);
+    }
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.F)) {
+        this.reverse(BoundingBox.eboundCollideStatus.eCollideTop);
     }
     
     GameObject.prototype.update.call(this);
     this._updateExtents();
 };
+
+PatrolHead.prototype.dead = function () { return this.mDead; };
 
 PatrolHead.prototype._updateExtents = function () {
     

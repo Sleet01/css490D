@@ -22,8 +22,11 @@ function PatrolWing(texture, mode, leader, vOffset, game) {
     this.mDead = false;
     
     // Set up SpriteRenderable to use passed location and size
-    var dims = [[0, 0, 204, 136],
-                [0, 375 , 204, 163]];
+//    var dims = [[0, 0, 204, 136],
+//                [0, 375 , 204, 163]];
+// Actual values are [xOrigin, *top of sprite from bottom*, width, height]
+    var dims = [[0, 511, 204, 136],
+                  [0, 348 , 204, 163]];
     var renderableObj = new SpriteAnimateRenderable(texture);
     var Xform = renderableObj.getXform();
     var lXform = leader.getXform();
@@ -33,7 +36,7 @@ function PatrolWing(texture, mode, leader, vOffset, game) {
                                      dims[mode][2], dims[mode][3],
                                      5, 0);
     renderableObj.setAnimationType(SpriteAnimateRenderable.eAnimationType.eAnimateSwing);
-    Xform.setPosition(lXform.getXPos() + this.kHOffset, lXform.getYpos() + this.kVOffset );
+    Xform.setPosition(lXform.getXPos() + this.kHOffset, lXform.getYPos() + this.kVOffset );
     Xform.setSize(this.mWidth, this.mHeight);
     
     // Set up the object
@@ -42,10 +45,11 @@ function PatrolWing(texture, mode, leader, vOffset, game) {
     // Customize for PatrolWing functionality
     this.mController = new FollowController(this, 
                                             lXform.getXPos() + this.kHOffset, 
-                                            lXform.getYpos() + this.kVOffset, 
+                                            lXform.getYPos() + this.kVOffset, 
                                             this.kCycle, this.kRate);
 
     this.mGame = game;
+    this.mVisible = false;
     
         // Set up extent objects (LineRenderables based on this object's bounding box
     this.mExtents = [];
@@ -69,7 +73,8 @@ PatrolWing.prototype.update = function() {
         if (gEngine.Input.isKeyClicked(gEngine.Input.keys.W)) {
             this.activateHit();
         }
-        this.mController.update(lXform.getXPos() + this.kHOffset, lXform.getYpos() + this.kVOffset);
+        this.mController.update(lXform.getXPos() + this.kHOffset, lXform.getYPos() + this.kVOffset);
+        this.mRenderComponent.updateAnimation();
         this._updateExtents();
     }
 };
