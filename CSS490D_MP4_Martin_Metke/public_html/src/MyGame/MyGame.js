@@ -15,11 +15,15 @@ function MyGame() {
     // The camera to view the scene
     this.mCamera = null;
 
+    // Zoomed-view sub-cameras
+    this.mZoomCams = null;
+
     // Text output on-camera
     this.mMsg = null;
 
+    // Random spawn-time setup.
     this.mSpawnPatrols = false;
-    this.mTTSpawn = 0;
+    this.mTTSpawn = Math.floor((Math.random() * (180 - 120) + 120));
     
     // Create a backdrop object to fill the cameras
     this.mBackgroundObj = null;
@@ -87,6 +91,15 @@ MyGame.prototype.initialize = function () {
                           this.mCamera.getWCCenter(),
                           this);
     
+    //Set up the ZoomCams and register the hero
+    this.mZoomCams = new SecondaryCameraSet(this.mHero, this.mCamera.getWCCenter(), 
+                                            [0, 800, 800, 600], 
+                                            this.mBackgroundObj,
+                                            this);
+    
+    // Create link to let the Hero and DyePackSet register hit DyePacks
+    this.mHero.setZoomCams(this.mZoomCams);
+    
     this.mMsg = new FontRenderable("Status Message");
     this.mMsg.setColor([1, 1, 1, 0.7]);
     this.mMsg.getXform().setPosition(10, 10);
@@ -109,10 +122,9 @@ MyGame.prototype.draw = function () {
     this.mHero.draw(this.mCamera);
     this.mDyePackSet.draw(this.mCamera);
     this.mPatrolSet.draw(this.mCamera);
+    
+    this.mZoomCams.draw();
 
-    //this.mTestPatrol.draw(this.mCamera);
-    //this.mTestPatrolHead.draw(this.mCamera);
-    //this.mTestPatrolWing.draw(this.mCamera);
 };
 
 // The Update function, updates the application state. Make sure to _NOT_ draw
@@ -132,7 +144,7 @@ MyGame.prototype.update = function () {
     // Spawn a new Patrol if "C" is pressed
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.C)) {
         this.mPatrolSet.addToSet( new Patrol(this.kSpriteSheet, 
-                                [(Math.random() * (cWidth/2) + (cWidth/2 - 50)),
+                                [(Math.random() * (cWidth/2 - 15) + (cWidth/2)),
                                  (Math.random() * (cHeight/2) + cWidth/4)], this) );
     }
     
@@ -147,7 +159,7 @@ MyGame.prototype.update = function () {
         
         if ( this.mTTSpawn === 0) {
             this.mPatrolSet.addToSet( new Patrol(this.kSpriteSheet, 
-                                [(Math.random() * (cWidth/2) + (cWidth/2 - 50)),
+                                [(Math.random() * (cWidth/2 - 15) + (cWidth/2)),
                                  (Math.random() * (cHeight/2) + cWidth/4)], this) );
             this.mTTSpawn = Math.floor((Math.random() * (180 - 120) + 120));
         }
@@ -165,6 +177,7 @@ MyGame.prototype.update = function () {
     this.mHero.update(x, y);
     this.mDyePackSet.update();
     this.mPatrolSet.update();
+    this.mZoomCams.update();
     
     // The big kahuna: collision checking.
     for (var i = 0; i < this.mPatrolSet.size(); i++){
@@ -175,7 +188,7 @@ MyGame.prototype.update = function () {
             this.mDyePackSet.getObjectAt(j).collide(cPatrol);
         }
         
-        //this.mHero.collide(cPatrol);
+        this.mHero.collide(cPatrol);
         
     }
     

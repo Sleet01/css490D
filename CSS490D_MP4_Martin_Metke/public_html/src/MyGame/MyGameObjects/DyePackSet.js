@@ -33,20 +33,21 @@ DyePackSet.prototype.update = function () {
     for (i = 0; i < this.mSet.length; i++) {
         this.mSet[i].update();
     }
-    //Check all objects for dead/out-of-bounds state
+    //Check all objects for hit/dead/out-of-bounds state
     for (i = 0; i < this.mSet.length; i++){
+        
+        // If the DyePack has died (hit something and run through its animation)
+        // then GC it.
         if (this.mSet[i].isDead()){
             cleanup.push(i);
         }
+        // If the DyePack is still alive but outside the set bounds, GC it.
         else if (this.mBBox.boundCollideStatus(this.mSet[i].getBBox()) 
                     === BoundingBox.eboundCollideStatus.eOutside){
             cleanup.push(i);
         }
-        // May need to remove break; consider edge cases.
-        //else{
-        //    break;
-        //}
     }
+
     // Cut out all dead objects registered so far
     for (i = 0; i < cleanup.length; i++) {
         this.mSet.splice(cleanup[i],1);

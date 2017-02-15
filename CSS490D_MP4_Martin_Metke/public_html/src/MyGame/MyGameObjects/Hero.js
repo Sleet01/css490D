@@ -16,6 +16,7 @@ function Hero(texture, center, game) {
     this.kRate = 0.05;
     this.kBounceFreq = 4;
     this.kBounceFrames = 60;
+    this.mZoomCams = null;
     
     // Set up SpriteRenderable to use passed location and size
     var dims = [5, 5, 116, 172];
@@ -60,6 +61,9 @@ Hero.prototype.update = function(x, y) {
     if (this.mHit){
         if (this.mAController.getDone()){
             this.mHit = false;
+            if (this.mZoomCams !== null){
+                this.mZoomCams.unregisterHitHero();
+            }
         }else{
             this.mAController.update();
         }
@@ -70,7 +74,8 @@ Hero.prototype.update = function(x, y) {
             var newDyePack = new DyePack(
                                 new TextureRenderable( this.mGame.kDyeSprite ), 
                                 Xform.getXPos() + this.mShotOffset[0],
-                                Xform.getYPos() + this.mShotOffset[1]);
+                                Xform.getYPos() + this.mShotOffset[1],
+                                this.mZoomCams);
             this.mGame.mDyePackSet.addToSet(newDyePack);
         }
         
@@ -78,10 +83,16 @@ Hero.prototype.update = function(x, y) {
     this.mMController.update(x, y);
 };
 
+Hero.prototype.setZoomCams = function( camSet ) {
+    
+    this.mZoomCams = camSet;
+
+};
+
 // Check if this object collides with the other object
 Hero.prototype.collide = function (oGameObject) {
   
-  if (oGameObject.collidesWith(this)) {
+  if (oGameObject.collides(this)) {
       this.activateHit();
   }
     
@@ -89,6 +100,12 @@ Hero.prototype.collide = function (oGameObject) {
 
 // Needs to be updated to do size
 Hero.prototype.activateHit = function(){
+    
     this.mHit = true;
+    
     this.mAController.restart();
+    
+    if (this.mZoomCams !== null ) {
+        this.mZoomCams.registerHitHero();
+    }
 };

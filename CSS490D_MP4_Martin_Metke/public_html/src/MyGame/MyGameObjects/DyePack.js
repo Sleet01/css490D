@@ -10,10 +10,11 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function DyePack(renderableObj, x, y) {
+function DyePack(renderableObj, x, y, zoomCams) {
     GameObject.call(this, renderableObj);
     renderableObj.getXform().setPosition(x, y);
     renderableObj.getXform().setSize(2, 3.5);
+    this.mZoomCams = zoomCams;
     this.mController = null;
     this.mHitLoc = null;
     this.mCurrentFrontDir = vec2.fromValues(1, 0);
@@ -66,6 +67,11 @@ DyePack.prototype.activateHit = function(){
     this.mHitLoc = [ this.getXform().getXPos(), this.getXform().getYPos()];
     this.mSpeed = 0;
     this.mController = new ShakePosition(4, 0.2, 20, 300);
+    
+    // On hit, register a hit
+    if( this.mZoomCams !== null ){
+        this.mZoomCams.registerHitPack(this);
+    }
 };
 
 // Perform collision check against oGameObject.
@@ -84,6 +90,10 @@ DyePack.prototype.collide = function (oGameObject){
             this.activateHit();
         }
     }
+};
+
+DyePack.prototype.isHit = function () {
+    return this.mHit;
 };
 
 DyePack.prototype.isDead = function() {

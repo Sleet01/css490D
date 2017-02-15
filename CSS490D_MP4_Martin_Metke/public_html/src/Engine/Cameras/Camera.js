@@ -57,6 +57,11 @@ Camera.prototype.setWCCenter = function (xPos, yPos) {
     var p = vec2.fromValues(xPos, yPos);
     this.mCameraState.setCenter(p);
 };
+
+Camera.prototype.setCameraStateWCCenter = function (p) {
+    this.mCameraState.setCenter(p);
+};
+
 Camera.prototype.getWCCenter = function () { return this.mCameraState.getCenter(); };
 Camera.prototype.setWCWidth = function (width) { this.mCameraState.setWidth(width); };
 Camera.prototype.getWCWidth = function () { return this.mCameraState.getWidth(); };
