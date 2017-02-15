@@ -9,7 +9,7 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function PatrolHead(texture, center, game) {
+function PatrolHead(texture, center) {
     this.mWidth = 7.5;
     this.mHeight = 7.5;
     this.mDead = false;
@@ -27,7 +27,6 @@ function PatrolHead(texture, center, game) {
     // Set up the object
     GameObject.call(this, renderableObj);
     
-    this.mGame = game;
     this.mVisible = false;
     this.mCurrentFrontDir = vec2.normalize( this.mCurrentFrontDir, vec2.fromValues( 
                                 Math.random(), Math.random() ) );

@@ -10,7 +10,7 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function PatrolWing(texture, mode, leader, vOffset, game) {
+function PatrolWing(texture, mode, leader, vOffset) {
     this.mWidth = 10;
     this.mHeight = 8;
     this.kHOffset = 10;
@@ -48,7 +48,6 @@ function PatrolWing(texture, mode, leader, vOffset, game) {
                                             lXform.getYPos() + this.kVOffset, 
                                             this.kCycle, this.kRate);
 
-    this.mGame = game;
     this.mVisible = false;
     
         // Set up extent objects (LineRenderables based on this object's bounding box

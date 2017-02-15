@@ -9,19 +9,18 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function Patrol(texture, center, game) {
+function Patrol(texture, center) {
     
     this.mDead = false;
     // Store the game scene for later member access
-    this.mGame = game;
     this.mReverseStates = {};
         
     // Instantiate the entities of this patrol.
     this.kWingOffset = 6;
     this.mEntities = [];
-    this.mEntities.push(this.mHead = new PatrolHead(texture, center, game));
-    this.mEntities.push(new PatrolWing(texture, 0, this.mHead, this.kWingOffset, game));
-    this.mEntities.push(new PatrolWing(texture, 1, this.mHead, -this.kWingOffset, game));
+    this.mEntities.push(this.mHead = new PatrolHead(texture, center));
+    this.mEntities.push(new PatrolWing(texture, 0, this.mHead, this.kWingOffset));
+    this.mEntities.push(new PatrolWing(texture, 1, this.mHead, -this.kWingOffset));
     
     // Get this patrol's extents, based off of member entities
     this.mWidth = this._getPatrolWidth();
