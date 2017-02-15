@@ -107,12 +107,21 @@ Patrol.prototype.collide = function (oGameObject) {
 Patrol.prototype.collides = function (oGameObject) {
     
     var result = false;
+    var i;
     
-    for ( var i = 0; i < this.mEntities.length; i++){
+    // BBox
+    for ( i = 0; i < this.mEntities.length; i++){
         if (this.mEntities[i].collides(oGameObject)){
             result = true;
             break;
         }
+    }
+    if (result) {
+        
+        var WCTouchPos = vec2.create;
+        
+        result = oGameObject.pixelTouches(this.mEntities[i], WCTouchPos);
+        
     }
     
     return result;
