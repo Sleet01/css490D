@@ -20,6 +20,13 @@ function Hero(texture, center, dps) {
     this.mTexture = texture;
     this.mDyePackSet = dps;
     
+    // SUPER-SECRET POWER UP SHOT!
+    this.mPowerup = 0;
+    this.mWasPoweringUp = false;
+    this.kPowerUpThreshold = 90;
+    this.mPowerUpLines = [];
+    
+    
     // Set up SpriteRenderable to use passed location and size
     var dims = [5, 5, 116, 172];
     var renderableObj = new SpriteRenderable(texture);
@@ -34,6 +41,7 @@ function Hero(texture, center, dps) {
     GameObject.call(this, renderableObj);
     
     // Customize for Hero functionality
+    // One controller handles following the mouse; the other takes over when 
     this.mMController = new MouseFollowController(this, center[0], center[1], 
                                                   this.kCycle, this.kRate);
     this.mAController = new SizeBounceController(this, this.mWidth/2, this.mHeight/2,
@@ -70,6 +78,7 @@ Hero.prototype.update = function(x, y) {
         }
     }
     else{
+        // If the Space was clicked, fire a new DyePack
         if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Space)) {        
             // Instantiate a new dyepack
             var newDyePack = new DyePack(
@@ -80,6 +89,77 @@ Hero.prototype.update = function(x, y) {
             this.mDyePackSet.addToSet(newDyePack);
         }
         
+        // HYPER SUPER POWER UP SHOT FUNCTION!
+        if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Space)){
+            
+            if (this.mWasPoweringUp){
+                
+                this.mPowerup += 1;
+                
+                if (this.mPowerup > this.kPowerUpThreshold ) {
+                    
+                    // Create a new set of lines
+                    if (this.mPowerUpLines.length === 0 ){
+                        
+                        for (var i = 0; i < 10; i++ ){
+
+                            var Xform = this.getXform();
+
+                            // Create some lines to show the powering up!
+                            this.mPowerUpLines.push(new LineRenderable(Xform.getXPos(), Xform.getYPos(),
+                                Xform.getXPos() + (this.mWidth * ((Math.random() > 0.5) ? Math.random() : -1 * Math.random())),
+                                Xform.getYPos() + (this.mWidth * ((Math.random() > 0.5) ? Math.random() : -1 * Math.random()))));
+
+                            this.mPowerUpLines[i].setColor([1,1,1,1]);
+                        }
+                        
+                    } else if (this.mPowerup % 4 === 0) {
+                        
+                        for (var i = 0; i < this.mPowerUpLines.length; i++ ){
+                            var Xform = this.getXform();
+
+                            // Move the lines around every few frames
+                            this.mPowerUpLines[i].setVertices(Xform.getXPos(), Xform.getYPos(),
+                                    Xform.getXPos() + (this.mWidth * ((Math.random() > 0.5) ? Math.random() : -1 * Math.random())),
+                                    Xform.getYPos() + (this.mWidth * ((Math.random() > 0.5) ? Math.random() : -1 * Math.random())));
+
+                        }
+                    }
+                }
+                
+            } else {
+                
+                this.mWasPoweringUp = true;
+            }
+            
+        } else {
+            // If 
+            if (this.mWasPoweringUp && this.mPowerup > this.kPowerUpThreshold ){
+                
+                this.mPowerup -= 1;
+                this.mPowerUpLines = [];
+                
+                var newDyePack = new DyePack(
+                                this.mTexture, 
+                                Xform.getXPos() + this.mShotOffset[0],
+                                Xform.getYPos() + this.mShotOffset[1],
+                                this.mZoomCams);
+                newDyePack.setCurrentFrontDir(
+                        vec2.fromValues( 1,
+                             0.5 * ((Math.random() > 0.5) ? Math.random() : -1 * Math.random())));
+                newDyePack.setSpeed(3);
+                this.mDyePackSet.addToSet(newDyePack);
+                
+            }
+            else if (this.mWasPoweringUp && this.mPowerup <= this.kPowerUpThreshold ) {
+                
+                this.mPowerup = 0;
+                this.mWasPoweringUp = false;
+                this.mPowerUpLines = [];
+                
+            }
+            
+        }
     }
     this.mMController.update(x, y);
 };
@@ -108,11 +188,25 @@ Hero.prototype.activateHit = function(){
     
     if (!this.mHit) {
         this.mHit = true;
-
+        
+        // Stop powerup!
+        this.mPowerup = 0;
+        this.mPowerUpLines = [];
+        
         this.mAController.restart();
 
         if (this.mZoomCams !== null ) {
             this.mZoomCams.registerHitHero();
         }
+    }
+};
+
+// Overloaded to ensure power-up lines are drawn.
+Hero.prototype.draw = function (aCamera) {
+    for (var i = 0; i < this.mPowerUpLines.length; i++ ) {
+        this.mPowerUpLines[i].draw(aCamera);
+    }
+    if (this.isVisible()) {
+        this.mRenderComponent.draw(aCamera);
     }
 };
