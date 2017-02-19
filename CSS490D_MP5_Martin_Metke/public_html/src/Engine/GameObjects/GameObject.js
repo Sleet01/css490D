@@ -13,9 +13,10 @@ function GameObject(renderableObj, physics) {
     this.mRenderComponent = renderableObj;
     this.mVisible = true;
     // New abstracted physics representation; default to DefaultPhysics normally
-    this.mPhysics = (typeof physics !== 'undefined') ? physics : new DefaultPhysics;
-    
+    this.mPhysics = (typeof physics !== 'undefined') ? physics : new DefaultPhysics();
+    this.mPhysics.register(this);
 }
+
 GameObject.prototype.getXform = function () { return this.mRenderComponent.getXform(); };
 GameObject.prototype.getBBox = function () {
     var xform = this.getXform();
