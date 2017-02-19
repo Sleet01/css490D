@@ -11,6 +11,17 @@
 function BoundingBox(centerPos, w, h) {
     this.mLL = vec2.fromValues(0, 0);
     this.setBounds(centerPos, w, h);
+    
+    // Set up lines representing the extents of this BoundingBox
+    this.mExtents = [];
+    this.mExtents.push(new LineRenderable(this.minX(), this.minY(), this.maxX(), this.minY()));
+    this.mExtents.push(new LineRenderable(this.maxX(), this.minY(), this.maxX(), this.maxY()));
+    this.mExtents.push(new LineRenderable(this.maxX(), this.maxY(), this.minX(), this.maxY()));
+    this.mExtents.push(new LineRenderable(this.minX(), this.maxY(), this.minX(), this.minY()));
+    for (var j = 0; j < this.mExtents.length; j++) {
+            this.mExtents[j].setColor([1, 1, 1, 1]);
+    }
+    
 }
 
 BoundingBox.eboundCollideStatus = Object.freeze({
@@ -74,5 +85,20 @@ BoundingBox.prototype.maxX = function () { return this.mLL[0] + this.mWidth; };
 BoundingBox.prototype.minY = function () { return this.mLL[1]; };
 BoundingBox.prototype.maxY = function () { return this.mLL[1] + this.mHeight; };
 
+BoundingBox.prototype._updateExtents = function () {
+    
+    this.mExtents[0].setVertices(this.minX(), this.minY(), this.maxX(), this.minY());
+    this.mExtents[1].setVertices(this.maxX(), this.minY(), this.maxX(), this.maxY());
+    this.mExtents[2].setVertices(this.maxX(), this.maxY(), this.minX(), this.maxY());
+    this.mExtents[3].setVertices(this.minX(), this.maxY(), this.minX(), this.minY());
+};
+
+// Allow the bounding box to draw itself.
+BoundingBox.prototype.draw = function( aCamera ) {
+    
+    for (var j = 0; j < this.mExtents.length; j++) {
+        this.mExtents[j].draw( aCamera );
+    }
+};
 
 //</editor-fold>

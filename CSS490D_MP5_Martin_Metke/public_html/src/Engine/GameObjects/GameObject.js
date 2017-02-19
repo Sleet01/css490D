@@ -9,11 +9,12 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function GameObject(renderableObj) {
+function GameObject(renderableObj, physics=null) {
     this.mRenderComponent = renderableObj;
     this.mVisible = true;
-    this.mCurrentFrontDir = vec2.fromValues(0, 1);  // this is the current front direction of the object
-    this.mSpeed = 0;
+    // New abstracted physics representation
+    this.mPhysics = physics;
+    
 }
 GameObject.prototype.getXform = function () { return this.mRenderComponent.getXform(); };
 GameObject.prototype.getBBox = function () {
@@ -82,8 +83,12 @@ GameObject.prototype.rotateObjPointTo = function (p, rate) {
 
 GameObject.prototype.update = function () {
     // simple default behavior
-    var pos = this.getXform().getPosition();
-    vec2.scaleAndAdd(pos, pos, this.getCurrentFrontDir(), this.getSpeed());
+    if (this.mPhysics !== null) {
+        this.mPhysics.update();
+    }else {
+        var pos = this.getXform().getPosition();
+        vec2.scaleAndAdd(pos, pos, this.getCurrentFrontDir(), this.getSpeed());
+    }
 };
 
 GameObject.prototype.draw = function (aCamera) {
