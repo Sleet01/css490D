@@ -9,11 +9,11 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function GameObject(renderableObj, physics=null) {
+function GameObject(renderableObj, physics) {
     this.mRenderComponent = renderableObj;
     this.mVisible = true;
-    // New abstracted physics representation
-    this.mPhysics = physics;
+    // New abstracted physics representation; default to DefaultPhysics normally
+    this.mPhysics = (typeof physics !== 'undefined') ? physics : new DefaultPhysics;
     
 }
 GameObject.prototype.getXform = function () { return this.mRenderComponent.getXform(); };
@@ -25,18 +25,20 @@ GameObject.prototype.getBBox = function () {
 GameObject.prototype.setVisibility = function (f) { this.mVisible = f; };
 GameObject.prototype.isVisible = function () { return this.mVisible; };
 
-GameObject.prototype.setSpeed = function (s) { this.mSpeed = s; };
-GameObject.prototype.getSpeed = function () { return this.mSpeed; };
-GameObject.prototype.incSpeedBy = function (delta) { this.mSpeed += delta; };
+GameObject.prototype.setSpeed = function (s) { this.mPhysics.setSpeed(s); };
+GameObject.prototype.getSpeed = function () { return this.mPhysics.getSpeed(); };
+GameObject.prototype.incSpeedBy = function (delta) { this.mPhysics.incSpeedBy(delta); };
 
-GameObject.prototype.setCurrentFrontDir = function (f) { vec2.normalize(this.mCurrentFrontDir, f); };
-GameObject.prototype.getCurrentFrontDir = function () { return this.mCurrentFrontDir; };
+GameObject.prototype.setCurrentFrontDir = function (f) { this.mPhysics.setCurrentFrontDir(f); };
+GameObject.prototype.getCurrentFrontDir = function () { return this.mPhysics.getCurrentFrontDir(); };
 
 GameObject.prototype.getRenderable = function () { return this.mRenderComponent; };
 
 // Orientate the entire object to point towards point p
 // will rotate Xform() accordingly
 GameObject.prototype.rotateObjPointTo = function (p, rate) {
+    /** TO DO: move into DefaultPhysics */
+    
     // Step A: determine if reach the destination position p
     var dir = [];
     vec2.sub(dir, p, this.getXform().getPosition());
@@ -85,9 +87,6 @@ GameObject.prototype.update = function () {
     // simple default behavior
     if (this.mPhysics !== null) {
         this.mPhysics.update();
-    }else {
-        var pos = this.getXform().getPosition();
-        vec2.scaleAndAdd(pos, pos, this.getCurrentFrontDir(), this.getSpeed());
     }
 };
 
