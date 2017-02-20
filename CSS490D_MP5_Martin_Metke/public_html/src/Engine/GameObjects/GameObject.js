@@ -12,6 +12,7 @@
 function GameObject(renderableObj, physics) {
     this.mRenderComponent = renderableObj;
     this.mXform = renderableObj.getXform();
+    this.mBBox = new BoundingBox(this.mXform.getPosition(), this.mXform.getWidth(), this.mXform.getHeight());
     this.mVisible = true;
     // New abstracted physics representation; default to DefaultPhysics normally
     this.mPhysicsComponent = (typeof physics !== 'undefined') ? physics : new DefaultPhysics();
@@ -41,6 +42,10 @@ GameObject.prototype.rotateObjPointTo = function (p, rate) {
     this.mPhysicsComponent.rotateObjPointTo(p, rate);
 };
 
+GameObject.prototype.reflect = function () {
+    this.mPhysicsComponent.reflect();
+};
+
 GameObject.prototype.update = function () {
     // simple default behavior
     if (this.mPhysicsComponent !== null) {
@@ -52,7 +57,7 @@ GameObject.prototype.draw = function (aCamera) {
     if (this.isVisible()) {
         this.mRenderComponent.draw(aCamera);
     }
-    if (this.Xform.getVisibility()) {
-        this.Xform.draw(aCamera);
+    if (this.mBBox.getVisibility()) {
+        this.mBBox.draw(aCamera);
     }
 };
