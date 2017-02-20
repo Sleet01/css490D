@@ -13,6 +13,8 @@ function Transform() {
     this.mPosition = vec2.fromValues(0, 0);  // this is the translation
     this.mScale = vec2.fromValues(1, 1);     // this is the width (x) and height (y)
     this.mRotationInRad = 0.0;               // in radians!
+    this.mVisible = false;
+    this.mBBox = new BoundingBox(this.mPosition, this.mScale[0], this.mScale[1]);
 }
 
 // <editor-fold desc="Public Methods">
@@ -84,5 +86,14 @@ Transform.prototype.getXform = function () {
     mat4.scale(matrix, matrix, vec3.fromValues(this.getWidth(), this.getHeight(), 1.0));
 
     return matrix;
+};
+
+Transform.prototype.getVisibility = function () { return this.mVisible; };
+Transform.prototype.setVisibility = function ( f ) { this.mVisible = f; };
+
+Transform.prototype.draw = function (aCamera) {
+    if (this.mVisible){
+        this.mBBox.draw(aCamera);
+    }
 };
 //</editor-fold>

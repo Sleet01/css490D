@@ -42,6 +42,7 @@ gEngine.GameLoop = (function () {
             //      If lag larger then update frames, update until caught up.
             while ((mLagTime >= kMPF) && mIsLoopRunning) {
                 gEngine.Input.update();
+                gEngine.Physics.collision();
                 this.update();      // call Scene.update()
                 mLagTime -= kMPF;
             }
