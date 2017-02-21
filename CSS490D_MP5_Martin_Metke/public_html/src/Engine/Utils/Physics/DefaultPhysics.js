@@ -10,10 +10,12 @@
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
 function DefaultPhysics( object = null ){
-    this.mCurrentFrontDir = vec2.fromValues(1, 0);  // this is the current front direction of the object
+    this.mCurrentFrontDir = vec2.fromValues(0, 1);  // this is the current front direction of the object
     this.mSpeed = 0;
+    this.mBRadius = 0;
     this.mObject = null;
     this.mCenter = null;
+    this.mBCircle = null;
     if (object !== null) { this.register(object); };
     
 };
@@ -23,6 +25,7 @@ DefaultPhysics.prototype.register = function (gObject){
     var Xform = gObject.getXform();
     this.mCenter = Xform.getPosition();
     this.mBRadius = Math.sqrt(Math.pow(Xform.getWidth(), 2) + Math.pow(Xform.getHeight(), 2))/2.0;
+    this.mBCircle = new CircleRenderable(this.mCenter, this.mBRadius);
 };
 
 DefaultPhysics.prototype.resetBRadius = function () { this.register(this.mObject); };
@@ -36,6 +39,10 @@ DefaultPhysics.prototype.incSpeedBy = function (delta) { this.mSpeed += delta; }
 DefaultPhysics.prototype.setCurrentFrontDir = function (f) { vec2.normalize(this.mCurrentFrontDir, f); };
 DefaultPhysics.getCurrentFrontDir = function () { return this.mCurrentFrontDir; };
 
+DefaultPhysics.prototype.drawBoundingCircle = function ( aCamera ) {
+    
+  
+};
 // Orientate the entire object to point towards point p
 // will rotate Xform() accordingly
 DefaultPhysics.prototype.rotateObjPointTo = function (p, rate) {
@@ -83,8 +90,16 @@ DefaultPhysics.prototype.rotateObjPointTo = function (p, rate) {
     this.mObject.getXform().incRotationByRad(rad);
 };
 
+
+
 DefaultPhysics.prototype.update = function () {
     // simple default behavior
     var pos = this.mObject.getXform().getPosition();
     vec2.scaleAndAdd(pos, pos, this.getCurrentFrontDir(), this.getSpeed());
+};
+
+DefaultPhysics.prototype.draw = function ( aCamera ) {
+    
+    this.drawBoundingCircle( aCamera );
+
 };
