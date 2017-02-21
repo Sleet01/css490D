@@ -11,17 +11,17 @@
 // Constructor and object definition
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-// p1, p2: either both there, or none
-function CircleRenderable(center, radius) {
+// A circle renderable that, given a center and radius, draws
+function CircleRenderable(center, radius, color=[1, 1, 1, 1]) {
     Renderable.call(this);
-    Renderable.prototype.setColor.call(this, [1, 1, 1, 1]);
+    Renderable.prototype.setColor.call(this, color);
     Renderable.prototype._setShader.call(this, gEngine.DefaultResources.getLineShader());
     this.getXform().setSize(radius*2, radius*2);
 
     this.mPointSize = 1;
     this.mDrawVertices = false;
     this.mShowLine = true;
-    this.mCenter = vec2.fromValues(center[0], center[1]);
+    this.mCenter = center;
     this.mRadius = radius;
     this.kLineRatio = 20;
     

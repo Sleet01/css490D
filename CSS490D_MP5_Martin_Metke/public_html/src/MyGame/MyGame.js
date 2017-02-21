@@ -135,6 +135,12 @@ MyGame.prototype.update = function () {
         this.mP1 = null;
     }
 
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.R )) {
+        for (var r = 0; r < this.mGOSet.size(); r++ ){
+            this.mGOSet.getObjectAt(r).reflect();
+        }
+    }
+
     this.mGOSet.update();
 
     msg += echo;

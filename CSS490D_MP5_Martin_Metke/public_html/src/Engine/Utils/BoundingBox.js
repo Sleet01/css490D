@@ -106,8 +106,10 @@ BoundingBox.prototype.getVisibility = function () {
 // Allow the bounding box to draw itself.
 BoundingBox.prototype.draw = function( aCamera ) {
     
-    for (var j = 0; j < this.mExtents.length; j++) {
-        this.mExtents[j].draw( aCamera );
+    if (this.mVisible){
+        for (var j = 0; j < this.mExtents.length; j++) {
+            this.mExtents[j].draw( aCamera );
+        }
     }
 };
 

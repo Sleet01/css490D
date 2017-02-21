@@ -23,11 +23,11 @@ gEngine.Physics = (function () {
         for (i =5; i < mAllObjects.length; ++i) {
             for (j = i + 1; j < mAllObjects.length; ++j){
                 if (mAllObjects[i].boundTest(mAllObjects[j])){
-                    if (mAllObjects[i].collisionTest(mAllObjects[j])) {
-                        //bounce;
-                        mAllObjects[i].reflect();
-                        mAllObjects[j].reflect();
-                    }
+                    
+                    //bounce;
+                    mAllObjects[i].reflect();
+                    mAllObjects[j].reflect();
+                    
                 }
             }
         }

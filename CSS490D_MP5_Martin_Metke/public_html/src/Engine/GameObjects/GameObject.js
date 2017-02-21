@@ -34,16 +34,19 @@ GameObject.prototype.getCurrentFrontDir = function () { return this.mPhysicsComp
 
 GameObject.prototype.getRenderable = function () { return this.mRenderComponent; };
 
+GameObject.prototype.boundTest = function ( oObject ) { return this.mPhysicsComponent.boundTest( oObject ); };
+GameObject.prototype.collisionTest = function ( oObject ) { return this.mPhysicsComponent.collisionTest( oObject ); };
+
+GameObject.prototype.reflect = function () {
+    this.mPhysicsComponent.reflect();
+};
+
 // Orientate the entire object to point towards point p
 // will rotate Xform() accordingly
 GameObject.prototype.rotateObjPointTo = function (p, rate) {
     /** TO DO: move into DefaultPhysics */
     
     this.mPhysicsComponent.rotateObjPointTo(p, rate);
-};
-
-GameObject.prototype.reflect = function () {
-    this.mPhysicsComponent.reflect();
 };
 
 GameObject.prototype.update = function () {

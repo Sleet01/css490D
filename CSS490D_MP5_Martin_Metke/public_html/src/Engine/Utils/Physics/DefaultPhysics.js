@@ -10,9 +10,10 @@
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
 function DefaultPhysics( object = null ){
-    this.mCurrentFrontDir = vec2.fromValues(0, 1);  // this is the current front direction of the object
+    this.mCurrentFrontDir = vec2.fromValues(-1, 0);  // this is the current front direction of the object
     this.mVisible = true;
-    this.mSpeed = 0.2;
+    this.mSpeed = 0.033;
+    this.mW = 0.001;
     this.mBRadius = 0;
     this.mObject = null;
     this.mCenter = null;
@@ -39,6 +40,15 @@ DefaultPhysics.prototype.getSpeed = function () { return this.mSpeed; };
 DefaultPhysics.prototype.incSpeedBy = function (delta) { this.mSpeed += delta; };
 DefaultPhysics.prototype.setCurrentFrontDir = function (f) { vec2.normalize(this.mCurrentFrontDir, f); };
 DefaultPhysics.prototype.getCurrentFrontDir = function () { return this.mCurrentFrontDir; };
+
+// Manipulate rotation rate in degrees
+DefaultPhysics.prototype.setRotationRate = function (rad) { this.mW = rad; };
+DefaultPhysics.prototype.getRotationRate = function () { return this.mW; };
+DefaultPhysics.prototype.incRotationRateBy = function (rad) { this.mW += rad; };
+
+DefaultPhysics.prototype.reflect = function () {
+    this.mCurrentFrontDir = vec2.fromValues(-1 * this.mCurrentFrontDir[0], -1 * this.mCurrentFrontDir[1]);
+};
 
 // Orientate the entire object to point towards point p
 // will rotate Xform() accordingly
@@ -98,8 +108,9 @@ DefaultPhysics.prototype.getVisibility = function () {
 DefaultPhysics.prototype.update = function () {
     // simple default behavior
     var pos = this.mObject.getXform().getPosition();
+    this.mObject.getXform().incRotationByRad(this.mW);
+    vec2.rotate(this.mCurrentFrontDir, this.mCurrentFrontDir, this.mW);
     vec2.scaleAndAdd(pos, pos, this.getCurrentFrontDir(), this.getSpeed());
-    this.mBCircle.setCenter(pos);
 };
 
 DefaultPhysics.prototype.draw = function ( aCamera ) {
