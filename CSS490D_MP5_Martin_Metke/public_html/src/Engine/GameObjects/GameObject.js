@@ -60,4 +60,6 @@ GameObject.prototype.draw = function (aCamera) {
     if (this.mBBox.getVisibility()) {
         this.mBBox.draw(aCamera);
     }
+    
+    this.mPhysicsComponent.draw(aCamera);
 };

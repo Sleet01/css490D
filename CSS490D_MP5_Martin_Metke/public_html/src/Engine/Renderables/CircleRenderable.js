@@ -42,10 +42,11 @@ CircleRenderable.prototype.draw = function (aCamera) {
     var sx, sy, cx, cy;
     var xf = this.getXform();
     var delta = (Math.PI * 2)/(Math.ceil(this.mRadius) * this.kLineRatio);
-    var mP1 = [this.mCenter[0] + this.mRadius, this.mCenter[1]];
+    var mP1 = [this.mCenter[0], this.mCenter[1]];
     var mP2 = [];
-    
-    for (theta = 0; theta <= Math.PI * 2; theta += delta ){
+
+    // Go through one revolution, +1 to close the circle
+    for (theta = 0; theta <= (Math.PI * 2) + 1; theta += delta ){
         
         mP2 = [this.mCenter[0] + (this.mRadius * Math.sin(theta)),
                this.mCenter[1] + (this.mRadius * Math.cos(theta))];
@@ -69,7 +70,7 @@ CircleRenderable.prototype.draw = function (aCamera) {
             gl.drawArrays(gl.POINTS, 0, 2);
         }
     }
-    
+   
     xf.setPosition(this.mCenter[0], this.mCenter[1]);
     xf.setSize(this.mRadius*2, this.mRadius*2);
 };

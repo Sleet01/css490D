@@ -5,7 +5,7 @@
 
 /*jslint node: true, vars: true */
 /*global gEngine, Scene, GameObjectset, TextureObject, Camera, vec2,
-  FontRenderable, SpriteRenderable, LineRenderable,
+  FontRenderable, SpriteRenderable, LineRenderable, SpriteAnimateRenderable,
   GameObject */
 /* find out more about jslint: http://www.jslint.com/help.html */
 
@@ -20,15 +20,35 @@ function MyGame() {
     this.mLineSet = [];
     this.mCurrentLine = null;
     this.mP1 = null;
+    this.mGOSet = new GameObjectSet;
+    
+    this.kSpriteSheet = "assets/SpriteSheet.png";
+  
 }
 gEngine.Core.inheritPrototype(MyGame, Scene);
+
+/** @brief  Load resources needed for this 
+ *  
+ */
+MyGame.prototype.loadScene = function () {
+    // Load the 
+    gEngine.Textures.loadTexture(this.kSpriteSheet);
+  
+};
+
+MyGame.prototype.unloadScene = function () {
+    // will be called from GameLoop.stop
+    gEngine.Textures.unloadTexture(this.kSpriteSheet);
+        
+    gEngine.GameLoop.stop();
+};
 
 MyGame.prototype.initialize = function () {
     // Step A: set up the cameras
     this.mCamera = new Camera(
-        vec2.fromValues(30, 27.5), // position of the camera
+        vec2.fromValues(50, 50), // position of the camera
         100,                       // width of camera
-        [0, 0, 640, 480]           // viewport (orgX, orgY, width, height)
+        [0, 0, 800, 600]           // viewport (orgX, orgY, width, height)
     );
     this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
             // sets the background to gray
@@ -37,6 +57,27 @@ MyGame.prototype.initialize = function () {
     this.mMsg.setColor([0, 0, 0, 1]);
     this.mMsg.getXform().setPosition(-19, -8);
     this.mMsg.setTextHeight(3);
+    
+    // Set up SpriteRenderable to use passed location and size
+    //    var dims = [[0, 0, 204, 136],
+    //                [0, 375 , 204, 163]];
+    // Actual values are [xOrigin, *top of sprite from bottom*, width, height]
+    var dims = [[0, 511, 204, 136],
+                  [0, 348 , 204, 163]];
+    var renderableObj = new SpriteAnimateRenderable(this.kSpriteSheet);
+    var Xform = renderableObj.getXform();
+    renderableObj.setColor([1, 1, 1, 0]);
+    renderableObj.setAnimationSpeed(12);
+    renderableObj.setSpriteSequence( dims[0][1], dims[0][0], 
+                                     dims[0][2], dims[0][3],
+                                     5, 0);
+    renderableObj.setAnimationType(SpriteAnimateRenderable.eAnimationType.eAnimateSwing);
+    Xform.setPosition(50, 50);
+    Xform.setSize(12, 9.6);
+    
+    var GO1 = new GameObject(renderableObj);
+    this.mGOSet.addToSet( GO1 );
+    this.regPhysObject( GO1 );
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
@@ -52,6 +93,10 @@ MyGame.prototype.draw = function () {
         l.draw(this.mCamera);
     }
     this.mMsg.draw(this.mCamera);   // only draw status in the main camera
+    
+    for (var j = 0; j < this.mGOSet.size(); j++ ){
+        this.mGOSet.getObjectAt(j).draw(this.mCamera);
+    }
 };
 
 // The Update function, updates the application state. Make sure to _NOT_ draw
@@ -90,6 +135,12 @@ MyGame.prototype.update = function () {
         this.mP1 = null;
     }
 
+    this.mGOSet.update();
+
     msg += echo;
     this.mMsg.setText(msg);
+};
+
+MyGame.prototype.regPhysObject = function ( object ) {
+    gEngine.Core.registerObject(object);
 };

@@ -11,7 +11,8 @@
 
 function DefaultPhysics( object = null ){
     this.mCurrentFrontDir = vec2.fromValues(0, 1);  // this is the current front direction of the object
-    this.mSpeed = 0;
+    this.mVisible = true;
+    this.mSpeed = 0.2;
     this.mBRadius = 0;
     this.mObject = null;
     this.mCenter = null;
@@ -37,12 +38,8 @@ DefaultPhysics.prototype.setSpeed = function (s) { this.mSpeed = s; };
 DefaultPhysics.prototype.getSpeed = function () { return this.mSpeed; };
 DefaultPhysics.prototype.incSpeedBy = function (delta) { this.mSpeed += delta; };
 DefaultPhysics.prototype.setCurrentFrontDir = function (f) { vec2.normalize(this.mCurrentFrontDir, f); };
-DefaultPhysics.getCurrentFrontDir = function () { return this.mCurrentFrontDir; };
+DefaultPhysics.prototype.getCurrentFrontDir = function () { return this.mCurrentFrontDir; };
 
-DefaultPhysics.prototype.drawBoundingCircle = function ( aCamera ) {
-    
-  
-};
 // Orientate the entire object to point towards point p
 // will rotate Xform() accordingly
 DefaultPhysics.prototype.rotateObjPointTo = function (p, rate) {
@@ -90,16 +87,24 @@ DefaultPhysics.prototype.rotateObjPointTo = function (p, rate) {
     this.mObject.getXform().incRotationByRad(rad);
 };
 
+DefaultPhysics.prototype.setVisibility = function (f) {
+    this.mVisible = f;
+};
 
+DefaultPhysics.prototype.getVisibility = function () {
+    return this.mVisible;
+};
 
 DefaultPhysics.prototype.update = function () {
     // simple default behavior
     var pos = this.mObject.getXform().getPosition();
     vec2.scaleAndAdd(pos, pos, this.getCurrentFrontDir(), this.getSpeed());
+    this.mBCircle.setCenter(pos);
 };
 
 DefaultPhysics.prototype.draw = function ( aCamera ) {
     
-    this.drawBoundingCircle( aCamera );
-
+    if(this.mVisible){
+        this.mBCircle.draw( aCamera );
+    }
 };
