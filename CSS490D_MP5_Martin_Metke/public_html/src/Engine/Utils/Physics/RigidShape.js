@@ -16,6 +16,7 @@ function RigidShape( object = null ){
     this.mVisible = true;
     this.mSpeed = 0.0;
     this.mW = 0.0;
+    this.mRotation = 0;
     this.mBRadius = 0;
     this.mObject = null;
     this.mCenter = null;
@@ -57,6 +58,8 @@ RigidShape.prototype.getCurrentFrontDir = function () { return this.mCurrentFron
 RigidShape.prototype.setRotationRate = function (rad) { this.mW = rad; };
 RigidShape.prototype.getRotationRate = function () { return this.mW; };
 RigidShape.prototype.incRotationRateBy = function (rad) { this.mW += rad; };
+RigidShape.prototype.getRotation = function () { return this.mRotation; };
+RigidShape.prototype.reverseRotation = function () { this.mW = -1 * this.mW; };
 
 // Perform reflection vs another object
 RigidShape.prototype.reflect = function (object) {
@@ -70,10 +73,6 @@ RigidShape.prototype.reflect = function (object) {
             this.mOngoingCollisions.put(object, this.kCollisionLimit);
         }
     }
-    else{
-        console.log("We should get here eventually...");
-    }
-    
 };
 
 // Utility functions for reflecting along one axis only.  Does not register a collision object
@@ -140,6 +139,7 @@ RigidShape.prototype.update = function () {
     var pos = this.mObject.getXform().getPosition();
     this.mObject.getXform().incRotationByRad(this.mW);
     this.mBCircle.incAngleBy(this.mW);
+    this.mRotation += this.mW;
     vec2.rotate(this.mCurrentFrontDir, this.mCurrentFrontDir, this.mW);
     vec2.scaleAndAdd(pos, pos, this.getCurrentFrontDir(), this.getSpeed());
     

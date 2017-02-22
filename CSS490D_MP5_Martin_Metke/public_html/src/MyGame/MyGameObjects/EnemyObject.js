@@ -31,10 +31,8 @@ function EnemyObject(texture) {
     
     var xDir = (Math.random() > 0.5) ? Math.random() : -1 * Math.random();
     var yDir = (Math.random() > 0.5) ? Math.random() : -1 * Math.random();
-    var angle = vec2.fromValues(1, 0);
     
     this.mPhysicsComponent.setCurrentFrontDir(vec2.fromValues(xDir, yDir));
-    this.mOriginalAngle = vec2.dot( angle, this.mPhysicsComponent.getCurrentFrontDir());
     
 }
 gEngine.Core.inheritPrototype(EnemyObject, GameObject);
@@ -64,6 +62,7 @@ EnemyObject.prototype.incBRadiusBy = function (delta){
     this.mPhysicsComponent.incBRadiusBy(delta);
 };
 
+// Pass-through function to return this EnemyObject's Bounding Radius (strictly for readout)
 EnemyObject.prototype.getBRadius = function () { return this.mPhysicsComponent.getBRadius(); };
 
 // Checks for a collision with the main camera's bounds; reverse directions
@@ -104,6 +103,8 @@ EnemyObject.prototype.collideWCBound = function (aCamera){
     
 };
 
+// Prevent drifting enemies from getting locked into a world bound too often
+// by putting timers on reversals in each axis
 EnemyObject.prototype.countdownCollisions = function () {
     if (this.xCollision !== 0){
         this.xCollision--;
@@ -113,7 +114,13 @@ EnemyObject.prototype.countdownCollisions = function () {
     }
 };
 
+// Update function takes a Camera strictly for world-bound checking.
+// Can operate fine without it.
 EnemyObject.prototype.update = function ( aCamera ) {
+    
+    if(gEngine.Input.isKeyClicked(gEngine.Input.keys.T)){
+        this.setVisibility(!this.isVisible());
+    }
     
     if ( aCamera !== undefined) {
         this.collideWCBound(aCamera);
@@ -121,4 +128,8 @@ EnemyObject.prototype.update = function ( aCamera ) {
     }
     GameObject.prototype.update.call(this);
     
+    if (Math.abs(this.mPhysicsComponent.getRotation()) > 1){
+        this.mPhysicsComponent.reverseRotation();
+    }
+   
 };
