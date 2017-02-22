@@ -14,14 +14,12 @@
 function MyGame() {
     // The camera to view the scene
     this.mCamera = null;
-
+    this.mSelected = 0;
     this.mMsg = null;
 
-    this.mLineSet = [];
-    this.mCurrentLine = null;
-    this.mP1 = null;
     this.mGOSet = new GameObjectSet;
     
+    this.kRadiusRate = 0.5;
     this.kSpriteSheet = "assets/SpriteSheet.png";
   
 }
@@ -55,29 +53,16 @@ MyGame.prototype.initialize = function () {
 
     this.mMsg = new FontRenderable("Status Message");
     this.mMsg.setColor([0, 0, 0, 1]);
-    this.mMsg.getXform().setPosition(-19, -8);
+    this.mMsg.getXform().setPosition(5, 15);
     this.mMsg.setTextHeight(3);
     
-    // Set up SpriteRenderable to use passed location and size
-    //    var dims = [[0, 0, 204, 136],
-    //                [0, 375 , 204, 163]];
-    // Actual values are [xOrigin, *top of sprite from bottom*, width, height]
-    var dims = [[0, 511, 204, 136],
-                  [0, 348 , 204, 163]];
-    var renderableObj = new SpriteAnimateRenderable(this.kSpriteSheet);
-    var Xform = renderableObj.getXform();
-    renderableObj.setColor([1, 1, 1, 0]);
-    renderableObj.setAnimationSpeed(12);
-    renderableObj.setSpriteSequence( dims[0][1], dims[0][0], 
-                                     dims[0][2], dims[0][3],
-                                     5, 0);
-    renderableObj.setAnimationType(SpriteAnimateRenderable.eAnimationType.eAnimateSwing);
-    Xform.setPosition(50, 50);
-    Xform.setSize(12, 9.6);
-    
-    var GO1 = new GameObject(renderableObj);
+       
+    var GO1 = new EnemyObject( this.kSpriteSheet );
+    var GO2 = new EnemyObject( this.kSpriteSheet );
     this.mGOSet.addToSet( GO1 );
+    this.mGOSet.addToSet( GO2 );
     this.regPhysObject( GO1 );
+    this.regPhysObject( GO2 );
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
@@ -87,11 +72,7 @@ MyGame.prototype.draw = function () {
     gEngine.Core.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
 
     this.mCamera.setupViewProjection();
-    var i, l;
-    for (i = 0; i < this.mLineSet.length; i++) {
-        l = this.mLineSet[i];
-        l.draw(this.mCamera);
-    }
+    
     this.mMsg.draw(this.mCamera);   // only draw status in the main camera
     
     for (var j = 0; j < this.mGOSet.size(); j++ ){
@@ -102,46 +83,30 @@ MyGame.prototype.draw = function () {
 // The Update function, updates the application state. Make sure to _NOT_ draw
 // anything from this function!
 MyGame.prototype.update = function () {
-    var msg = "Lines: " + this.mLineSet.length + " ";
+    var msg = "Selected object: " + this.mSelected + ", BRadius: " + this.mGOSet.getObjectAt(this.mSelected).getBRadius();
     var echo = "";
-    var x, y;
-
-    if (gEngine.Input.isButtonPressed(gEngine.Input.mouseButton.Middle)) {
-        var len = this.mLineSet.length;
-        if (len > 0) {
-            this.mCurrentLine = this.mLineSet[len - 1];
-            x = this.mCamera.mouseWCX();
-            y = this.mCamera.mouseWCY();
-            echo += "Selected " + len + " ";
-            echo += "[" + x.toPrecision(2) + " " + y.toPrecision(2) + "]";
-            this.mCurrentLine.setFirstVertex(x, y);
-        }
-    }
-
-    if (gEngine.Input.isButtonPressed(gEngine.Input.mouseButton.Left)) {
-        x = this.mCamera.mouseWCX();
-        y = this.mCamera.mouseWCY();
-        echo += "[" + x.toPrecision(2) + " " + y.toPrecision(2) + "]";
-
-        if (this.mCurrentLine === null) { // start a new one
-            this.mCurrentLine = new LineRenderable();
-            this.mCurrentLine.setFirstVertex(x, y);
-            this.mLineSet.push(this.mCurrentLine);
-        } else {
-            this.mCurrentLine.setSecondVertex(x, y);
-        }
-    } else {
-        this.mCurrentLine = null;
-        this.mP1 = null;
-    }
-
+    
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.R )) {
         for (var r = 0; r < this.mGOSet.size(); r++ ){
-            this.mGOSet.getObjectAt(r).reflect();
+            this.mGOSet.getObjectAt(r).reflect(this.mCamera);
         }
     }
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Left )) {
+        var nextIndex = (this.mSelected - 1);
+        this.mSelected = ( nextIndex >= 0) ? nextIndex : this.mGOSet.size() + nextIndex; 
+    }
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Right )) {
+        this.mSelected = (this.mSelected + 1) % this.mGOSet.size(); 
+    }
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Up )) {
+        this.mGOSet.getObjectAt(this.mSelected).incBRadiusBy(this.kRadiusRate); 
+    }
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Down )) {
+        this.mGOSet.getObjectAt(this.mSelected).incBRadiusBy(-this.kRadiusRate); 
+    }
 
-    this.mGOSet.update();
+
+    this.mGOSet.update(this.mCamera);
 
     msg += echo;
     this.mMsg.setText(msg);

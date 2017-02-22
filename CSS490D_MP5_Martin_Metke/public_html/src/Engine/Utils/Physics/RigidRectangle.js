@@ -4,12 +4,12 @@
  */
 
 /*jslint node: true, vars: true */
-/*global vec2, vec3, BoundingBox, GameObject, DefaultPhysics, gEngine */
+/*global vec2, vec3, BoundingBox, GameObject, RigidShape, gEngine */
 /* find out more about jslint: http://www.jslint.com/help.html */
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
 function RigidRectangle( object = null ){
-    DefaultPhysics.call(this, object);
+    RigidShape.call(this, object);
 }
-gEngine.Core.inheritPrototype(RigidRectangle, DefaultPhysics);
+gEngine.Core.inheritPrototype(RigidRectangle, RigidShape);

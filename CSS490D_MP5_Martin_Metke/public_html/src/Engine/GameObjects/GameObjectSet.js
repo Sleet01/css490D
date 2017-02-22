@@ -24,10 +24,10 @@ GameObjectSet.prototype.addToSet = function (obj) {
     this.mSet.push(obj);
 };
 
-GameObjectSet.prototype.update = function () {
+GameObjectSet.prototype.update = function (aCamera) {
     var i;
     for (i = 0; i < this.mSet.length; i++) {
-        this.mSet[i].update();
+        this.mSet[i].update(aCamera);
     }
 };
 

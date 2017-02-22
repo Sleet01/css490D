@@ -25,8 +25,8 @@ gEngine.Physics = (function () {
                 if (mAllObjects[i].boundTest(mAllObjects[j])){
                     
                     //bounce;
-                    mAllObjects[i].reflect();
-                    mAllObjects[j].reflect();
+                    mAllObjects[i].reflect(mAllObjects[j]);
+                    mAllObjects[j].reflect(mAllObjects[i]);
                     
                 }
             }

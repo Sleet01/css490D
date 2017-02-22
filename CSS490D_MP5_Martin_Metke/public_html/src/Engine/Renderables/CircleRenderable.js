@@ -17,13 +17,14 @@ function CircleRenderable(center, radius, color=[1, 1, 1, 1]) {
     Renderable.prototype.setColor.call(this, color);
     Renderable.prototype._setShader.call(this, gEngine.DefaultResources.getLineShader());
     this.getXform().setSize(radius*2, radius*2);
+    this.mAngle = 0;
 
     this.mPointSize = 1;
     this.mDrawVertices = false;
     this.mShowLine = true;
     this.mCenter = center;
     this.mRadius = radius;
-    this.kLineRatio = 20;
+    this.kLineRatio = 5;
     
 }
 gEngine.Core.inheritPrototype(CircleRenderable, Renderable);
@@ -38,7 +39,7 @@ CircleRenderable.prototype.draw = function (aCamera) {
     var gl = gEngine.Core.getGL();
     this.mShader.activateShader(this.mColor, aCamera);  // always activate the shader first!
 
-    var theta = 0;
+    var theta;
     var sx, sy, cx, cy;
     var xf = this.getXform();
     var delta = (Math.PI * 2)/(Math.ceil(this.mRadius) * this.kLineRatio);
@@ -46,7 +47,7 @@ CircleRenderable.prototype.draw = function (aCamera) {
     var mP2 = [];
 
     // Go through one revolution, +1 to close the circle
-    for (theta = 0; theta <= (Math.PI * 2) + 1; theta += delta ){
+    for (theta = 0 - this.mAngle; theta <= (Math.PI * 2) + .5 - this.mAngle; theta += delta ){
         
         mP2 = [this.mCenter[0] + (this.mRadius * Math.sin(theta)),
                this.mCenter[1] + (this.mRadius * Math.cos(theta))];
@@ -75,9 +76,15 @@ CircleRenderable.prototype.draw = function (aCamera) {
     xf.setSize(this.mRadius*2, this.mRadius*2);
 };
 
+// Replicate LineRenderable functionality
 CircleRenderable.prototype.setDrawVertices = function (s) { this.mDrawVertices = s; };
 CircleRenderable.prototype.setShowLine = function (s) { this.mShowLine = s; };
 CircleRenderable.prototype.setPointSize = function (s) { this.mPointSize = s; };
+
+
+CircleRenderable.prototype.setAngle = function (a) {this.mAngle = a;};
+CircleRenderable.prototype.getAngle = function () {return this.mAngle;};
+CircleRenderable.prototype.incAngleBy = function (delta) {this.mAngle += delta; };
 
 CircleRenderable.prototype.setCircle = function (center, radius) {
     this.setCenter(center);
@@ -87,9 +94,19 @@ CircleRenderable.prototype.setCircle = function (center, radius) {
 CircleRenderable.prototype.setCenter = function (center) {
     this.mCenter = vec2.fromValues(center[0], center[1]);
 };
+CircleRenderable.prototype.getCenter = function () {
+    return this.mCenter;
+};
 
 CircleRenderable.prototype.setRadius = function (radius) {
     this.mRadius = radius;
+};
+CircleRenderable.prototype.incRadiusBy = function (delta) {
+    this.mRadius += delta;
+};
+
+CircleRenderable.prototype.getRadius = function () {
+    return this.mRadius;
 };
 
 //--- end of Public Methods
