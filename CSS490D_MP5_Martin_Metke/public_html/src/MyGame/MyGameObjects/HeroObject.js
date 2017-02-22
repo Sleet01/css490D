@@ -13,7 +13,7 @@ function HeroObject(texture) {
         
     this.kWidth = 9;
     this.kHeight = 12;
-    this.kMDelta = 6/60.0;
+    this.kMDelta = 10/60.0;
     this.kRDelta = Math.PI * 2 / 3 / 60;
     // Set up the object with its RigidShape
     GameObject.call(this, this.initRenderable(texture), new RigidRectangle());

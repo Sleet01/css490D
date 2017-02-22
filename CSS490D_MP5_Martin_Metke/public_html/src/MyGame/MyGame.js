@@ -53,7 +53,7 @@ MyGame.prototype.initialize = function () {
 
     this.mMsg = new FontRenderable("Status Message");
     this.mMsg.setColor([0, 0, 0, 1]);
-    this.mMsg.getXform().setPosition(5, 15);
+    this.mMsg.getXform().setPosition(5, 5);
     this.mMsg.setTextHeight(3);
     
     // Set up Hero object
@@ -90,7 +90,6 @@ MyGame.prototype.draw = function () {
 // anything from this function!
 MyGame.prototype.update = function () {
     var msg = "Selected object: " + this.mSelected + ", BRadius: " + this.mGOSet.getObjectAt(this.mSelected).getBRadius();
-    var echo = "";
     
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.R )) {
         for (var r = 0; r < this.mGOSet.size(); r++ ){
@@ -120,7 +119,6 @@ MyGame.prototype.update = function () {
 
     this.mGOSet.update(this.mCamera);
 
-    msg += echo;
     this.mMsg.setText(msg);
 };
 

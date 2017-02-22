@@ -118,6 +118,8 @@ EnemyObject.prototype.countdownCollisions = function () {
 // Can operate fine without it.
 EnemyObject.prototype.update = function ( aCamera ) {
     
+    this.mRenderComponent.updateAnimation();
+    
     if(gEngine.Input.isKeyClicked(gEngine.Input.keys.T)){
         this.setVisibility(!this.isVisible());
     }
