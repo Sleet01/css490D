@@ -61,6 +61,18 @@ RigidShape.prototype.incRotationRateBy = function (rad) { this.mW += rad; };
 RigidShape.prototype.getRotation = function () { return this.mRotation; };
 RigidShape.prototype.reverseRotation = function () { this.mW = -1 * this.mW; };
 
+// Rotate by a set amount
+RigidShape.prototype.incRotationBy = function (rad) {
+    
+    this.mObject.getXform().incRotationByRad(rad);
+    this.mBCircle.incAngleBy(rad);
+    this.mRotation += rad;
+    vec2.rotate(this.mCurrentFrontDir, this.mCurrentFrontDir, rad);
+};
+
+RigidShape.prototype.incXPosBy = function (xDelta) { this.mObject.getXform().incXPosBy(xDelta); };
+RigidShape.prototype.incYPosBy = function (yDelta) { this.mObject.getXform().incYPosBy(yDelta); };
+
 // Perform reflection vs another object
 RigidShape.prototype.reflect = function (object) {
     // See if the object is in our Ongoing Collisions hash
@@ -137,10 +149,11 @@ RigidShape.prototype.getVisibility = function () {
 RigidShape.prototype.update = function () {
     // simple default behavior
     var pos = this.mObject.getXform().getPosition();
-    this.mObject.getXform().incRotationByRad(this.mW);
-    this.mBCircle.incAngleBy(this.mW);
-    this.mRotation += this.mW;
-    vec2.rotate(this.mCurrentFrontDir, this.mCurrentFrontDir, this.mW);
+//    this.mObject.getXform().incRotationByRad(this.mW);
+//    this.mBCircle.incAngleBy(this.mW);
+//    this.mRotation += this.mW;
+//    vec2.rotate(this.mCurrentFrontDir, this.mCurrentFrontDir, this.mW);
+    this.incRotationBy(this.mW);
     vec2.scaleAndAdd(pos, pos, this.getCurrentFrontDir(), this.getSpeed());
     
     // Clean up Ongoing Reflection list

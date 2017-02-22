@@ -29,8 +29,8 @@ RigidRectangle.prototype.register = function (gObject){
     // Set up extent objects (LineRenderables based on this object's bounding box
     
     this.resetPoints();
-    this.rotatePoints();
-    this.resetRectangle();
+    this.rotatePoints(0);
+    this.setupRectangle();
 };
 
 // Reset the points based on the current Xform
@@ -44,8 +44,8 @@ RigidRectangle.prototype.resetPoints = function () {
     xCtr = center[0];
     yCtr = center[1];
     
-    this.mPoints.push([xCtr - hWidth, yCtr + hHeight ]);
-    this.mPoints.push([xCtr - hWidth, yCtr + hHeight + this.kNormalLen ]);
+    this.mPoints.push([xCtr - hWidth, yCtr + hHeight ]); // Start of 1st 2 lines
+    this.mPoints.push([xCtr - hWidth, yCtr + hHeight + this.kNormalLen ]); // End point for 1st Vector
     this.mPoints.push([xCtr + hWidth, yCtr + hHeight ]); // End point for first side
     this.mPoints.push([xCtr + hWidth, yCtr + hHeight ]);
     this.mPoints.push([xCtr + hWidth + this.kNormalLen, yCtr + hHeight ]);
@@ -59,19 +59,40 @@ RigidRectangle.prototype.resetPoints = function () {
     
 };
 
-RigidRectangle.prototype.rotatePoints = function () {
+// Update lines.  I have been too clever for my own good.
+RigidRectangle.prototype.resetRectangle = function () {
+    
+    // this.mPoints index
+    var j;
+    
+    // Should be 8 lines, so 0 ~ 7: 0 ~ 11 in points?
+    // i = 0 : points[i] = 0, 1; i = 1 : points[i] = 0, 2
+    // i = 2 : points[i] = 3, 4; i = 3 : points[i] = 3, 5
+    // i = 4 : points[i] = 6, 7; i = 5 : points[i] = 6, 8
+    // i = 6 : points[i] = 9, 10; i = 7 : points[i] = 9, 11
+    for (var i = 0; i < this.mLines.length; i+=2){
+        
+        j = i + (i /2);
+        
+        this.mLines[i].setVertices(this.mPoints[j][0], this.mPoints[j][1], this.mPoints[j+1][0], this.mPoints[j+1][1]);
+        this.mLines[i+1].setVertices(this.mPoints[j][0], this.mPoints[j][1], this.mPoints[j+2][0], this.mPoints[j+2][1]);
+    }
+};
+
+RigidRectangle.prototype.rotatePoints = function (deltaAngle) {
     
     var center = this.mObject.getXform().getPosition();
     var point;
     
     for (var i = 0; i < this.mPoints.length; i++) {
         point = vec2.fromValues(this.mPoints[i][0], this.mPoints[i][1]);
-        vec2.rotateWRT(point, point, this.getRotation(), center);
+        vec2.rotateWRT(point, point, deltaAngle, center);
         this.mPoints[i] = [point[0], point[1]];
     }
 };
 
-RigidRectangle.prototype.resetRectangle = function () {
+// Fill this.mLines with LineRenderables.  Do *not* call more than once! >_<
+RigidRectangle.prototype.setupRectangle = function () {
     
 
     for (var i = 0; i < this.mPoints.length; i+=3){
@@ -84,10 +105,30 @@ RigidRectangle.prototype.resetRectangle = function () {
     }
 };
 
-RigidRectangle.prototype.update = function () {
+RigidRectangle.prototype.incRotationBy = function (rad) {
+    
+    RigidShape.prototype.incRotationBy.call(this, rad);
+    this.rotatePoints(rad);
+    
+};
+
+RigidRectangle.prototype.incXPosBy = function (xDelta) { 
+    RigidShape.prototype.incXPosBy.call(this, xDelta);
+    for (var i = 0; i < this.mPoints.length; i++ ){
+        this.mPoints[i][0] += xDelta;
+    }
+};
+
+RigidRectangle.prototype.incYPosBy = function (yDelta) { 
+    RigidShape.prototype.incYPosBy.call(this, yDelta);
+    for (var i = 0; i < this.mPoints.length; i++ ){
+        this.mPoints[i][1] += yDelta;
+    }
+};
+
+RigidRectangle.prototype.update = function ( ) {
     // simple default behavior
     RigidShape.prototype.update.call(this);
-    this.rotatePoints();
     this.resetRectangle();
 
 };

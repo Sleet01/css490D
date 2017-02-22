@@ -44,7 +44,7 @@ MyGame.prototype.unloadScene = function () {
 MyGame.prototype.initialize = function () {
     // Step A: set up the cameras
     this.mCamera = new Camera(
-        vec2.fromValues(50, 50), // position of the camera
+        vec2.fromValues(50, 37.5), // position of the camera
         100,                       // width of camera
         [0, 0, 800, 600]           // viewport (orgX, orgY, width, height)
     );
@@ -56,7 +56,12 @@ MyGame.prototype.initialize = function () {
     this.mMsg.getXform().setPosition(5, 15);
     this.mMsg.setTextHeight(3);
     
-       
+    // Set up Hero object
+    var hero = new HeroObject(this.kSpriteSheet);
+    this.mGOSet.addToSet( hero );
+    this.regPhysObject( hero );
+    
+    // Set up enemy objects
     for (var i = 0; i < 5; i++ ){
         var enemy = new EnemyObject(this.kSpriteSheet);
         this.mGOSet.addToSet( enemy );
