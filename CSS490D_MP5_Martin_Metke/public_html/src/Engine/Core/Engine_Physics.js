@@ -20,7 +20,7 @@ gEngine.Physics = (function () {
     var collision = function () {
                 
         var i, j;
-        for (i =5; i < mAllObjects.length; ++i) {
+        for (i = 0; i < mAllObjects.length; ++i) {
             for (j = i + 1; j < mAllObjects.length; ++j){
                 if (mAllObjects[i].boundTest(mAllObjects[j])){
                     

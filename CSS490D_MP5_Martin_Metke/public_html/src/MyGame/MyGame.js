@@ -57,12 +57,13 @@ MyGame.prototype.initialize = function () {
     this.mMsg.setTextHeight(3);
     
        
-    var GO1 = new EnemyObject( this.kSpriteSheet );
-    var GO2 = new EnemyObject( this.kSpriteSheet );
-    this.mGOSet.addToSet( GO1 );
-    this.mGOSet.addToSet( GO2 );
-    this.regPhysObject( GO1 );
-    this.regPhysObject( GO2 );
+    for (var i = 0; i < 5; i++ ){
+        var enemy = new EnemyObject(this.kSpriteSheet);
+        this.mGOSet.addToSet( enemy );
+        this.regPhysObject( enemy );
+    }
+    
+    
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
@@ -91,6 +92,7 @@ MyGame.prototype.update = function () {
             this.mGOSet.getObjectAt(r).reflect(this.mCamera);
         }
     }
+    // Select an object
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Left )) {
         var nextIndex = (this.mSelected - 1);
         this.mSelected = ( nextIndex >= 0) ? nextIndex : this.mGOSet.size() + nextIndex; 
@@ -98,9 +100,14 @@ MyGame.prototype.update = function () {
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Right )) {
         this.mSelected = (this.mSelected + 1) % this.mGOSet.size(); 
     }
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Zero )) {
+        this.mSelected = 0;
+    }
+    // Manipulate radius of selected objects
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Up )) {
         this.mGOSet.getObjectAt(this.mSelected).incBRadiusBy(this.kRadiusRate); 
     }
+    
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Down )) {
         this.mGOSet.getObjectAt(this.mSelected).incBRadiusBy(-this.kRadiusRate); 
     }

@@ -44,6 +44,7 @@ GameObject.prototype.setCurrentFrontDir = function (f) {
     } 
 };
 
+GameObject.prototype.getCenter = function () { return (this.mPhysicsComponent === null) ? null : this.mPhysicsComponent.getCenter(); };
 GameObject.prototype.getCurrentFrontDir = function () { return (this.mPhysicsComponent === null) ? null : this.mPhysicsComponent.getCurrentFrontDir(); };
 
 GameObject.prototype.getRenderable = function () { return this.mRenderComponent; };

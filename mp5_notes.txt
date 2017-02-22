@@ -1,0 +1,21 @@
+Hero:
++ RigidRectangle
+-- Face Normal + side vector
++ Bounding Circle (from RigidShape)
++ WASD moves
++ ZX rotates (including Xform, BCircle, RigidRectangle)
++ T toggles texture display
+L/R keys select current object
+U/D keys increase/decrease *Bounding* circle radius
+
+Enemy:
++ RigidCircle
++ BoundingCircle (from RigidShape)
+-- Defaults to RigidCircle size
++ Moves 20 U/s @ random direction
++ Rotates 0.6 Rad/s between initial direction +/- one rad
+-- Does reflection change all facing?
++ Constrained to Camera BBox
+L/R keys select current object
+U/D keys increase/decrease *Bounding* circle radius
+0 selects Hero

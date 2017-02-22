@@ -44,6 +44,7 @@ RigidShape.prototype.incBRadiusBy = function (deltaR) {
     this.mBCircle.incRadiusBy(deltaR);
 };
 
+RigidShape.prototype.getCenter = function () {return this.mObject.getXform().getPosition();};
 RigidShape.prototype.getBRadius = function () { return this.mBRadius; };
 
 RigidShape.prototype.setSpeed = function (s) { this.mSpeed = s; };
@@ -155,6 +156,20 @@ RigidShape.prototype.update = function () {
         }
     }
     
+};
+
+RigidShape.prototype.boundTest = function ( oObject ) {
+    
+    var displacement = vec2.fromValues(0,0);
+    vec2.sub(displacement, this.getCenter(), oObject.getCenter());
+    var distance = vec2.length(displacement);
+    
+    if (distance <= this.getBRadius() + oObject.getBRadius()){
+        return true;
+    }
+    else{
+        return false;
+    }
 };
 
 RigidShape.prototype.draw = function ( aCamera ) {
