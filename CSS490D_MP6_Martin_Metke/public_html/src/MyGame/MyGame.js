@@ -100,6 +100,7 @@ MyGame.prototype.draw = function () {
     for (var j = 0; j < collisions.length; ++j){
         collisions[j].draw(this.mCamera);
     }
+    gEngine.Core.clearCollisions();
     
 };
 
@@ -107,7 +108,7 @@ MyGame.prototype.draw = function () {
 // anything from this function!
 MyGame.prototype.update = function () {
     // Trying clearing the collisions at the start of the update pass
-    gEngine.Core.clearCollisions();
+    //gEngine.Core.clearCollisions();
     
     var msg = "Objects: " + this.mGOSet.size() + ", Selected object: " + this.mSelected + ", BRadius: " 
             + this.mGOSet.getObjectAt(this.mSelected).getBRadius().toFixed(2);
