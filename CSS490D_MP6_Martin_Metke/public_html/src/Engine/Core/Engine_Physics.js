@@ -18,11 +18,21 @@ gEngine.Physics = (function () {
     var mAllObjects = gEngine.Core.getObjects();
     
     var collision = function () {
-                
+
         var i, j;
+        var collisionInfo;
+        
         for (i = 0; i < mAllObjects.length; ++i) {
             for (j = i + 1; j < mAllObjects.length; ++j){
                 if (mAllObjects[i].boundTest(mAllObjects[j])){
+                    if (mAllObjects[i].collisionTest(mAllObjects[j], collisionInfo)) {
+//                        //make sure the normal is always from object[i] to object[j]
+//                        if (collisionInfo.getNormal().dot(mAllObjects[j].mCenter.subtract(mAllObjects[i].mCenter)) < 0) {
+//                            collisionInfo.changeDir();
+//                        }
+//                        //draw collision info (a black line that shows normal)
+//                        drawCollisionInfo(collisionInfo, gEngine.Core.mContext);
+                    }
                     
                     //bounce;
                     mAllObjects[i].reflect(mAllObjects[j]);

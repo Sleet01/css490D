@@ -51,7 +51,10 @@ GameObject.prototype.getRenderable = function () { return this.mRenderComponent;
 
 // Pass-through functions for bound tests
 GameObject.prototype.boundTest = function ( oObject ) { return (this.mPhysicsComponent === null) ? null : this.mPhysicsComponent.boundTest( oObject ); };
-GameObject.prototype.collisionTest = function ( oObject ) { return (this.mPhysicsComponent === null) ? null : this.mPhysicsComponent.collisionTest( oObject ); };
+GameObject.prototype.collisionTest = function ( oObject ) { 
+    return false;
+    //return (this.mPhysicsComponent === null) ? null : this.mPhysicsComponent.collisionTest( oObject ); 
+};
 
 // Pass-through functions for reflection
 GameObject.prototype.reflect = function (aObject) {

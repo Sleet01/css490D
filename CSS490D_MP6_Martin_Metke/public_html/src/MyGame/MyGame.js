@@ -89,7 +89,8 @@ MyGame.prototype.draw = function () {
 // The Update function, updates the application state. Make sure to _NOT_ draw
 // anything from this function!
 MyGame.prototype.update = function () {
-    var msg = "Selected object: " + this.mSelected + ", BRadius: " + this.mGOSet.getObjectAt(this.mSelected).getBRadius();
+    var msg = "Objects: " + this.mGOSet.size() + "Selected object: " + this.mSelected + ", BRadius: " 
+            + this.mGOSet.getObjectAt(this.mSelected).getBRadius();
     
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.R )) {
         for (var r = 0; r < this.mGOSet.size(); r++ ){
