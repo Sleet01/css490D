@@ -12,7 +12,7 @@
 function GameObject(renderableObj, physics = null) {
     this.mRenderComponent = renderableObj;
     this.mXform = renderableObj.getXform();
-    this.mVisible = true;
+    this.mVisible = false;
     // New abstracted physics representation; default to RigidShape normally
     this.mPhysicsComponent = physics;
     if (physics !== null){
@@ -21,6 +21,7 @@ function GameObject(renderableObj, physics = null) {
 }
 
 GameObject.prototype.getXform = function () { return this.mXform; };
+GameObject.prototype.getPhysicsComponent = function () { return this.mPhysicsComponent; };
 
 GameObject.prototype.setVisibility = function (f) { this.mVisible = f; };
 GameObject.prototype.isVisible = function () { return this.mVisible; };

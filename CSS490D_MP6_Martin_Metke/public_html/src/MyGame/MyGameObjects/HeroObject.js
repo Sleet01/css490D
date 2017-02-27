@@ -13,8 +13,7 @@ function HeroObject(texture) {
         
     this.kWidth = 9;
     this.kHeight = 12;
-    this.kMDelta = 10/60.0;
-    this.kRDelta = Math.PI * 2 / 3 / 60;
+    
     // Set up the object with its RigidShape
     GameObject.call(this, this.initRenderable(texture), new RigidRectangle());
     
@@ -73,29 +72,7 @@ HeroObject.prototype.collideWCBound = function (aCamera){
 // Update function takes a Camera strictly for world-bound checking.
 // Can operate fine without it.
 HeroObject.prototype.update = function ( aCamera ) {
-    
-    if(gEngine.Input.isKeyClicked(gEngine.Input.keys.T)){
-        this.setVisibility(!this.isVisible());
-    }
-    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.W)){
-        this.mPhysicsComponent.incYPosBy(this.kMDelta);
-    }
-    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.S)){
-        this.mPhysicsComponent.incYPosBy(-this.kMDelta);
-    }
-    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.A)){
-        this.mPhysicsComponent.incXPosBy(-this.kMDelta);
-    }
-    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.D)){
-        this.mPhysicsComponent.incXPosBy(this.kMDelta);
-    }
-    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Z)){
-        this.mPhysicsComponent.incRotationBy(this.kRDelta);
-    }
-    if(gEngine.Input.isKeyPressed(gEngine.Input.keys.X)){
-        this.mPhysicsComponent.incRotationBy(-this.kRDelta);
-    }
-    
+  
 //    if ( aCamera !== undefined) {
 //        this.collideWCBound(aCamera);
 //    }

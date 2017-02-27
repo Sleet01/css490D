@@ -26,8 +26,8 @@ function EnemyObject(texture) {
     // Enemy-specific configuration
     this.mPhysicsComponent.setBRadius(this.kRRadius);
     this.mPhysicsComponent.setRRadius(this.kRRadius);
-    this.mPhysicsComponent.setSpeed(20/60);
-    this.mPhysicsComponent.setRotationRate(0.6/60);
+    //this.mPhysicsComponent.setSpeed(20/60);
+    //this.mPhysicsComponent.setRotationRate(0.6/60);
     
     var xDir = (Math.random() > 0.5) ? Math.random() : -1 * Math.random();
     var yDir = (Math.random() > 0.5) ? Math.random() : -1 * Math.random();

@@ -16,6 +16,8 @@ function MyGame() {
     this.mCamera = null;
     this.mSelected = 0;
     this.mMsg = null;
+    this.kMDelta = 10/60.0;
+    this.kRDelta = Math.PI * 2 / 3 / 60;
 
     this.mGOSet = new GameObjectSet;
     
@@ -89,7 +91,7 @@ MyGame.prototype.draw = function () {
 // The Update function, updates the application state. Make sure to _NOT_ draw
 // anything from this function!
 MyGame.prototype.update = function () {
-    var msg = "Objects: " + this.mGOSet.size() + "Selected object: " + this.mSelected + ", BRadius: " 
+    var msg = "Objects: " + this.mGOSet.size() + ", Selected object: " + this.mSelected + ", BRadius: " 
             + this.mGOSet.getObjectAt(this.mSelected).getBRadius();
     
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.R )) {
@@ -108,16 +110,41 @@ MyGame.prototype.update = function () {
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Zero )) {
         this.mSelected = 0;
     }
+
+    var selected = this.mGOSet.getObjectAt(this.mSelected);
+    var sPhysics = selected.getPhysicsComponent();
+
     // Manipulate radius of selected objects
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Up )) {
-        this.mGOSet.getObjectAt(this.mSelected).incBRadiusBy(this.kRadiusRate); 
+        selected.incBRadiusBy(this.kRadiusRate); 
     }
-    
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Down )) {
-        this.mGOSet.getObjectAt(this.mSelected).incBRadiusBy(-this.kRadiusRate); 
+        selected.incBRadiusBy(-this.kRadiusRate); 
     }
-
-
+    if (sPhysics !== null){
+        // Manipulate position of selected objects
+        if(gEngine.Input.isKeyClicked(gEngine.Input.keys.T)){
+            selected.setVisibility(!selected.isVisible());
+        }
+        if(gEngine.Input.isKeyPressed(gEngine.Input.keys.W)){
+            sPhysics.incYPosBy(this.kMDelta);
+        }
+        if(gEngine.Input.isKeyPressed(gEngine.Input.keys.S)){
+            sPhysics.incYPosBy(-this.kMDelta);
+        }
+        if(gEngine.Input.isKeyPressed(gEngine.Input.keys.A)){
+            sPhysics.incXPosBy(-this.kMDelta);
+        }
+        if(gEngine.Input.isKeyPressed(gEngine.Input.keys.D)){
+            sPhysics.incXPosBy(this.kMDelta);
+        }
+        if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Z)){
+            sPhysics.incRotationBy(this.kRDelta);
+        }
+        if(gEngine.Input.isKeyPressed(gEngine.Input.keys.X)){
+            sPhysics.incRotationBy(-this.kRDelta);
+        }
+    }
     this.mGOSet.update(this.mCamera);
 
     this.mMsg.setText(msg);
