@@ -111,21 +111,24 @@ MyGame.prototype.update = function () {
         this.mSelected = 0;
     }
 
+    // Manipulate the selected object
     var selected = this.mGOSet.getObjectAt(this.mSelected);
     var sPhysics = selected.getPhysicsComponent();
 
-    // Manipulate radius of selected objects
+    // Manipulate radius, visibility of selected objects
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Up )) {
         selected.incBRadiusBy(this.kRadiusRate); 
     }
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Down )) {
         selected.incBRadiusBy(-this.kRadiusRate); 
     }
+    if(gEngine.Input.isKeyClicked(gEngine.Input.keys.T)){
+        selected.setVisibility(!selected.isVisible());
+    }
+    
     if (sPhysics !== null){
         // Manipulate position of selected objects
-        if(gEngine.Input.isKeyClicked(gEngine.Input.keys.T)){
-            selected.setVisibility(!selected.isVisible());
-        }
+       
         if(gEngine.Input.isKeyPressed(gEngine.Input.keys.W)){
             sPhysics.incYPosBy(this.kMDelta);
         }
@@ -144,7 +147,12 @@ MyGame.prototype.update = function () {
         if(gEngine.Input.isKeyPressed(gEngine.Input.keys.X)){
             sPhysics.incRotationBy(-this.kRDelta);
         }
+        if(gEngine.Input.isKeyPressed(gEngine.Input.keys.C)){
+            sPhysics.setRotation(0);
+        }
     }
+    
+    // Pass a camera through for bounds-checking
     this.mGOSet.update(this.mCamera);
 
     this.mMsg.setText(msg);

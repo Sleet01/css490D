@@ -59,6 +59,7 @@ RigidShape.prototype.setRotationRate = function (rad) { this.mW = rad; };
 RigidShape.prototype.getRotationRate = function () { return this.mW; };
 RigidShape.prototype.incRotationRateBy = function (rad) { this.mW += rad; };
 RigidShape.prototype.getRotation = function () { return this.mRotation; };
+RigidShape.prototype.setRotation = function (rad) {this.incRotationBy(rad - this.getRotation()); };
 RigidShape.prototype.reverseRotation = function () { this.mW = -1 * this.mW; };
 
 // Rotate by a set amount
