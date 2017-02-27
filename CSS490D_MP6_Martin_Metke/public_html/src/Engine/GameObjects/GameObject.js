@@ -9,9 +9,10 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function GameObject(renderableObj, physics = null) {
+function GameObject(x, y, renderableObj, physics = null) {
     this.mRenderComponent = renderableObj;
     this.mXform = renderableObj.getXform();
+    this.mXform.setPosition(x, y);
     this.mVisible = false;
     // New abstracted physics representation; default to RigidShape normally
     this.mPhysicsComponent = physics;

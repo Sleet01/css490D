@@ -18,6 +18,7 @@ gEngine.Core = (function () {
     // The graphical context to draw to
     var mGL = null;
     var mAllObjects = [];
+    var mAllCollisions = [];
     
     // initialize the WebGL, the vertex buffer and compile the shaders
     var _initializeWebGL = function (htmlCanvasID) {
@@ -88,22 +89,33 @@ gEngine.Core = (function () {
             return mAllObjects.slice(index, 1)[0];
         }
     };
+    var registerCollision = function (cInfo) { mAllCollisions.push(cInfo); };
+    var clearCollisions = function () { 
+        if (mAllCollisions.length > 0 ){
+            mAllCollisions.length = 0;
+        } 
+    };
     
     // Return the array of registered objects
     var getObjects = function () { return mAllObjects; };
+    // Return the array of registered collisions
+    var getCollisions = function () { return mAllCollisions; };
 
 // -- end of public methods
 
     var mPublic = {
         getGL: getGL,
         getObjects: getObjects,
+        getCollisions: getCollisions,
         initializeEngineCore: initializeEngineCore,
         clearCanvas: clearCanvas,
         inheritPrototype: inheritPrototype,
         startScene: startScene,
         cleanUp: cleanUp,
         registerObject: registerObject,
-        removeObject: removeObject
+        removeObject: removeObject,
+        registerCollision: registerCollision,
+        clearCollisions: clearCollisions
     };
 
     return mPublic;

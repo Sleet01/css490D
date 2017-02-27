@@ -59,15 +59,26 @@ MyGame.prototype.initialize = function () {
     this.mMsg.setTextHeight(3);
     
     // Set up Hero object
-    var hero = new HeroObject(this.kSpriteSheet);
+    var hero = new HeroObject( 50, 37.5, this.kSpriteSheet);
     this.mGOSet.addToSet( hero );
     this.regPhysObject( hero );
     
     // Set up enemy objects
+    var pos = [[10, 20],
+               [30, 20],
+               [50, 20],
+               [70, 20],
+               [90, 20]];
+                 
     for (var i = 0; i < 5; i++ ){
-        var enemy = new EnemyObject(this.kSpriteSheet);
-        this.mGOSet.addToSet( enemy );
-        this.regPhysObject( enemy );
+        var obj;
+        if (i % 2 === 1){
+            obj = new RectObject(pos[i][0], pos[i][1], this.kSpriteSheet);
+        } else {
+            var obj = new CircObject(pos[i][0], pos[i][1], this.kSpriteSheet);
+        }
+        this.mGOSet.addToSet( obj );
+        this.regPhysObject( obj );
     }
     
     
@@ -83,16 +94,23 @@ MyGame.prototype.draw = function () {
     
     this.mMsg.draw(this.mCamera);   // only draw status in the main camera
     
-    for (var j = 0; j < this.mGOSet.size(); j++ ){
-        this.mGOSet.getObjectAt(j).draw(this.mCamera);
+    this.mGOSet.draw(this.mCamera);
+       
+    var collisions = gEngine.Core.getCollisions();
+    for (var j = 0; j < collisions.length; ++j){
+        collisions[j].draw(this.mCamera);
     }
+    
 };
 
 // The Update function, updates the application state. Make sure to _NOT_ draw
 // anything from this function!
 MyGame.prototype.update = function () {
+    // Trying clearing the collisions at the start of the update pass
+    gEngine.Core.clearCollisions();
+    
     var msg = "Objects: " + this.mGOSet.size() + ", Selected object: " + this.mSelected + ", BRadius: " 
-            + this.mGOSet.getObjectAt(this.mSelected).getBRadius();
+            + this.mGOSet.getObjectAt(this.mSelected).getBRadius().toFixed(2);
     
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.R )) {
         for (var r = 0; r < this.mGOSet.size(); r++ ){

@@ -143,8 +143,8 @@ RigidRectangle.prototype.incYPosBy = function (yDelta) {
 };
 
 RigidRectangle.prototype.collisionTest = function ( oObject, collisionInfo ) {
-  
     
+    return false;
     
 };
 

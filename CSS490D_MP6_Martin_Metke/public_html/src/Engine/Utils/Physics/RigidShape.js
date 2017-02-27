@@ -147,6 +147,8 @@ RigidShape.prototype.getVisibility = function () {
     return this.mVisible;
 };
 
+RigidShape.prototype.toggleBVis = function () { this.mVisible = !this.mVisible; };
+
 RigidShape.prototype.update = function () {
     // simple default behavior
     var pos = this.mObject.getXform().getPosition();

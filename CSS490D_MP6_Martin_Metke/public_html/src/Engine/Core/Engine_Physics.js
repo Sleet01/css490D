@@ -16,7 +16,7 @@ var gEngine = gEngine || { };
 gEngine.Physics = (function () {
     
     var mAllObjects = gEngine.Core.getObjects();
-    
+        
     var collision = function () {
 
         var i, j;
@@ -37,15 +37,10 @@ gEngine.Physics = (function () {
                             collisionInfo.changeDir();
                         }
                         
-                        //bounce;
-                        mAllObjects[i].reflect(mAllObjects[j]);
-                        mAllObjects[j].reflect(mAllObjects[i]);
                         //draw collision info (a black line that shows normal)
-                        // drawCollisionInfo(collisionInfo, gEngine.Core.mContext);
+                        gEngine.Core.registerCollision(collisionInfo); 
+
                     }
-                    
-                    
-                    
                 }
             }
         }

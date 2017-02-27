@@ -66,6 +66,8 @@ RigidCircle.prototype.collidedCircCirc = function (c1, c2, collisionInfo) {
         var c2Offset = vec2.create();
         vec2.add(c2Offset, c2.mCenter, radiusC2);
         vec2.normalize(vFrom1to2, vFrom1to2);
+        // Set collision info with reversed, scaled, vector pointing out towards
+        // C2's center, by depth of overlap
         collisionInfo.setInfo(rSum - dist, vFrom1to2, c2Offset);
     } else {
         //same position
@@ -93,6 +95,7 @@ RigidCircle.prototype.draw = function ( aCamera ) {
     
     if(this.mVisible){
         this.mBCircle.draw( aCamera );
-        this.mRCircle.draw( aCamera );
     }
+    
+    this.mRCircle.draw( aCamera );
 };
