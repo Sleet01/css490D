@@ -3,7 +3,7 @@
  * Engine component responsible for handling physics interactions
  */
 /*jslint node: true, vars: true, evil: true */
-/*global document */
+/*global document, vec2*/
 /* find out more about jslint: http://www.jslint.com/help.html */
 
 //  Global variable EngineCore
@@ -21,22 +21,30 @@ gEngine.Physics = (function () {
 
         var i, j;
         var collisionInfo;
+        var centerDiff;
         
         for (i = 0; i < mAllObjects.length; ++i) {
             for (j = i + 1; j < mAllObjects.length; ++j){
                 if (mAllObjects[i].boundTest(mAllObjects[j])){
+                    
+                    collisionInfo = new CollisionInfo();
                     if (mAllObjects[i].collisionTest(mAllObjects[j], collisionInfo)) {
-//                        //make sure the normal is always from object[i] to object[j]
-//                        if (collisionInfo.getNormal().dot(mAllObjects[j].mCenter.subtract(mAllObjects[i].mCenter)) < 0) {
-//                            collisionInfo.changeDir();
-//                        }
-//                        //draw collision info (a black line that shows normal)
-//                        drawCollisionInfo(collisionInfo, gEngine.Core.mContext);
+                        //make sure the normal is always from object[i] to object[j]
+                        centerDiff = vec2.create();
+                        vec2.sub(centerDiff, mAllObjects[j].mPhysicsComponent.mCenter, mAllObjects[i].mPhysicsComponent.mCenter);
+                        
+                        if (vec2.dot(collisionInfo.getNormal(), centerDiff) < 0) {
+                            collisionInfo.changeDir();
+                        }
+                        
+                        //bounce;
+                        mAllObjects[i].reflect(mAllObjects[j]);
+                        mAllObjects[j].reflect(mAllObjects[i]);
+                        //draw collision info (a black line that shows normal)
+                        // drawCollisionInfo(collisionInfo, gEngine.Core.mContext);
                     }
                     
-                    //bounce;
-                    mAllObjects[i].reflect(mAllObjects[j]);
-                    mAllObjects[j].reflect(mAllObjects[i]);
+                    
                     
                 }
             }

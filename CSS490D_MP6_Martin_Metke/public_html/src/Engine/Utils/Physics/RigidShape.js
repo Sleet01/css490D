@@ -185,6 +185,12 @@ RigidShape.prototype.boundTest = function ( oObject ) {
     }
 };
 
+// Default CollisionTest; always returns false
+RigidShape.prototype.collisionTest = function ( oObject, collisionInfo ) {
+    
+    return false;
+};
+
 RigidShape.prototype.draw = function ( aCamera ) {
     
     if(this.mVisible){
