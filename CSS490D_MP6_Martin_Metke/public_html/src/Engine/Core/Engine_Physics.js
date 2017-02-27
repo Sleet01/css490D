@@ -1,52 +1,42 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/*
+ * File: Engine_Physics.js 
+ * Engine component responsible for handling physics interactions
  */
-
-
-/*jslint node: true, vars: true, white: true */
-/*global vec2, CollisionInfo */
+/*jslint node: true, vars: true, evil: true */
+/*global document */
 /* find out more about jslint: http://www.jslint.com/help.html */
 
+//  Global variable EngineCore
+//  the following syntax enforces there can only be one instance of EngineCore object
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-/**
- * Static refrence to gEngine
- * @type gEngine
- */
 var gEngine = gEngine || { };
     // initialize the variable while ensuring it is not redefined
 
-/**
- * Default Constructor<p>
- * Physics engine supporting projection and impulse collision resolution. <p>
- * @class gEngine.Physics
- * @type gEngine.Physics
- */
 gEngine.Physics = (function () {
-
-    var mSystemtAcceleration = [0, -20];        // system-wide default acceleration
     
-    var getSystemtAcceleration = function() { return mSystemtAcceleration; };
+    var mAllObjects = gEngine.Core.getObjects();
     
-    var processCollision = function(set) {
-        var i = 0, j;
-        for (i = 0; i<set.size(); i++) {
-            var one = set.getObjectAt(i).getRigidBody();
-            for (j = i+1; j<set.size(); j++) {
-                var g = set.getObjectAt(j).getRigidBody();
-                if (one.boundTest(g)) {
-                    one.flipVelocity();
-                    g.flipVelocity();
+    var collision = function () {
+                
+        var i, j;
+        for (i = 0; i < mAllObjects.length; ++i) {
+            for (j = i + 1; j < mAllObjects.length; ++j){
+                if (mAllObjects[i].boundTest(mAllObjects[j])){
+                    
+                    //bounce;
+                    mAllObjects[i].reflect(mAllObjects[j]);
+                    mAllObjects[j].reflect(mAllObjects[i]);
+                    
                 }
             }
         }
     };
     
+    // -- end of public methods
+
     var mPublic = {
-        getSystemAcceleration: getSystemtAcceleration,
-        processCollision: processCollision
+        collision: collision
     };
     return mPublic;
 }());

@@ -1,5 +1,5 @@
 /*
- * File: EngineCore.js 
+ * File: Engine_Core.js 
  * The first iteration of what the core of our game engine would look like.
  */
 /*jslint node: true, vars: true, evil: true */
@@ -17,6 +17,8 @@ gEngine.Core = (function () {
     // instance variables
     // The graphical context to draw to
     var mGL = null;
+    var mAllObjects = [];
+    
     // initialize the WebGL, the vertex buffer and compile the shaders
     var _initializeWebGL = function (htmlCanvasID) {
         var canvas = document.getElementById(htmlCanvasID);
@@ -77,15 +79,31 @@ gEngine.Core = (function () {
         gEngine.DefaultResources.cleanUp();
         gEngine.VertexBuffer.cleanUp();
     };
-    // -- end of public methods
+
+    // Accessors / mutators for array of all objects to be physically collided
+    var registerObject = function (object) { mAllObjects.push(object); };
+    var removeObject = function (object) {
+        var index = mAllObjects.indexOf(object);
+        if (index !== -1){
+            return mAllObjects.slice(index, 1)[0];
+        }
+    };
+    
+    // Return the array of registered objects
+    var getObjects = function () { return mAllObjects; };
+
+// -- end of public methods
 
     var mPublic = {
         getGL: getGL,
+        getObjects: getObjects,
         initializeEngineCore: initializeEngineCore,
         clearCanvas: clearCanvas,
         inheritPrototype: inheritPrototype,
         startScene: startScene,
-        cleanUp: cleanUp
+        cleanUp: cleanUp,
+        registerObject: registerObject,
+        removeObject: removeObject
     };
 
     return mPublic;

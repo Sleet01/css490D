@@ -9,48 +9,86 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function GameObject(renderableObj) {
+function GameObject(renderableObj, physics = null) {
     this.mRenderComponent = renderableObj;
+    this.mXform = renderableObj.getXform();
     this.mVisible = true;
-    this.mCurrentFrontDir = vec2.fromValues(0, 1);  // this is the current front direction of the object
-    this.mRigidBody = null;
-    this.mDrawRenderable = true;
+    // New abstracted physics representation; default to RigidShape normally
+    this.mPhysicsComponent = physics;
+    if (physics !== null){
+        this.mPhysicsComponent.register(this);
+    }
 }
-GameObject.prototype.getXform = function () { return this.mRenderComponent.getXform(); };
-GameObject.prototype.getBBox = function () {
-    var xform = this.getXform();
-    var b = new BoundingBox(xform.getPosition(), xform.getWidth(), xform.getHeight());
-    return b;
-};
+
+GameObject.prototype.getXform = function () { return this.mXform; };
+
 GameObject.prototype.setVisibility = function (f) { this.mVisible = f; };
 GameObject.prototype.isVisible = function () { return this.mVisible; };
 
-GameObject.prototype.setCurrentFrontDir = function (f) { vec2.normalize(this.mCurrentFrontDir, f); };
-GameObject.prototype.getCurrentFrontDir = function () { return this.mCurrentFrontDir; };
+GameObject.prototype.setSpeed = function (s) { 
+    if ( this.mPhysicsComponent !== null ) {
+        this.mPhysicsComponent.setSpeed(s);
+    } 
+};
+
+GameObject.prototype.getSpeed = function () { return (this.mPhysicsComponent === null) ? null : this.mPhysicsComponent.getSpeed(); };
+GameObject.prototype.incSpeedBy = function (delta) { 
+    if(this.mPhysicsComponent !== null ){
+        this.mPhysicsComponent.incSpeedBy(delta);
+    } 
+};
+
+GameObject.prototype.setCurrentFrontDir = function (f) { 
+    if(this.mPhysicsComponent !== null ){
+        this.mPhysicsComponent.setCurrentFrontDir(f);
+    } 
+};
+
+GameObject.prototype.getCenter = function () { return (this.mPhysicsComponent === null) ? null : this.mPhysicsComponent.getCenter(); };
+GameObject.prototype.getCurrentFrontDir = function () { return (this.mPhysicsComponent === null) ? null : this.mPhysicsComponent.getCurrentFrontDir(); };
 
 GameObject.prototype.getRenderable = function () { return this.mRenderComponent; };
 
-GameObject.prototype.setRigidBody = function (r) {
-    this.mRigidBody = r;
+// Pass-through functions for bound tests
+GameObject.prototype.boundTest = function ( oObject ) { return (this.mPhysicsComponent === null) ? null : this.mPhysicsComponent.boundTest( oObject ); };
+GameObject.prototype.collisionTest = function ( oObject ) { return (this.mPhysicsComponent === null) ? null : this.mPhysicsComponent.collisionTest( oObject ); };
+
+// Pass-through functions for reflection
+GameObject.prototype.reflect = function (aObject) {
+    this.mPhysicsComponent.reflect(aObject);
 };
-GameObject.prototype.getRigidBody = function () { return this.mRigidBody; };
-GameObject.prototype.toggleDrawRenderable = function() { 
-    this.mDrawRenderable = !this.mDrawRenderable; };
+
+GameObject.prototype.reflectX = function () { 
+    if(this.mPhysicsComponent !== null ){
+        this.mPhysicsComponent.reflectX();
+    } 
+};
+
+GameObject.prototype.reflectY = function () { 
+    if(this.mPhysicsComponent !== null ){
+        this.mPhysicsComponent.reflectX();
+    } 
+};
+
+// Orientate the entire object to point towards point p
+// will rotate Xform() accordingly
+GameObject.prototype.rotateObjPointTo = function (p, rate) {
+    /** TO DO: move into RigidShape */
+    if (this.mPhysicsComponent !== null){
+        this.mPhysicsComponent.rotateObjPointTo(p, rate);
+    }
+};
 
 GameObject.prototype.update = function () {
     // simple default behavior
-    if (this.mRigidBody !== null)
-            this.mRigidBody.update();
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.T)) {
-        this.toggleDrawRenderable();
+    if (this.mPhysicsComponent !== null) {
+        this.mPhysicsComponent.update();
     }
 };
 
 GameObject.prototype.draw = function (aCamera) {
     if (this.isVisible()) {
-        if (this.mDrawRenderable)
-            this.mRenderComponent.draw(aCamera);
-        if (this.mRigidBody !== null)
-            this.mRigidBody.draw(aCamera);
+        this.mRenderComponent.draw(aCamera);
     }
+    this.mPhysicsComponent.draw(aCamera);
 };

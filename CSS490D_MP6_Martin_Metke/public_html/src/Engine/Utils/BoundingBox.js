@@ -73,6 +73,4 @@ BoundingBox.prototype.minX = function () { return this.mLL[0]; };
 BoundingBox.prototype.maxX = function () { return this.mLL[0] + this.mWidth; };
 BoundingBox.prototype.minY = function () { return this.mLL[1]; };
 BoundingBox.prototype.maxY = function () { return this.mLL[1] + this.mHeight; };
-
-
 //</editor-fold>

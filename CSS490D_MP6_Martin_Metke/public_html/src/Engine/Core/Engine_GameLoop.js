@@ -12,7 +12,6 @@ var gEngine = gEngine || { };
 
 gEngine.GameLoop = (function () {
     var kFPS = 60;          // Frames per second
-    var kFrameTime = 1 / kFPS;
     var kMPF = 1000 / kFPS; // Milliseconds per frame.
 
     // Variables for timing gameloop.
@@ -43,6 +42,7 @@ gEngine.GameLoop = (function () {
             //      If lag larger then update frames, update until caught up.
             while ((mLagTime >= kMPF) && mIsLoopRunning) {
                 gEngine.Input.update();
+                gEngine.Physics.collision();
                 this.update();      // call Scene.update()
                 mLagTime -= kMPF;
             }
@@ -80,15 +80,10 @@ gEngine.GameLoop = (function () {
     var stop = function () {
         mIsLoopRunning = false;
     };
-    
-    var getUpdateIntervalInSeconds = function () {
-        return kFrameTime;
-    };
 
     var mPublic = {
         start: start,
-        stop: stop,
-        getUpdateIntervalInSeconds: getUpdateIntervalInSeconds
+        stop: stop
     };
     return mPublic;
 }());
