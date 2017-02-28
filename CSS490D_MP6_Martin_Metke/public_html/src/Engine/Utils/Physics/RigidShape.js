@@ -14,6 +14,7 @@ function RigidShape( object = null ){
     this.mOngoingCollisions = new Hashtable();  // Store collisions
     this.kCollisionLimit = 30; // Number of updates to store a collision state
     this.mVisible = true;
+    this.mBVisible = true;
     this.mSpeed = 0.0;
     this.mW = 0.0;
     this.mRotation = 0;
@@ -150,6 +151,11 @@ RigidShape.prototype.getVisibility = function () {
 RigidShape.prototype.toggleBVis = function () { this.mVisible = !this.mVisible; };
 
 RigidShape.prototype.update = function () {
+    
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.B)){
+        this.mBVisible = !this.mBVisible;
+    }
+    
     // simple default behavior
     var pos = this.mObject.getXform().getPosition();
 //    this.mObject.getXform().incRotationByRad(this.mW);
@@ -196,7 +202,7 @@ RigidShape.prototype.collisionTest = function ( oObject, collisionInfo ) {
 
 RigidShape.prototype.draw = function ( aCamera ) {
     
-    if(this.mVisible){
+    if(this.mBVisible){
         this.mBCircle.draw( aCamera );
     }
 };

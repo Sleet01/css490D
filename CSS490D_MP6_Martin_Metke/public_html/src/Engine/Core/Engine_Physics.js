@@ -22,7 +22,8 @@ gEngine.Physics = (function () {
         var i, j;
         var collisionInfo;
         var centerDiff;
-        
+
+        gEngine.Core.clearCollisions();
         for (i = 0; i < mAllObjects.length; ++i) {
             for (j = i + 1; j < mAllObjects.length; ++j){
                 if (mAllObjects[i].boundTest(mAllObjects[j])){
@@ -38,7 +39,7 @@ gEngine.Physics = (function () {
                         }
                         
                         //draw collision info (a black line that shows normal)
-                        //gEngine.Core.registerCollision(collisionInfo); 
+                        gEngine.Core.registerCollision(collisionInfo); 
 
                     }
                 }

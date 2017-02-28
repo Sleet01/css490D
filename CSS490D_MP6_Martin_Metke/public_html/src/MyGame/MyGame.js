@@ -87,8 +87,8 @@ MyGame.prototype.initialize = function () {
 //    this.mGOSet.addToSet(myLine);
     
     // Testing COllisionInfo
-    var ManualCollision = new CollisionInfo();
-    this.mGOSet.addToSet(ManualCollision);
+    //var ManualCollision = new CollisionInfo();
+    //this.mGOSet.addToSet(ManualCollision);
     
 };
 
@@ -108,7 +108,7 @@ MyGame.prototype.draw = function () {
     for (var j = 0; j < collisions.length; ++j){
         collisions[j].draw(this.mCamera);
     }
-    gEngine.Core.clearCollisions();
+    //gEngine.Core.clearCollisions();
     
 };
 

@@ -16,8 +16,8 @@
 function CollisionInfo() {
     this.mDepth = 0;
     this.mNormal = new vec2.fromValues(0, 0);
-    this.mStart = new vec2.fromValues(40, 20);
-    this.mEnd = new vec2.fromValues(60, 40);
+    this.mStart = new vec2.fromValues(0, 0);
+    this.mEnd = new vec2.fromValues(0, 0);
     this.mLine = new LineRenderable(this.mStart[0], this.mStart[1],
                                     this.mEnd[0], this.mEnd[1]);
     this.mLine.setColor([1, 0.5, 0.5, 1]);
@@ -103,11 +103,13 @@ CollisionInfo.prototype.draw = function (aCamera) {
     // End point
     this.mLine.setPointSize(5);
     this.mLine.setDrawVertices(true);
+    this.mLine.setShowLine(false);
     this.mLine.setVertices(this.mEnd[0], this.mEnd[1], this.mEnd[0], this.mEnd[1]);
     this.mLine.draw(aCamera);
     
     // Line shaft
     this.mLine.setDrawVertices(false);
+    this.mLine.setShowLine(true);
     this.mLine.setPointSize(1);
     this.mLine.setVertices(this.mStart[0], this.mStart[1], this.mEnd[0], this.mEnd[1]);
     this.mLine.draw(aCamera);

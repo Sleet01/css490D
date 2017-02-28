@@ -157,7 +157,7 @@ RigidRectangle.prototype.update = function ( ) {
 
 RigidRectangle.prototype.draw = function ( aCamera ) {
     
-    if(this.mVisible){
+    if(this.mBVisible){
         this.mBCircle.draw( aCamera );
     }
     for (var i = 0; i < this.mLines.length; i++ ){
