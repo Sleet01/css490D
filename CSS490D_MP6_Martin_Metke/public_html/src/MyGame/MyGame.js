@@ -81,6 +81,14 @@ MyGame.prototype.initialize = function () {
         this.regPhysObject( obj );
     }
     
+//     Testing line renderable.  Why it no work?!?!
+//    var myLine = new LineRenderable(30, 30, 60, 40);
+//    myLine.setColor([1, 0.5, 0.5, 1]);
+//    this.mGOSet.addToSet(myLine);
+    
+    // Testing COllisionInfo
+    var ManualCollision = new CollisionInfo();
+    this.mGOSet.addToSet(ManualCollision);
     
 };
 

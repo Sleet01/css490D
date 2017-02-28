@@ -38,7 +38,7 @@ gEngine.Physics = (function () {
                         }
                         
                         //draw collision info (a black line that shows normal)
-                        gEngine.Core.registerCollision(collisionInfo); 
+                        //gEngine.Core.registerCollision(collisionInfo); 
 
                     }
                 }

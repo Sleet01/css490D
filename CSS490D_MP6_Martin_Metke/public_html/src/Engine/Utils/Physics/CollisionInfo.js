@@ -16,11 +16,11 @@
 function CollisionInfo() {
     this.mDepth = 0;
     this.mNormal = new vec2.fromValues(0, 0);
-    this.mStart = new vec2.fromValues(0, 0);
-    this.mEnd = new vec2.fromValues(0, 0);
+    this.mStart = new vec2.fromValues(40, 20);
+    this.mEnd = new vec2.fromValues(60, 40);
     this.mLine = new LineRenderable(this.mStart[0], this.mStart[1],
                                     this.mEnd[0], this.mEnd[1]);
-    this.mLine.setColor([1, 0.5, 0.5, 0]);
+    this.mLine.setColor([1, 0.5, 0.5, 1]);
 }
 
 /**
@@ -92,6 +92,11 @@ CollisionInfo.prototype.changeDir = function () {
     var n = this.mStart;
     this.mStart = this.mEnd;
     this.mEnd = n;
+};
+
+//For debugging purposes only
+CollisionInfo.prototype.update = function () {
+    
 };
 
 CollisionInfo.prototype.draw = function (aCamera) {

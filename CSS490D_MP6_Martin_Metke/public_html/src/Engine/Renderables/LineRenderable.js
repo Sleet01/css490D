@@ -76,5 +76,10 @@ LineRenderable.prototype.setSecondVertex = function (x, y) {
     this.mP2[1] = y;
 };
 
+// For debugging purposes only
+LineRenderable.prototype.update = function () {
+    
+};
+
 //--- end of Public Methods
 //</editor-fold>
