@@ -66,6 +66,7 @@ RigidRectangle.prototype.findAxisLeastPenetration = function (otherRect, collisi
         // use -n as direction and the vectex on edge i as point on edge
         var dir = vec2.create();
         vec2.scale(dir, n, -1);
+        vec2.normalize(dir, dir);
         var ptOnEdge = this.mVertices[i];
         // find the support on B
         // the point has longest distance with edge i 
@@ -188,10 +189,10 @@ RigidRectangle.prototype.collidedRectCirc = function (otherCir, collisionInfo) {
 
             //normal = vec2.clone(v1);
             //vec2.normalize(normal, normal);
-            radiusVec = vec2.clone(normal);
-            vec2.scale(radiusVec, radiusVec, -otherCir.mRRadius);
-            var radiusSum = vec2.clone(circ2Pos);
-            vec2.add(radiusSum, radiusSum, radiusVec);
+            radiusVec = vec2.create();
+            vec2.scale(radiusVec, normal, -otherCir.mRRadius);
+            var radiusSum = vec2.create();
+            vec2.add(radiusSum, circ2Pos, radiusVec);
             collisionInfo.setInfo(otherCir.mRRadius - dis, normal, radiusSum);
         } else {
             //the center of circle is in corner region of mVertex[nearestEdge+1]

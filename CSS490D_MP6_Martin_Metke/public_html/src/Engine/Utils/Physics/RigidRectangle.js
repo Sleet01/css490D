@@ -51,16 +51,16 @@ RigidRectangle.prototype.resetPoints = function () {
     yCtr = center[1];
 
     this.mVertices.push(vec2.clone([xCtr - hWidth, yCtr + hHeight ])); // Start of 1st normal and side
-    this.mNormals.push(vec2.clone([xCtr - hWidth, yCtr + hHeight + this.kNormalLen ])); // End point for 1st Normal
+    this.mNormals.push(vec2.clone([xCtr - hWidth - this.kNormalLen, yCtr + hHeight ])); // End point for 1st Normal
     
     this.mVertices.push(vec2.clone([xCtr + hWidth, yCtr + hHeight ])); // Start of 2nd normal and side
-    this.mNormals.push(vec2.clone([xCtr + hWidth + this.kNormalLen, yCtr + hHeight ])); // End point for 2nd Normal
+    this.mNormals.push(vec2.clone([xCtr + hWidth, yCtr + hHeight + this.kNormalLen ])); // End point for 2nd Normal
     
     this.mVertices.push(vec2.clone([xCtr + hWidth, yCtr - hHeight ])); // Start of 3rd normal and side
-    this.mNormals.push(vec2.clone([xCtr + hWidth, yCtr - hHeight - this.kNormalLen ])); // End point for 3rd Normal
+    this.mNormals.push(vec2.clone([xCtr + hWidth + this.kNormalLen, yCtr - hHeight ])); // End point for 3rd Normal
     
     this.mVertices.push(vec2.clone([xCtr - hWidth, yCtr - hHeight ])); // Start of the 4th normal and side
-    this.mNormals.push(vec2.clone([xCtr - hWidth - this.kNormalLen, yCtr - hHeight ])); // End point of the 4th Normal
+    this.mNormals.push(vec2.clone([xCtr - hWidth, yCtr - hHeight  - this.kNormalLen ])); // End point of the 4th Normal
 };
 
 // Update lines.  I have been too clever for my own good.
