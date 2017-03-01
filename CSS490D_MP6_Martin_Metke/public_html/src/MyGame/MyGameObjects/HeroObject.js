@@ -15,7 +15,7 @@ function HeroObject(x, y, texture) {
     this.kHeight = 12;
     
     // Set up the object with its RigidShape
-    GameObject.call(this, x, y, this.initRenderable(texture), new RigidRectangle());
+    GameObject.call(this, x, y, this.initRenderable(texture), new RigidRectangle(null, this.kWidth, this.kHeight));
     
 }
 gEngine.Core.inheritPrototype(HeroObject, GameObject);

@@ -14,6 +14,7 @@ function RigidCircle( object = null, color = [0, 0, 0, 1] ){
     this.mRRadius = 0;
     this.mColor = color;
     this.mRCircle = null;
+    this.mType = "Circle";
 }
 gEngine.Core.inheritPrototype(RigidCircle, RigidShape);
 
@@ -39,10 +40,10 @@ RigidCircle.prototype.getRRadius = function () { return this.mRRadius; };
 
 RigidCircle.prototype.collisionTest = function ( oObject, collisionInfo ) {
     var status = false;
-    if (typeof oObject.mPhysicsComponent === typeof this) {
+    if (oObject.mPhysicsComponent.mType === "Circle") {
         status = this.collidedCircCirc(this, oObject.mPhysicsComponent, collisionInfo);
     } else {
-        status = oObject.collidedRectCirc(this, collisionInfo);
+        status = oObject.mPhysicsComponent.collidedRectCirc(this, collisionInfo);
     }
     return status;
 };

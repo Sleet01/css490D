@@ -9,7 +9,7 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function RigidRectangle( object = null, width=0, height=0 ){
+function RigidRectangle( object = null, width=1, height=1 ){
     RigidShape.call(this, object);
     this.kWidth = width;
     this.kHeight = height;
@@ -23,6 +23,7 @@ function RigidRectangle( object = null, width=0, height=0 ){
     this.mVertices = [];
     //this.mPoints = [];
     this.mLines = [];
+    this.mType = "Rectangle";
 }
 gEngine.Core.inheritPrototype(RigidRectangle, RigidShape);
 
@@ -38,6 +39,9 @@ RigidRectangle.prototype.register = function (gObject){
 // Reset the points based on the current Xform
 RigidRectangle.prototype.resetPoints = function () {
     
+    this.mVertices = [];
+    this.mNormals = [];
+    
     var xCtr, yCtr, center;
     var hWidth = this.kWidth / 2.0;
     var hHeight = this.kHeight / 2.0;
@@ -46,17 +50,17 @@ RigidRectangle.prototype.resetPoints = function () {
     xCtr = center[0];
     yCtr = center[1];
 
-    this.mVertices.push([xCtr - hWidth, yCtr + hHeight ]); // Start of 1st normal and side
-    this.mNormals.push([xCtr - hWidth, yCtr + hHeight + this.kNormalLen ]); // End point for 1st Normal
+    this.mVertices.push(vec2.clone([xCtr - hWidth, yCtr + hHeight ])); // Start of 1st normal and side
+    this.mNormals.push(vec2.clone([xCtr - hWidth, yCtr + hHeight + this.kNormalLen ])); // End point for 1st Normal
     
-    this.mVertices.push([xCtr + hWidth, yCtr + hHeight ]); // Start of 2nd normal and side
-    this.mNormals.push([xCtr + hWidth + this.kNormalLen, yCtr + hHeight ]); // End point for 2nd Normal
+    this.mVertices.push(vec2.clone([xCtr + hWidth, yCtr + hHeight ])); // Start of 2nd normal and side
+    this.mNormals.push(vec2.clone([xCtr + hWidth + this.kNormalLen, yCtr + hHeight ])); // End point for 2nd Normal
     
-    this.mVertices.push([xCtr + hWidth, yCtr - hHeight ]); // Start of 3rd normal and side
-    this.mNormals.push([xCtr + hWidth, yCtr - hHeight - this.kNormalLen ]); // End point for 3rd Normal
+    this.mVertices.push(vec2.clone([xCtr + hWidth, yCtr - hHeight ])); // Start of 3rd normal and side
+    this.mNormals.push(vec2.clone([xCtr + hWidth, yCtr - hHeight - this.kNormalLen ])); // End point for 3rd Normal
     
-    this.mVertices.push([xCtr - hWidth, yCtr - hHeight ]); // Start of the 4th normal and side
-    this.mNormals.push([xCtr - hWidth - this.kNormalLen, yCtr - hHeight ]); // End point of the 4th Normal
+    this.mVertices.push(vec2.clone([xCtr - hWidth, yCtr - hHeight ])); // Start of the 4th normal and side
+    this.mNormals.push(vec2.clone([xCtr - hWidth - this.kNormalLen, yCtr - hHeight ])); // End point of the 4th Normal
 };
 
 // Update lines.  I have been too clever for my own good.
@@ -85,13 +89,13 @@ RigidRectangle.prototype.rotatePoints = function (deltaAngle) {
     var point;
     
     for (var i = 0; i < this.mVertices.length; i++) {
-        point = vec2.fromValues(this.mVertices[i][0], this.mVertices[i][1]);
+        point = this.mVertices[i];
         vec2.rotateWRT(point, point, deltaAngle, center);
-        this.mVertices[i] = [point[0], point[1]];
+        this.mVertices[i] = point;
         
-        point = vec2.fromValues(this.mNormals[i][0], this.mNormals[i][1]);
+        point = this.mNormals[i];
         vec2.rotateWRT(point, point, deltaAngle, center);
-        this.mNormals[i] = [point[0], point[1]];
+        this.mNormals[i] = point;
     }
 };
 
@@ -140,12 +144,6 @@ RigidRectangle.prototype.incYPosBy = function (yDelta) {
         this.mVertices[i][1] += yDelta;
         this.mNormals[i][1] += yDelta;
     }
-};
-
-RigidRectangle.prototype.collisionTest = function ( oObject, collisionInfo ) {
-    
-    return false;
-    
 };
 
 RigidRectangle.prototype.update = function ( ) {

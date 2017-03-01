@@ -22,6 +22,7 @@ function RigidShape( object = null ){
     this.mObject = null;
     this.mCenter = null;
     this.mBCircle = null;
+    this.mType = "Shape";
     if (object !== null) { this.register(object); };
     
 };

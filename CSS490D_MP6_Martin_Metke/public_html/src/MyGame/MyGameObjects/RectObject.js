@@ -17,10 +17,7 @@ function RectObject(x, y, texture) {
     // Set up the object with its RigidShape
     GameObject.call(this, x, y, 
                     this.initRenderable(texture), 
-                    new RigidRectangle(this, this.kWidth, this.kHeight));
-
-    this.mPhysicsComponent.resetPoints();
-    this.mPhysicsComponent.resetRectangle();
+                    new RigidRectangle(null, this.kWidth, this.kHeight));
     
 }
 gEngine.Core.inheritPrototype(RectObject, GameObject);
