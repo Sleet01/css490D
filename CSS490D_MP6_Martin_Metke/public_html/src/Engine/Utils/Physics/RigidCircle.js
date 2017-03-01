@@ -93,9 +93,12 @@ RigidCircle.prototype.update = function () {
 
 RigidCircle.prototype.draw = function ( aCamera ) {
     
+    if(this.mVisible){
+        this.mRCircle.draw( aCamera );
+    }
     if(this.mBVisible){
         this.mBCircle.draw( aCamera );
     }
     
-    this.mRCircle.draw( aCamera );
+    
 };

@@ -10,12 +10,17 @@
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
 function RectObject(x, y, texture) {
-        
-    this.kWidth = 10;
-    this.kHeight = 10;
+    
+    this.kWidth = 15;
+    this.kHeight = 15;
     
     // Set up the object with its RigidShape
-    GameObject.call(this, x, y, this.initRenderable(texture), new RigidRectangle());
+    GameObject.call(this, x, y, 
+                    this.initRenderable(texture), 
+                    new RigidRectangle(this, this.kWidth, this.kHeight));
+
+    this.mPhysicsComponent.resetPoints();
+    this.mPhysicsComponent.resetRectangle();
     
 }
 gEngine.Core.inheritPrototype(RectObject, GameObject);

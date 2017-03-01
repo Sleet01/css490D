@@ -9,10 +9,10 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function RigidRectangle( object = null ){
+function RigidRectangle( object = null, width=0, height=0 ){
     RigidShape.call(this, object);
-    this.kWidth = 9;
-    this.kHeight = 12;
+    this.kWidth = width;
+    this.kHeight = height;
     this.kNormalLen = 3;
     this.kColors = [[1, 0, 0, 1],
                     [0, 1, 0, 1],
