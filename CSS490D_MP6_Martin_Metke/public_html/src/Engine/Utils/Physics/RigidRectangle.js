@@ -51,16 +51,16 @@ RigidRectangle.prototype.resetPoints = function () {
     yCtr = center[1];
 
     this.mVertices.push(vec2.clone([xCtr - hWidth, yCtr + hHeight ])); // Start of 1st normal and side
-    this.mNormals.push(vec2.clone([xCtr - hWidth - this.kNormalLen, yCtr + hHeight ])); // End point for 1st Normal
-    
-    this.mVertices.push(vec2.clone([xCtr + hWidth, yCtr + hHeight ])); // Start of 2nd normal and side
     this.mNormals.push(vec2.clone([xCtr + hWidth, yCtr + hHeight + this.kNormalLen ])); // End point for 2nd Normal
-    
-    this.mVertices.push(vec2.clone([xCtr + hWidth, yCtr - hHeight ])); // Start of 3rd normal and side
+        
+    this.mVertices.push(vec2.clone([xCtr + hWidth, yCtr + hHeight ])); // Start of 2nd normal and side
     this.mNormals.push(vec2.clone([xCtr + hWidth + this.kNormalLen, yCtr - hHeight ])); // End point for 3rd Normal
     
-    this.mVertices.push(vec2.clone([xCtr - hWidth, yCtr - hHeight ])); // Start of the 4th normal and side
+    this.mVertices.push(vec2.clone([xCtr + hWidth, yCtr - hHeight ])); // Start of 3rd normal and side
     this.mNormals.push(vec2.clone([xCtr - hWidth, yCtr - hHeight  - this.kNormalLen ])); // End point of the 4th Normal
+    
+    this.mVertices.push(vec2.clone([xCtr - hWidth, yCtr - hHeight ])); // Start of the 4th normal and side
+    this.mNormals.push(vec2.clone([xCtr - hWidth - this.kNormalLen, yCtr + hHeight ])); // End point for 1st Normal
 };
 
 // Update lines.  I have been too clever for my own good.
@@ -70,8 +70,8 @@ RigidRectangle.prototype.resetRectangle = function () {
     for (var i = 0; i < this.mLines.length; i+=2){
         
         // Update Normal line
-        this.mLines[i].setVertices(this.mVertices[i/2][0], 
-                                   this.mVertices[i/2][1], 
+        this.mLines[i].setVertices(this.mVertices[(i/2+1)%this.mVertices.length][0], 
+                                   this.mVertices[(i/2+1)%this.mVertices.length][1], 
                                    this.mNormals[i/2][0], 
                                    this.mNormals[i/2][1]);
         

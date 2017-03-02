@@ -118,8 +118,11 @@ MyGame.prototype.update = function () {
     // Trying clearing the collisions at the start of the update pass
     //gEngine.Core.clearCollisions();
     
-    var msg = "Objects: " + this.mGOSet.size() + ", Selected object: " + this.mSelected + ", BRadius: " 
-            + this.mGOSet.getObjectAt(this.mSelected).getBRadius().toFixed(2);
+    var collisions = gEngine.Core.getCollisions();
+    var msg = "CollInfos: " + collisions.length + 
+              ", Objs: " + this.mGOSet.size() + 
+              ", Selected obj: " + this.mSelected + 
+              ", BRadius: " + this.mGOSet.getObjectAt(this.mSelected).getBRadius().toFixed(2);
     
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.R )) {
         for (var r = 0; r < this.mGOSet.size(); r++ ){

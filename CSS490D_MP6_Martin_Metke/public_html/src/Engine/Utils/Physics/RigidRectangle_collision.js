@@ -21,6 +21,7 @@ RigidRectangle.prototype.findSupportPoint = function (dir, ptOnEdge) {
     //the longest project length
     var vToEdge;
     var projection;
+    var vertex = vec2.create();
 
     tmpSupport.mSupportPointDist = -9999999;
     tmpSupport.mSupportPoint = null;
@@ -28,13 +29,14 @@ RigidRectangle.prototype.findSupportPoint = function (dir, ptOnEdge) {
     for (var i = 0; i < this.mVertices.length; i++) {
         //vToEdge = this.mVertices[i].subtract(ptOnEdge);
         var vToEdge = vec2.create();
-        vec2.subtract(vToEdge,this.mVertices[i],ptOnEdge );
+        vec2.normalize(vertex, this.mVertices[i]);
+        vec2.subtract(vToEdge,vertex,ptOnEdge );
         projection = vec2.dot(vToEdge, dir);
         
         //find the longest distance with certain edge
         //dir is -n direction, so the distance should be positive       
         if ((projection > 0) && (projection > tmpSupport.mSupportPointDist)) {
-            tmpSupport.mSupportPoint = this.mVertices[i];
+            tmpSupport.mSupportPoint = vertex;
             tmpSupport.mSupportPointDist = projection;
         }
     }
@@ -52,6 +54,7 @@ RigidRectangle.prototype.findAxisLeastPenetration = function (otherRect, collisi
 
     var n;
     var supportPoint;
+    var vertex = vec2.create();
 
     var bestDistance = 999999;
     var bestIndex = null;
@@ -61,7 +64,8 @@ RigidRectangle.prototype.findAxisLeastPenetration = function (otherRect, collisi
 
     while ((hasSupport) && (i < this.mNormals.length)) {
         // Retrieve a face normal from A
-        n = this.mNormals[i];
+        n = vec2.clone(this.mNormals[i]);
+        vec2.normalize(n, n);
 
         // use -n as direction and the vectex on edge i as point on edge
         var dir = vec2.create();
@@ -85,10 +89,11 @@ RigidRectangle.prototype.findAxisLeastPenetration = function (otherRect, collisi
         //all four directions have support point
         //var bestVec = this.mNormals[bestIndex].scale(bestDistance);
         var bestVec = vec2.create();
-        vec2.scale(bestVec, this.mNormals[bestIndex], bestDistance);
+        vec2.normalize(vertex, this.mNormals[bestIndex]);
+        vec2.scale(bestVec, vertex, bestDistance);
         var spSum = vec2.create();
         vec2.add(spSum, supportPoint, bestVec);
-        collisionInfo.setInfo(bestDistance, this.mNormals[bestIndex], spSum);
+        collisionInfo.setInfo(bestDistance, vertex, spSum);
     }
     return hasSupport;
 };
@@ -145,12 +150,18 @@ RigidRectangle.prototype.collidedRectCirc = function (otherCir, collisionInfo) {
     var nearestEdge = 0;
     var i;
     var v = vec2.create();
+    var vertex = vec2.create();
+    var nVertex = vec2.create();
     var circ2Pos, projection;
     for (i = 0; i < 4; i++) {
         //find the nearest face for center of circle        
         circ2Pos = otherCir.mCenter;
+        // Determine direction to center from this vertex
         vec2.subtract(v, circ2Pos, this.mVertices[i]);
-        projection = vec2.dot(v, this.mNormals[i]);
+        // Make a true "normal" in the direction from this.mVertices[i+1%4] -> this.mNormals[i]
+        vec2.subtract(vertex, this.mNormals[i], this.mVertices[(i+1)%4] );
+        vec2.normalize(vertex, vertex);
+        projection = vec2.dot(v, vertex);
         if (projection > 0) {
             //if the center of circle is outside of rectangle
             bestDistance = projection;
@@ -187,8 +198,6 @@ RigidRectangle.prototype.collidedRectCirc = function (otherCir, collisionInfo) {
                 return false;
             }
 
-            //normal = vec2.clone(v1);
-            //vec2.normalize(normal, normal);
             radiusVec = vec2.create();
             vec2.scale(radiusVec, normal, -otherCir.mRRadius);
             var radiusSum = vec2.create();
@@ -209,8 +218,8 @@ RigidRectangle.prototype.collidedRectCirc = function (otherCir, collisionInfo) {
                 if (dis > otherCir.mRRadius) {
                     return false;
                 }
-//                normal = vec2.clone(v1);
-//                vec2.normalize(normal, normal);
+                normal = vec2.clone(v1);
+                vec2.normalize(normal, normal);
                 radiusVec = vec2.create();
                 vec2.scale(radiusVec, normal, -otherCir.mRRadius);
                 var radiusSum = vec2.create();
@@ -220,10 +229,15 @@ RigidRectangle.prototype.collidedRectCirc = function (otherCir, collisionInfo) {
                 //the center of circle is in face region of face[nearestEdge]
                 if (bestDistance < otherCir.mRRadius) {
                     radiusVec = vec2.create();
-                    vec2.scale(radiusVec, normal, otherCir.mRRadius);
+//                    normal = vec2.clone(v1);
+//                    vec2.normalize(normal, normal);
+                    vec2.subtract(vertex, this.mNormals[nearestEdge], this.mVertices[(nearestEdge+1)%4]);
+                    vec2.normalize(vertex, vertex);
+                    vec2.scale(radiusVec, vertex, otherCir.mRRadius);
                     var radiusDiff = vec2.create();
                     vec2.subtract(radiusDiff, circ2Pos, radiusVec);
-                    collisionInfo.setInfo(otherCir.mRRadius - bestDistance, this.mNormals[nearestEdge], radiusDiff);
+                    
+                    collisionInfo.setInfo(otherCir.mRRadius - bestDistance, vertex, radiusDiff);
                 } else {
                     return false;
                 }
@@ -232,10 +246,11 @@ RigidRectangle.prototype.collidedRectCirc = function (otherCir, collisionInfo) {
     } else {
         //the center of circle is inside of rectangle
         radiusVec = vec2.create();
-        vec2.scale(radiusVec, this.mNormals[nearestEdge],otherCir.mRRadius);
+        vec2.normalize(vertex, this.mNormals[nearestEdge]);
+        vec2.scale(radiusVec, vertex,otherCir.mRRadius);
         var radiusDiff = vec2.create();
         vec2.subtract(radiusDiff, circ2Pos, radiusVec);
-        collisionInfo.setInfo(otherCir.mRRadius - bestDistance, this.mNormals[nearestEdge], radiusDiff);
+        collisionInfo.setInfo(otherCir.mRRadius - bestDistance, vertex, radiusDiff);
     }
     return true;
 };
