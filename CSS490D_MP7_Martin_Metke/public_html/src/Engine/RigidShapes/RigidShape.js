@@ -4,16 +4,50 @@
 
 /* global gEngine, vec2 */
 
-function RigidShape(xf) {
+function RigidShape(xf, mass, friction, restitution) {
     // New for relaxation / interpenetration resolution functionality:
-    this.mMass = 0;
     this.mInertia = 0;
-    
+    if (mass !== undefined) {
+        this.mInvMass = mass;
+    } else {
+        this.mInvMass = 1;
+    }
+
+    if (friction !== undefined) {
+        this.mFriction = friction;
+    } else {
+        this.mFriction = 0.8;
+    }
+
+    if (restitution !== undefined) {
+        this.mRestitution = restitution;
+    } else {
+        this.mRestitution = 0.2;
+    }
+
+    this.mVelocity = vec2.fromValues(0, 0);
+
+    // This seems... weird
+    if (this.mInvMass !== 0) {
+        this.mInvMass = 1 / this.mInvMass;
+        this.mAcceleration = gEngine.Core.mGravity;
+    } else {
+        this.mAcceleration = new Vec2(0, 0);
+    }
+
+    //angle
+    this.mAngle = 0;
+
+    //negetive-- clockwise
+    //postive-- counterclockwise
+    this.mAngularVelocity = 0;
+    this.mAngularAcceleration = 0;
+   
+    // Old initialization code
     this.mLine = new LineRenderable();
     this.mLine.setColor([1, 1, 1, 1]);
     
     this.mXform = xf;
-    this.mVelocity = vec2.fromValues(0, 0);
     this.mBoundRadius = 0;
     
     this.mDrawBounds = false;
