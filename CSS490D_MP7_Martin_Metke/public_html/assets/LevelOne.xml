@@ -13,11 +13,37 @@
           />
               
               
-    <!-- Squares Rotation is in degree -->
-    <Square PosX="20" PosY="60" Width="5" Height="5" Rotation="30" Color="1 1 1 1" />
-    <Square PosX="20" PosY="60" Width="2" Height="3" Rotation="0"  Color="1 0 0 1" />
-    <Square PosX="10" PosY="65" Width="1" Height="1" Rotation="45"  Color="1 1 0 1" /> 
-    <Square PosX="30" PosY="65" Width="1" Height="1" Rotation="0"  Color="1 0 1 1" /> 
-    <Square PosX="10" PosY="55" Width="1" Height="1" Rotation="0"  Color="0 1 0 1" /> 
-    <Square PosX="30" PosY="55" Width="1" Height="1" Rotation="0"  Color="0 0 0 1" /> 
+    <!-- Walls Rotation is in degree; texture is set in MyGame. -->
+    <!-- "West" walls -->
+    <Wall PosX="1.5" PosY="6" Width="3" Height="12" Rotation="0" Color="1 1 1 0" />
+    <Wall PosX="1.5" PosY="18" Width="3" Height="12" Rotation="0" Color="1 1 1 0" />
+    <Wall PosX="1.5" PosY="30" Width="3" Height="12" Rotation="0" Color="1 1 1 0" />
+    <Wall PosX="1.5" PosY="42" Width="3" Height="12" Rotation="0" Color="1 1 1 0" />
+    <Wall PosX="1.5" PosY="54" Width="3" Height="12" Rotation="0" Color="1 1 1 0" />
+    <Wall PosX="1.5" PosY="66" Width="3" Height="12" Rotation="0" Color="1 1 1 0" />
+    <Wall PosX="1.5" PosY="78" Width="3" Height="12" Rotation="0" Color="1 1 1 0" />
+    <!-- "East" walls -->
+    <Wall PosX="98.5" PosY="6" Width="3" Height="12" Rotation="0" Color="1 1 1 0" />
+    <Wall PosX="98.5" PosY="18" Width="3" Height="12" Rotation="0" Color="1 1 1 0" />
+    <Wall PosX="98.5" PosY="30" Width="3" Height="12" Rotation="0" Color="1 1 1 0" />
+    <Wall PosX="98.5" PosY="42" Width="3" Height="12" Rotation="0" Color="1 1 1 0" />
+    <Wall PosX="98.5" PosY="54" Width="3" Height="12" Rotation="0" Color="1 1 1 0" />
+    <Wall PosX="98.5" PosY="66" Width="3" Height="12" Rotation="0" Color="1 1 1 0" />
+    <Wall PosX="98.5" PosY="78" Width="3" Height="12" Rotation="0" Color="1 1 1 0" />
+    <!-- Ceiling Rotation is in degree; texture is set in MyGame. -->
+    <Ceiling PosX="16" PosY="73" Width="32" Height="4" Rotation="180" Color="1 1 1 0" />
+    <Ceiling PosX="48" PosY="73" Width="32" Height="4" Rotation="180" Color="1 1 1 0" />
+    <Ceiling PosX="80" PosY="73" Width="32" Height="4" Rotation="180" Color="1 1 1 0" />
+    <Ceiling PosX="112" PosY="73" Width="32" Height="4" Rotation="180" Color="1 1 1 0" />
+    <!-- Floor Rotation is in degree; texture is set in MyGame. -->
+    <Floor PosX="16" PosY="2" Width="32" Height="4" Rotation="0" Color="1 1 1 0" />
+    <Floor PosX="48" PosY="2" Width="32" Height="4" Rotation="0" Color="1 1 1 0" />
+    <Floor PosX="80" PosY="2" Width="32" Height="4" Rotation="0" Color="1 1 1 0" />
+    <Floor PosX="112" PosY="2" Width="32" Height="4" Rotation="0" Color="1 1 1 0" />
+    
+    <!-- Platforms; Rotation is in degree; texture is set in MyGame. -->
+    <Platform PosX="40" PosY="40" Width="30" Height="3.75" Rotation="-30" Color="1 1 1 0" />
+    <Platform PosX="60" PosY="30" Width="30" Height="3.75" Rotation="0" Color="1 1 1 0" />
+    <Platform PosX="20" PosY="20" Width="30" Height="3.75" Rotation="0" Color="1 1 1 0" />
+    <Platform PosX="70" PosY="50" Width="30" Height="3.75" Rotation="0" Color="1 1 1 0" />
 </MyGameLevel>

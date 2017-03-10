@@ -12,7 +12,7 @@ function RigidShape(xf) {
     this.mVelocity = vec2.fromValues(0, 0);
     this.mBoundRadius = 0;
     
-    this.mDrawBounds = true;
+    this.mDrawBounds = false;
 }
 
 RigidShape.prototype.toggleDrawBound = function() {
@@ -80,7 +80,7 @@ RigidShape.prototype.draw = function(aCamera) {
     this.mLine.draw(aCamera);
 };
 
-RigidShape.kNumCircleSides = 16;
+RigidShape.kNumCircleSides = 32;
 RigidShape.prototype.drawCircle = function(aCamera, r) {
     var pos = this.mXform.getPosition();    
     var prevPoint = vec2.clone(pos);

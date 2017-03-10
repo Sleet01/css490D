@@ -42,7 +42,10 @@ RigidCircle.prototype.collideCircCirc = function (c1, c2, collisionInfo) {
         } else {
             var pC2 = c2.getCenter();
             var ptOnC2 = [pC2[0], pC2[1]+c2.mRadius];
-            collisionInfo.setInfo(rSum, new Vec2(0, -1), ptOnC2);
+            var v = new vec2.create();
+            v[0] = 0;
+            v[1] = -1;
+            collisionInfo.setInfo(rSum, v, ptOnC2);
         }
     }
     return true;

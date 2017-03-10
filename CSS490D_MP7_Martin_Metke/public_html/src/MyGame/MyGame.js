@@ -12,8 +12,12 @@
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
 function MyGame() {
-    this.kMinionSprite = "assets/minion_sprite.png";
-    
+    this.kSpriteDict = { Minion:"assets/minion_sprite.png",
+                         Wall:"assets/wall.png",
+                         Platform:"assets/platform.png",
+                         Target:"assets/target.png"};
+    this.kSceneFile = "assets/LevelOne.xml";
+      
     // The camera to view the scene
     this.mCamera = null;
 
@@ -29,30 +33,41 @@ gEngine.Core.inheritPrototype(MyGame, Scene);
 
 
 MyGame.prototype.loadScene = function () {
-    gEngine.Textures.loadTexture(this.kMinionSprite);
+    // Load all sprites
+    for(var key in this.kSpriteDict){
+        if (this.kSpriteDict.hasOwnProperty(key)) {
+            gEngine.Textures.loadTexture(this.kSpriteDict[key]);
+        }
+    }
+    gEngine.TextFileLoader.loadTextFile(this.kSceneFile, gEngine.TextFileLoader.eTextFileType.eXMLFile);
 };
 
 MyGame.prototype.unloadScene = function () {
-    gEngine.Textures.unloadTexture(this.kMinionSprite);
+    // Unload all sprites
+    for(var key in this.kSpriteDict){
+        if (this.kSpriteDict.hasOwnProperty(key)) {
+            gEngine.Textures.unloadTexture(this.kSpriteDict[key]);
+        }
+    }
+    gEngine.TextFileLoader.unloadTextFile(this.kSceneFile);
 };
 
 MyGame.prototype.initialize = function () {
     // Step A: set up the cameras
-    this.mCamera = new Camera(
-        vec2.fromValues(50, 40), // position of the camera
-        100,                     // width of camera
-        [0, 0, 800, 600]         // viewport (orgX, orgY, width, height)
-    );
-    this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
-            // sets the background to gray
-    
-    this.mHero = new Hero(this.kMinionSprite);
+    var sceneParser = new xmlSceneFileParser(this.kSceneFile);
+    this.mCamera = sceneParser.parseCamera();
+ 
     this.mAllObjs = new GameObjectSet();
+    sceneParser.parseFrame(this.mAllObjs, this.kSpriteDict);
+        
+    this.mHero = new Hero(this.kSpriteDict["Minion"]);
+    
+    
     this.mAllObjs.addToSet(this.mHero);
     var y = 10;
     var x = 10;
     for (var i = 1; i<=5; i++) {
-        var m = new Minion(this.kMinionSprite, x, y, ((i%2)!=0));
+        var m = new Minion(this.kSpriteDict["Minion"], x, y, ((i%2)!==0));
         x += 20;
         this.mAllObjs.addToSet(m);
     }
@@ -107,7 +122,7 @@ MyGame.prototype.update = function () {
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Down)) {
         this.increasShapeSize(obj, -MyGame.kBoundDelta);
     }
-    obj.keyControl();
+    //obj.keyControl();
     
     this.mAllObjs.update(this.mCamera);
     
