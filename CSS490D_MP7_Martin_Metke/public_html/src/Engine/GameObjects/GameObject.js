@@ -44,10 +44,6 @@ GameObject.prototype.update = function () {
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.T)) {
         this.toggleDrawRenderable();
     }
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.B)) {
-        if (this.mRigidBody !== null)
-            this.mRigidBody.toggleDrawBound();
-    }
 };
 
 GameObject.prototype.draw = function (aCamera) {

@@ -2,9 +2,13 @@
 /*jslint node: true, vars: true, evil: true, bitwise: true */
 "use strict";
 
-/* global gEngine */
+/* global gEngine, vec2 */
 
 function RigidShape(xf) {
+    // New for relaxation / interpenetration resolution functionality:
+    this.mMass = 0;
+    this.mInertia = 0;
+    
     this.mLine = new LineRenderable();
     this.mLine.setColor([1, 1, 1, 1]);
     

@@ -42,8 +42,8 @@
     <Floor PosX="112" PosY="2" Width="32" Height="4" Rotation="0" Color="1 1 1 0" />
     
     <!-- Platforms; Rotation is in degree; texture is set in MyGame. -->
-    <Platform PosX="40" PosY="40" Width="30" Height="3.75" Rotation="-30" Color="1 1 1 0" />
-    <Platform PosX="60" PosY="30" Width="30" Height="3.75" Rotation="0" Color="1 1 1 0" />
-    <Platform PosX="20" PosY="20" Width="30" Height="3.75" Rotation="0" Color="1 1 1 0" />
-    <Platform PosX="70" PosY="50" Width="30" Height="3.75" Rotation="0" Color="1 1 1 0" />
+    <Platform PosX="40" PosY="40" Width="22" Height="2.5" Rotation="-30" Color="1 1 1 0" />
+    <Platform PosX="60" PosY="30" Width="22" Height="2.5" Rotation="0" Color="1 1 1 0" />
+    <Platform PosX="20" PosY="20" Width="22" Height="2.5" Rotation="0" Color="1 1 1 0" />
+    <Platform PosX="70" PosY="50" Width="22" Height="2.5" Rotation="0" Color="1 1 1 0" />
 </MyGameLevel>
