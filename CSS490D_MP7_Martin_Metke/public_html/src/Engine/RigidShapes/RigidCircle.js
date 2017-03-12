@@ -60,6 +60,13 @@ RigidCircle.prototype.updateInertia = function () {
     }
 };
 
+//rotate angle in counterclockwise
+RigidCircle.prototype.rotate = function (angle) {
+    this.mAngle += angle;
+    this.mStartpoint = this.mStartpoint.rotate(this.mCenter, angle);
+    return this;
+};
+
 RigidCircle.prototype.move = function (s) {
     var p = this.mXform.getPosition();
     vec2.add(p, p, s);

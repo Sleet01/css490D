@@ -110,12 +110,12 @@ MyGame.prototype.update = function () {
     var msg = "Num: " + this.mAllObjs.size() + " Current=" + this.mCurrentObj;   
         
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Right)) {
-        this.mCurrentObj = (this.mCurrentObj + 1) % 6;
+        this.mCurrentObj = (this.mCurrentObj + 1) % (this.mAllObjs.size() - 1);
     }
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Left)) {
         this.mCurrentObj = (this.mCurrentObj - 1);
         if (this.mCurrentObj < 0)
-            this.mCurrentObj = 5;
+            this.mCurrentObj = (this.mAllObjs.size() - 1);
     }
     var obj = this.mAllObjs.getObjectAt(this.mCurrentObj);
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Up)) {
@@ -124,7 +124,10 @@ MyGame.prototype.update = function () {
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Down)) {
         this.increasShapeSize(obj, -MyGame.kBoundDelta);
     }
-    //obj.keyControl();
+    if ("keyControl" in obj){
+        obj.keyControl();
+    }
+    
     
     this.mAllObjs.update(this.mCamera);
 

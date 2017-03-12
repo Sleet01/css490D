@@ -29,7 +29,7 @@ gEngine.Physics = (function () {
     var mMovement = true;
     var mSystemAcceleration = vec2.fromValues(0, -20);        // system-wide default acceleration
     
-    var mPositionalCorrectionFlag = true;
+    var mPositionalCorrectionFlag = false;
     
     // correction rate constants
     var kRelaxationCount = 15;                  // number of relaxation iteration
@@ -156,7 +156,7 @@ gEngine.Physics = (function () {
             jT = jN;
         }
 
-// --- update to vec2 standard --- //
+// --- updated to vec2 standard --- //
         //impulse is from s1 to s2 (in opposite direction of velocity)
         impulse = vec2.create();
         vec2.scale(impulse, tangent, jT);
