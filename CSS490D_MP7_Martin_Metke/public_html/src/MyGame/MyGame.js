@@ -59,18 +59,19 @@ MyGame.prototype.initialize = function () {
  
     this.mAllObjs = new GameObjectSet();
     sceneParser.parseFrame(this.mAllObjs, this.kSpriteDict);
-        
-    this.mHero = new Hero(this.kSpriteDict["Minion"]);
     
-    
-    this.mAllObjs.addToSet(this.mHero);
-    var y = 10;
-    var x = 10;
-    for (var i = 1; i<=5; i++) {
-        var m = new Minion(this.kSpriteDict["Minion"], x, y, ((i%2)!==0));
-        x += 20;
-        this.mAllObjs.addToSet(m);
-    }
+    this.mAllObjs.addToSet(new Minion(this.kSpriteDict["Minion"], 50, 50, true));
+//    this.mHero = new Hero(this.kSpriteDict["Minion"]);
+//    
+//    
+//    this.mAllObjs.addToSet(this.mHero);
+//    var y = 10;
+//    var x = 10;
+//    for (var i = 1; i<=5; i++) {
+//        var m = new Minion(this.kSpriteDict["Minion"], x, y, ((i%2)!==0));
+//        x += 20;
+//        this.mAllObjs.addToSet(m);
+//    }
 
     this.mMsg = new FontRenderable("Status Message");
     this.mMsg.setColor([0, 0, 0, 1]);
@@ -105,6 +106,7 @@ MyGame.prototype.increasShapeSize = function(obj, delta) {
 // anything from this function!
 MyGame.kBoundDelta = 0.1;
 MyGame.prototype.update = function () {
+    
     var msg = "Num: " + this.mAllObjs.size() + " Current=" + this.mCurrentObj;   
         
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Right)) {
@@ -125,7 +127,7 @@ MyGame.prototype.update = function () {
     //obj.keyControl();
     
     this.mAllObjs.update(this.mCamera);
-    
+
     gEngine.Physics.processCollision(this.mAllObjs, this.mCollisionInfos);
 
     msg += " R=" + obj.getRigidBody().getBoundRadius();

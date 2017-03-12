@@ -23,7 +23,7 @@ gEngine.Core = (function () {
     mCanvas.height = mHeight;
     mCanvas.width = mWidth;
 
-    var mGravity = new Vec2(0, 10);
+    var mGravity = new Vec2(0, 9.8);
     var mMovement = false;
 
     var mCurrentTime, mElapsedTime, mPreviousTime = Date.now(), mLagTime = 0;

@@ -17,7 +17,7 @@ function Minion(spriteTexture, atX, atY, createCircle) {
     this.mMinion = new SpriteAnimateRenderable(spriteTexture);
     this.mMinion.setColor([1, 1, 1, 0]);
     this.mMinion.getXform().setPosition(atX, atY);
-    this.mMinion.getXform().setSize(24, 19.2);
+    this.mMinion.getXform().setSize(12, 10);
     this.mMinion.setSpriteSequence(512, 0,      // first element pixel position: top-left 512 is top of image, 0 is left of image
                                     204, 164,   // widthxheight in pixels
                                     5,          // number of elements in this sequence
@@ -30,7 +30,7 @@ function Minion(spriteTexture, atX, atY, createCircle) {
     
     var r;
     if (createCircle)
-        r = new RigidCircle(this.getXform(), 8); 
+        r = new RigidCircle(this.getXform(), 4); 
     else
         r = new RigidRectangle(this.getXform(), 20, 18);
     this.setRigidBody(r);

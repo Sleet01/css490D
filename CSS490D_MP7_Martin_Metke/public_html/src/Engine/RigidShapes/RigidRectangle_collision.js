@@ -113,7 +113,7 @@ RigidRectangle.prototype.collideRectRect = function (r1, r2, collisionInfo) {
     if (status1) {
         status2 = r2.findAxisLeastPenetration(r1, collisionInfoR2);
         if (status2) {
-            var depthVec = [0, 0];
+            var depthVec = vec2.create();
             //if both of rectangles are overlapping, choose the shorter normal as the normal       
             if (collisionInfoR1.getDepth() < collisionInfoR2.getDepth()) {
                 vec2.scale(depthVec, collisionInfoR1.getNormal(), collisionInfoR1.getDepth());

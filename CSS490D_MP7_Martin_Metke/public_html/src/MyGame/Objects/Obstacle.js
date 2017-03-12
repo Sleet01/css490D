@@ -17,17 +17,16 @@ function Obstacle(spriteTexture, size, atX, atY, createCircle) {
     this.mObstacle.setColor([1, 1, 1, 0]);
     this.mObstacle.getXform().setPosition(atX, atY);
     this.mObstacle.getXform().setSize(size[0], size[1]);
-        
-                                // show each element for mAnimSpeed updates
 
     GameObject.call(this, this.mObstacle);
     
     var r;
     if (createCircle)
-        r = new RigidCircle(this.getXform(), sqrt(size[0]^2 + size[1]^2)); 
+        r = new RigidCircle(this.getXform(), sqrt(size[0]^2 + size[1]^2), 0); 
     else
-        r = new RigidRectangle(this.getXform(), size[0], size[1]);
+        r = new RigidRectangle(this.getXform(), size[0], size[1], 0);
     this.setRigidBody(r);
+    
     // Turn off renderable
     this.toggleDrawRenderable();
 }

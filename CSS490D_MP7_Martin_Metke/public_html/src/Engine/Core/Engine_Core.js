@@ -17,6 +17,7 @@ gEngine.Core = (function () {
     // instance variables
     // The graphical context to draw to
     var mGL = null;
+
     // initialize the WebGL, the vertex buffer and compile the shaders
     var _initializeWebGL = function (htmlCanvasID) {
         var canvas = document.getElementById(htmlCanvasID);

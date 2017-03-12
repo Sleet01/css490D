@@ -5,13 +5,14 @@
  */
 /*jslint node: true, vars: true, evil: true, bitwise: true */
 "use strict";
-/* global RigidShape */
+/* global RigidShape, gEngine, vec2 */
 
-var RigidCircle = function (xf, radius) {
-    RigidShape.call(this, xf);
+var RigidCircle = function (xf, radius, mass) {
+    RigidShape.call(this, xf, mass);
     this.mType = "RigidCircle";
     this.mRadius = radius;
     this.mBoundRadius = radius;
+    this.updateInertia();
 };
 gEngine.Core.inheritPrototype(RigidCircle, RigidShape);
 
@@ -45,6 +46,23 @@ RigidCircle.prototype.draw = function (aCamera) {
     
     if (this.mDrawBounds)
         this.drawCircle(aCamera, this.mBoundRadius);
+};
+
+// Adapted from Ch 4.4 Physics impl.
+RigidCircle.prototype.updateInertia = function () {
+    if (this.mInvMass === 0) {
+        this.mInertia = 0;
+    } else {
+        // this.mInvMass is inverted!!
+        // Inertia=mass * radius^2
+        // 12 is a constant value that can be changed
+        this.mInertia = (1 / this.mInvMass) * (this.mRadius * this.mRadius) / 12;
+    }
+};
+
+RigidCircle.prototype.move = function (s) {
+    var p = this.mXform.getPosition();
+    vec2.add(p, p, s);
 };
 
 RigidCircle.prototype.update = function () {

@@ -73,7 +73,7 @@ xmlSceneFileParser.prototype.parseFrame = function (objSet, spriteDict) {
             }
             //sq.setColor(c);
             sq.getXform().setRotationInDegree(r); // In Degree
-            
+            sq.getRigidBody().rotateVertices();
             objSet.addToSet(sq);
         }
     }

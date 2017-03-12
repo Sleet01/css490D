@@ -7,8 +7,8 @@
 "use strict";
 /*global RigidShape, vec2, gEngine */
 
-var RigidRectangle = function (xf, width, height) {
-    RigidShape.call(this, xf);
+var RigidRectangle = function (xf, width, height, mass) {
+    RigidShape.call(this, xf, mass);
     this.mType = "RigidRectangle";
     this.mWidth = width;
     this.mHeight = height;
@@ -18,6 +18,9 @@ var RigidRectangle = function (xf, width, height) {
     
     this.setVertices();
     this.computeFaceNormals();
+    
+    // New from Ch 4.4 Phyics impl.
+    this.updateInertia();
 };
 gEngine.Core.inheritPrototype(RigidRectangle, RigidShape);
 
@@ -101,6 +104,25 @@ RigidRectangle.prototype.draw = function (aCamera) {
         this.mLine.setColor([1, 1, 1, 1]);
         this.drawCircle(aCamera, this.mBoundRadius);
     }
+};
+
+// New from Ch. 4.4 Phyics impl.
+RigidRectangle.prototype.updateInertia = function () {
+    // Expect this.mInvMass to be already inverted!
+    if (this.mInvMass === 0) {
+        this.mInertia = 0;
+    } else {
+        //inertia=mass*width^2+height^2
+        this.mInertia = (1 / this.mInvMass) * (this.mWidth * this.mWidth + this.mHeight * this.mHeight) / 12;
+        this.mInertia = 1 / this.mInertia;
+    }
+};
+
+// Uses setVertices instead of directly setting them relative to v.
+RigidRectangle.prototype.move = function (v) {
+    var p = this.mXform.getPosition();
+    vec2.add(p, p, v);
+    this.setVertices();
 };
 
 RigidRectangle.prototype.update = function () {
