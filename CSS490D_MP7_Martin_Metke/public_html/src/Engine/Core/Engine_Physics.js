@@ -29,7 +29,7 @@ gEngine.Physics = (function () {
     var mMovement = true;
     var mSystemAcceleration = vec2.fromValues(0, -20);        // system-wide default acceleration
     
-    var mPositionalCorrectionFlag = false;
+    var mPositionalCorrectionFlag = true;
     
     // correction rate constants
     var kRelaxationCount = 15;                  // number of relaxation iteration
@@ -104,10 +104,12 @@ gEngine.Physics = (function () {
 
 // --- updated to vec2 standard --- //
         //R cross N
-        var R1crossN = vec2.create();
+        var R1crossN = vec3.create();
         vec2.cross(R1crossN, r1, n);
-        var R2crossN = vec2.create();
+        var R2crossN = vec3.create();
         vec2.cross(R2crossN, r2, n);
+        R1crossN = R1crossN[2];
+        R2crossN = R2crossN[2];
 
         // Calc impulse scalar
         // the formula of jN can be found in http://www.myphysicslab.com/collision.html
@@ -142,10 +144,12 @@ gEngine.Physics = (function () {
         vec2.scale(tangent, tangent, -1);
 
 // --- updated to vec2 standard --- //
-        var R1crossT = vec2.create();
+        var R1crossT = vec3.create();
         vec2.cross(R1crossT, r1, tangent);
-        var R2crossT = vec2.create();
+        var R2crossT = vec3.create();
         vec2.cross(R2crossT, r2, tangent);
+        R1crossT = R1crossT[2];
+        R2crossT = R2crossT[2];
 
 // --- updated to vec2 standard --- //
         var jT = -(1 + newRestituion) * vec2.dot(relativeVelocity, tangent) * newFriction;
@@ -180,7 +184,7 @@ gEngine.Physics = (function () {
     
     var processCollision = function(set, infoSet) {
         var i = 0, j, k;
-        var iToj = [0, 0];
+        var iToj = vec2.create();
         var info = new CollisionInfo();
         for (k = 0; k < kRelaxationCount; k++){
             for (i = 0; i<set.size(); i++) {

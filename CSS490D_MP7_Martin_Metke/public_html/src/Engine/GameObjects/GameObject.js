@@ -15,6 +15,7 @@ function GameObject(renderableObj) {
     this.mCurrentFrontDir = vec2.fromValues(0, 1);  // this is the current front direction of the object
     this.mRigidBody = null;
     this.mDrawRenderable = true;
+    this.mSelected = false;
 }
 GameObject.prototype.getXform = function () { return this.mRenderComponent.getXform(); };
 GameObject.prototype.getBBox = function () {

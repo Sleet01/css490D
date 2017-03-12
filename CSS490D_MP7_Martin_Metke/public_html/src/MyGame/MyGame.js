@@ -22,12 +22,11 @@ function MyGame() {
     this.mCamera = null;
 
     this.mMsg = null;
-
+    
     this.mAllObjs = null;
     this.mCollisionInfos = [];
-    this.mHero = null;
-    
-    this.mCurrentObj = 0;
+    this.mMarker = null;    
+    this.mCurrentObj = 26;
 }
 gEngine.Core.inheritPrototype(MyGame, Scene);
 
@@ -73,6 +72,10 @@ MyGame.prototype.initialize = function () {
 //        this.mAllObjs.addToSet(m);
 //    }
 
+    this.mMarker = new SpriteRenderable(this.kSpriteDict["Target"]);
+    this.mMarker.setColor([1, 1, 1, 0]);
+    this.mMarker.getXform().setSize(3, 3);
+
     this.mMsg = new FontRenderable("Status Message");
     this.mMsg.setColor([0, 0, 0, 1]);
     this.mMsg.getXform().setPosition(2, 5);
@@ -94,10 +97,11 @@ MyGame.prototype.draw = function () {
         this.mCollisionInfos[i].draw(this.mCamera);
     this.mCollisionInfos = [];
     
+    this.mMarker.draw(this.mCamera);
     this.mMsg.draw(this.mCamera);   // only draw status in the main camera
 };
 
-MyGame.prototype.increasShapeSize = function(obj, delta) {
+MyGame.prototype.increaseShapeSize = function(obj, delta) {
     var s = obj.getRigidBody();
     var r = s.incShapeSizeBy(delta);
 };
@@ -108,28 +112,30 @@ MyGame.kBoundDelta = 0.1;
 MyGame.prototype.update = function () {
     
     var msg = "Num: " + this.mAllObjs.size() + " Current=" + this.mCurrentObj;   
-        
+    
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Right)) {
-        this.mCurrentObj = (this.mCurrentObj + 1) % (this.mAllObjs.size() - 1);
+        this.mCurrentObj = (this.mCurrentObj + 1) % (this.mAllObjs.size());
     }
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Left)) {
         this.mCurrentObj = (this.mCurrentObj - 1);
         if (this.mCurrentObj < 0)
             this.mCurrentObj = (this.mAllObjs.size() - 1);
     }
-    var obj = this.mAllObjs.getObjectAt(this.mCurrentObj);
+    var obj = this.mAllObjs.getObjectAt(this.mCurrentObj);    
+    
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Up)) {
-        this.increasShapeSize(obj, MyGame.kBoundDelta);
+        this.increaseShapeSize(obj, MyGame.kBoundDelta);
     }
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Down)) {
-        this.increasShapeSize(obj, -MyGame.kBoundDelta);
+        this.increaseShapeSize(obj, -MyGame.kBoundDelta);
     }
     if ("keyControl" in obj){
         obj.keyControl();
     }
     
-    
     this.mAllObjs.update(this.mCamera);
+    var xfp = obj.getXform().getPosition();
+    this.mMarker.getXform().setPosition(xfp[0], xfp[1]);
 
     gEngine.Physics.processCollision(this.mAllObjs, this.mCollisionInfos);
 
