@@ -13,14 +13,12 @@
         </group>
         <group>
             <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/GameObjects/GameObject.js</file>
+            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/RigidShapes/RigidCircle.js</file>
             <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/MyGame/MyGame.js</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/lib/gl-matrix.js</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/assets/LevelOne.xml</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/RigidShapes/CollisionInfo.js</file>
+            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/RigidShapes/RigidRectangle.js</file>
             <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/MyGame/Objects/WASDObj.js</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/Renderables/SpriteRenderable.js</file>
             <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/Core/Engine_Physics.js</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/Renderables/Renderable.js</file>
+            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/RigidShapes/RigidShape.js</file>
         </group>
     </open-files>
 </project-private>

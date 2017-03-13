@@ -64,7 +64,11 @@ MyGame.prototype.initialize = function () {
     this.mAllObjs.getObjectAt(26).getRigidBody().updateMass(-1000);
     
     this.mAllObjs.addToSet(new Minion(this.kSpriteDict["Minion"], 30, 60, false));
+    this.mAllObjs.getObjectAt(27).getRigidBody().updateMass(10);
+    
     this.mAllObjs.addToSet(new Minion(this.kSpriteDict["Minion"], 40, 60, true));
+    this.mAllObjs.getObjectAt(28).getRigidBody().updateMass(20);
+    
 //    this.mHero = new Hero(this.kSpriteDict["Minion"]);
 //    
 //    
@@ -148,7 +152,8 @@ MyGame.prototype.update = function () {
     this.mMarker.getXform().setPosition(xfp[0], xfp[1]);
 
     gEngine.Physics.processCollision(this.mAllObjs, this.mCollisionInfos);
-
-    msg += " R=" + obj.getRigidBody().getBoundRadius();
+    var objRB = obj.getRigidBody();
+    msg += " V= (" + objRB.mVelocity[0].toPrecision(2) + ", " + objRB.mVelocity[1].toPrecision(2) + ") ";
+    msg += " W= " + objRB.mAngularVelocity.toPrecision(2);
     this.mMsg.setText(msg);
 };

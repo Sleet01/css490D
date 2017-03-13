@@ -19,14 +19,7 @@ gEngine.Core.inheritPrototype(RigidCircle, RigidShape);
 RigidCircle.prototype.incShapeSizeBy= function (dt) {
     this.mRadius += dt;
     this.mBoundRadius += dt;
-};
-
-RigidCircle.prototype.travel = function (dt) {
-    // linear motion
-    var p = this.mXform.getPosition();
-    vec2.scaleAndAdd(p, p, this.mVelocity, dt);
-    
-    return this;
+    this.updateInertia();
 };
 
 RigidCircle.prototype.draw = function (aCamera) {
@@ -64,6 +57,7 @@ RigidCircle.prototype.updateInertia = function () {
 //rotate angle in counterclockwise
 RigidCircle.prototype.rotate = function (angle) {
     this.mAngle += angle;
+    this.mXform.setRotationInRad(this.mAngle);
     //this.mStartpoint = this.mStartpoint.rotate(this.mCenter, angle);
     return this;
 };

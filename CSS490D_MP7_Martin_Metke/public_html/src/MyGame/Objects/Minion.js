@@ -32,7 +32,7 @@ function Minion(spriteTexture, atX, atY, createCircle) {
     if (createCircle)
         r = new RigidCircle(this.getXform(), 4); 
     else
-        r = new RigidRectangle(this.getXform(), 5, 8);
+        r = new RigidRectangle(this.getXform(), 12, 9);
     this.setRigidBody(r);
     this.toggleDrawRenderable();
 }

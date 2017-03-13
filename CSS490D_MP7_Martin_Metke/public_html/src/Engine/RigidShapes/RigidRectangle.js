@@ -28,6 +28,7 @@ RigidRectangle.prototype.incShapeSizeBy= function (dt) {
     this.mHeight += dt;
     this.mWidth += dt;
     this.mBoundRadius = Math.sqrt(this.mWidth * this.mWidth + this.mHeight * this.mHeight) / 2;
+    this.updateInertia();
 };
 
 
@@ -57,31 +58,18 @@ RigidRectangle.prototype.computeFaceNormals = function () {
 // Taken from Ch 4.4 Physics implementation
 RigidRectangle.prototype.rotate = function (angle) {
     this.mAngle += angle;
-    
     this.mXform.setRotationInRad(this.mAngle);
-    this.rotateVertices();
+    this.rotateVertices(angle);
 };
 
-RigidRectangle.prototype.rotateVertices = function () {
+RigidRectangle.prototype.rotateVertices = function (angle) {
     var center = this.mXform.getPosition();
-    var r = this.mXform.getRotationInRad();
+    //var r = this.mXform.getRotationInRad();
+       
     for (var i = 0; i<4; i++) {
-        vec2.rotateWRT(this.mVertex[i], this.mVertex[i], r, center);
+        vec2.rotateWRT(this.mVertex[i], this.mVertex[i], angle, center);
     }
     this.computeFaceNormals();
-};
-
-// Replaced by "move" and "rotate" for physics adaptation
-RigidRectangle.prototype.travel = function (dt) {
-    var p = this.mXform.getPosition();
-    // Linear
-    vec2.scaleAndAdd(p, p, this.mVelocity, dt);
-    this.setVertices();
-    
-    // angular motion
-    this.rotateVertices();
-    
-    return this;
 };
 
 // All colors are black now
@@ -91,6 +79,7 @@ RigidRectangle.kBoundColor = [
     [0, 0, 0, 1],
     [0, 0, 0, 1]
 ];
+
 RigidRectangle.prototype.drawAnEdge = function (i1, i2, aCamera) {
     this.mLine.setColor(RigidRectangle.kBoundColor[i1]);
     this.mLine.setFirstVertex(this.mVertex[i1][0], this.mVertex[i1][1]);  
@@ -123,7 +112,7 @@ RigidRectangle.prototype.updateInertia = function () {
         this.mInertia = 0;
     } else {
         //inertia=mass*width^2+height^2
-        this.mInertia = (1 / this.mInvMass) * (this.mWidth * this.mWidth + this.mHeight * this.mHeight) / 12;
+        this.mInertia = (1 / this.mInvMass) * (this.mWidth * this.mWidth + this.mHeight * this.mHeight) / 6;
         this.mInertia = 1 / this.mInertia;
     }
 };
@@ -132,7 +121,12 @@ RigidRectangle.prototype.updateInertia = function () {
 RigidRectangle.prototype.move = function (s) {
     var p = this.mXform.getPosition();
     vec2.add(p, p, s);
-    this.setVertices();
+    
+    var i;
+    for (i = 0; i < this.mVertex.length; i++) {
+        vec2.add(this.mVertex[i], this.mVertex[i], s);
+    }
+    
       
  };
 

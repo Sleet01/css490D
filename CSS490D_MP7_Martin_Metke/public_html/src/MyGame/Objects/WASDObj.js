@@ -14,22 +14,25 @@ gEngine.Core.inheritPrototype(WASDObj, GameObject);
 
 WASDObj.prototype.keyControl = function () {
     var xform = this.getXform();
+    var rb = this.getRigidBody();
+    var hrb = (rb !== null);
+    
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.W)) {
-        xform.incYPosBy(this.kDelta);
+        ((hrb) ? rb.move([0, this.kDelta]) : xform.incYPosBy(this.kDelta));
     }
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.S)) {
-        xform.incYPosBy(-this.kDelta);
+        ((hrb) ? rb.move([0, -this.kDelta]) : xform.incYPosBy(-this.kDelta));
     }
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.A)) {
-        xform.incXPosBy(-this.kDelta);
+        ((hrb) ? rb.move([-this.kDelta, 0]) : xform.incXPosBy(-this.kDelta));
     }
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.D)) {
-        xform.incXPosBy(this.kDelta);
+        ((hrb) ? rb.move([this.kDelta, 0]) : xform.incXPosBy(this.kDelta));
     }
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Z)) {
-        xform.incRotationByDegree(1);
+       ((hrb) ? rb.rotate(1*Math.PI/180.0) : xform.incRotationByDegree(1));
     }
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.X)) {
-        xform.incRotationByDegree(-1);
+       ((hrb) ? rb.rotate(-1*Math.PI/180.0) : xform.incRotationByDegree(-1));
     }
 };

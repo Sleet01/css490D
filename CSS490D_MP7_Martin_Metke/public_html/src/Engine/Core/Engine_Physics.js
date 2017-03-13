@@ -26,23 +26,25 @@ var gEngine = gEngine || { };
  */
 gEngine.Physics = (function () {
 
+    // Physics-wide flags
     var mMovement = false;
     var mSystemAcceleration = vec2.fromValues(0, -20);        // system-wide default acceleration
     
-    var mPositionalCorrectionFlag = true;
+    var mPositionalCorrectionFlag = false;
     
     // correction rate constants
     var kRelaxationCount = 15;                  // number of relaxation iteration
     var kPosCorrectionRate = 0.8;               // percentage of separation to project objects
+
 
     // Borrowed from Physics ver 4.4
     var positionalCorrection = function (s1, s2, collisionInfo) {
         var s1InvMass = s1.mInvMass;
         var s2InvMass = s2.mInvMass;
 
-        var num = collisionInfo.getDepth() / (s1InvMass + s2InvMass) * kPosCorrectionRate;
-        var correctionAmount = vec2.clone(collisionInfo.getNormal());
-        vec2.scale(correctionAmount, correctionAmount, num);
+        var num = (collisionInfo.getDepth() / (s1InvMass + s2InvMass)) * kPosCorrectionRate;
+        var correctionAmount = vec2.create();
+        vec2.scale(correctionAmount, collisionInfo.getNormal(), num);
         var moveAmount = vec2.create();
         vec2.scale(moveAmount, correctionAmount, -s1InvMass);
         s1.move(moveAmount);
@@ -127,8 +129,8 @@ gEngine.Physics = (function () {
         var scaledImpulse = vec2.create();
         vec2.scale(scaledImpulse, impulse, s1.mInvMass);
         vec2.subtract(s1.mVelocity, s1.mVelocity, scaledImpulse);
-        vec2.scale(scaledImpulse, impulse, s2.mInvMass);
-        vec2.add(s2.mVelocity,impulse, scaledImpulse);
+        vec2.scale(scaledImpulse, impulse, s2.mInvMass); // Probably a bug here.
+        vec2.add(s2.mVelocity,s2.mVelocity, scaledImpulse);
         
         s1.mAngularVelocity -= R1crossN * jN * s1.mInertia;
         s2.mAngularVelocity += R2crossN * jN * s2.mInertia;
