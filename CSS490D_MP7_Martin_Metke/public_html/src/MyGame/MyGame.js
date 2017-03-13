@@ -59,7 +59,12 @@ MyGame.prototype.initialize = function () {
     this.mAllObjs = new GameObjectSet();
     sceneParser.parseFrame(this.mAllObjs, this.kSpriteDict);
     
+    // Initial controllable
     this.mAllObjs.addToSet(new Minion(this.kSpriteDict["Minion"], 50, 50, true));
+    this.mAllObjs.getObjectAt(26).getRigidBody().updateMass(-1000);
+    
+    this.mAllObjs.addToSet(new Minion(this.kSpriteDict["Minion"], 30, 60, false));
+    this.mAllObjs.addToSet(new Minion(this.kSpriteDict["Minion"], 40, 60, true));
 //    this.mHero = new Hero(this.kSpriteDict["Minion"]);
 //    
 //    
@@ -112,7 +117,12 @@ MyGame.kBoundDelta = 0.1;
 MyGame.prototype.update = function () {
     
     var msg = "Num: " + this.mAllObjs.size() + " Current=" + this.mCurrentObj;   
-    
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.P)){
+        gEngine.Physics.togglePositionalCorrection();
+    }
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.V)){
+        gEngine.Physics.toggleSystemMovement();
+    }
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Right)) {
         this.mCurrentObj = (this.mCurrentObj + 1) % (this.mAllObjs.size());
     }
@@ -121,7 +131,7 @@ MyGame.prototype.update = function () {
         if (this.mCurrentObj < 0)
             this.mCurrentObj = (this.mAllObjs.size() - 1);
     }
-    var obj = this.mAllObjs.getObjectAt(this.mCurrentObj);    
+    var obj = this.mAllObjs.getObjectAt(this.mCurrentObj);
     
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Up)) {
         this.increaseShapeSize(obj, MyGame.kBoundDelta);

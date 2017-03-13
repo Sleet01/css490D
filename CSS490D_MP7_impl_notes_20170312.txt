@@ -1,0 +1,7 @@
+To change:
+1) BPBR needs to match collision radius (at least for this case)
+2) Impulse is putting too much energy into ball
+2.A) figure out how to do this on purpose
+2.B) fix issue
+3) Movement is still working on Xform, needs to go through rigid shape completely
+4) Selected object needs to go to mInvMass == 0.

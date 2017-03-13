@@ -26,7 +26,7 @@ var gEngine = gEngine || { };
  */
 gEngine.Physics = (function () {
 
-    var mMovement = true;
+    var mMovement = false;
     var mSystemAcceleration = vec2.fromValues(0, -20);        // system-wide default acceleration
     
     var mPositionalCorrectionFlag = true;

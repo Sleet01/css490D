@@ -65,8 +65,8 @@ RigidShape.prototype.updateMass = function (delta) {
     mass += delta;
     if (mass <= 0) {
         this.mInvMass = 0;
-        this.mVelocity = new Vec2(0, 0);
-        this.mAcceleration = new Vec2(0, 0);
+        this.mVelocity = new vec2.fromValues(0, 0);
+        this.mAcceleration = new vec2.fromValues(0, 0);
         this.mAngularVelocity = 0;
         this.mAngularAcceleration = 0;
     } else {
@@ -107,13 +107,36 @@ RigidShape.prototype.flipVelocity = function() {
 };
 
 RigidShape.prototype.travel = function(dt) {};
+RigidShape.prototype.move = function(s) {};
 
 RigidShape.prototype.update = function () {
     if (gEngine.Physics.getSystemMovement()){
         var dt = gEngine.GameLoop.getUpdateIntervalInSeconds();
-        //s += v*t 
-        this.travel(dt);
+        //v += a*t
+        var accelScale = vec2.create();
+        vec2.scale(accelScale, this.mAcceleration, dt);
+        vec2.add(this.mVelocity, this.mVelocity, accelScale);
+        //this.mVelocity = this.mVelocity.add(this.mAcceleration.scale(dt));
+        //s += v*t
+        var velocityScale = vec2.create();
+        vec2.scale(velocityScale, this.mVelocity, dt);
+        this.move(velocityScale);
+        
+        this.mAngularVelocity += this.mAngularAcceleration * dt;
+        this.rotate(this.mAngularVelocity * dt);        
     }
+  /**
+    if (gEngine.Core.mMovement) {
+        var dt = gEngine.Core.mUpdateIntervalInSeconds;
+        //v += a*t
+        this.mVelocity = this.mVelocity.add(this.mAcceleration.scale(dt));
+        //s += v*t 
+        this.move(this.mVelocity.scale(dt));
+
+        this.mAngularVelocity += this.mAngularAcceleration * dt;
+        this.rotate(this.mAngularVelocity * dt);        
+    }
+    */
 };
 
 

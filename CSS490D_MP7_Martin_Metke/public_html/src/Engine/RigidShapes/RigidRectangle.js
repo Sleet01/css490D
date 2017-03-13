@@ -27,6 +27,7 @@ gEngine.Core.inheritPrototype(RigidRectangle, RigidShape);
 RigidRectangle.prototype.incShapeSizeBy= function (dt) {
     this.mHeight += dt;
     this.mWidth += dt;
+    this.mBoundRadius = Math.sqrt(this.mWidth * this.mWidth + this.mHeight * this.mHeight) / 2;
 };
 
 
@@ -53,6 +54,14 @@ RigidRectangle.prototype.computeFaceNormals = function () {
     }
 };
 
+// Taken from Ch 4.4 Physics implementation
+RigidRectangle.prototype.rotate = function (angle) {
+    this.mAngle += angle;
+    
+    this.mXform.setRotationInRad(this.mAngle);
+    this.rotateVertices();
+};
+
 RigidRectangle.prototype.rotateVertices = function () {
     var center = this.mXform.getPosition();
     var r = this.mXform.getRotationInRad();
@@ -62,6 +71,7 @@ RigidRectangle.prototype.rotateVertices = function () {
     this.computeFaceNormals();
 };
 
+// Replaced by "move" and "rotate" for physics adaptation
 RigidRectangle.prototype.travel = function (dt) {
     var p = this.mXform.getPosition();
     // Linear
@@ -119,11 +129,12 @@ RigidRectangle.prototype.updateInertia = function () {
 };
 
 // Uses setVertices instead of directly setting them relative to v.
-RigidRectangle.prototype.move = function (v) {
+RigidRectangle.prototype.move = function (s) {
     var p = this.mXform.getPosition();
-    vec2.add(p, p, v);
+    vec2.add(p, p, s);
     this.setVertices();
-};
+      
+ };
 
 RigidRectangle.prototype.update = function () {
     RigidShape.prototype.update.call(this);
