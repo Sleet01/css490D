@@ -17,7 +17,7 @@ function Minion(spriteTexture, atX, atY, createCircle) {
     this.mMinion = new SpriteAnimateRenderable(spriteTexture);
     this.mMinion.setColor([1, 1, 1, 0]);
     this.mMinion.getXform().setPosition(atX, atY);
-    this.mMinion.getXform().setSize(12, 10);
+    this.mMinion.getXform().setSize(Math.random() * (8 - 2) + 2, Math.random() * (7.4 - 2.4 ) + 2.4);
     this.mMinion.setSpriteSequence(512, 0,      // first element pixel position: top-left 512 is top of image, 0 is left of image
                                     204, 164,   // widthxheight in pixels
                                     5,          // number of elements in this sequence
@@ -29,16 +29,29 @@ function Minion(spriteTexture, atX, atY, createCircle) {
     GameObject.call(this, this.mMinion);
     
     var r;
-    if (createCircle)
-        r = new RigidCircle(this.getXform(), 4); 
+    var xf = this.getXform();
+    if (createCircle){
+        var rad = (Math.random()*(10.8 - 3.8) + 3.8)/2;
+        xf.setWidth(24*rad/15);
+        xf.setHeight(6 * rad / 5);
+        r = new RigidCircle(xf, rad);
+    }
     else
-        r = new RigidRectangle(this.getXform(), 12, 9);
+        r = new RigidRectangle(xf, xf.getWidth() , xf.getHeight());
     this.setRigidBody(r);
     this.toggleDrawRenderable();
 }
 gEngine.Core.inheritPrototype(Minion, WASDObj);
 
 Minion.prototype.update = function (aCamera) {
+    if(gEngine.Input.isKeyClicked(gEngine.Input.keys.H)){
+        var dt = gEngine.GameLoop.getUpdateIntervalInSeconds();
+        var manualImpulse = vec2.fromValues(Math.floor(Math.random() * (41) - 21), 
+            Math.floor(Math.random() * (41) - 21));
+        //vec2.scale(manualImpulse, manualImpulse, dt)
+        vec2.add(this.getRigidBody().mVelocity, this.getRigidBody().mVelocity, manualImpulse);
+    }
+    
     GameObject.prototype.update.call(this);
     // remember to update this.mMinion's animation
     this.mMinion.updateAnimation();

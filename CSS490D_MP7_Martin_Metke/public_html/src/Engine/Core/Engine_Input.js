@@ -19,7 +19,10 @@ gEngine.Input = (function () {
         Up: 38,
         Right: 39,
         Down: 40,
-
+        // Modifiers
+        Shift: 16,
+        Ctrl:  17,
+        Alt:   18,
         // space bar
         Space: 32,
 

@@ -32,6 +32,11 @@ gEngine.Physics = (function () {
     
     var mPositionalCorrectionFlag = false;
     
+    // Physical constants
+    const kDefaultInvMass = 1;
+    const kDefaultFriction = 0.8;
+    const kDefaultRestitution = 0.2;
+    
     // correction rate constants
     var kRelaxationCount = 15;                  // number of relaxation iteration
     var kPosCorrectionRate = 0.8;               // percentage of separation to project objects
@@ -218,7 +223,10 @@ gEngine.Physics = (function () {
         toggleSystemMovement: toggleSystemMovement,
         getPositionalCorrection: getPositionalCorrection,
         togglePositionalCorrection: togglePositionalCorrection,
-        processCollision: processCollision
+        processCollision: processCollision,
+        kDefaultInvMass: kDefaultInvMass,
+        kDefaultFriction: kDefaultFriction,
+        kDefaultRestitution: kDefaultRestitution
     };
     return mPublic;
 }());

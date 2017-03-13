@@ -25,8 +25,10 @@ function MyGame() {
     
     this.mAllObjs = null;
     this.mCollisionInfos = [];
-    this.mMarker = null;    
-    this.mCurrentObj = 26;
+    this.mDrawCollisions = false;
+    this.mMarker = null;
+    this.mFirstCreatedIndex = 0;
+    this.mCurrentObj = 0;
 }
 gEngine.Core.inheritPrototype(MyGame, Scene);
 
@@ -56,19 +58,14 @@ MyGame.prototype.initialize = function () {
     var sceneParser = new xmlSceneFileParser(this.kSceneFile);
     this.mCamera = sceneParser.parseCamera();
  
+    // Parse in all walls, floor, ceiling, platform
     this.mAllObjs = new GameObjectSet();
     sceneParser.parseFrame(this.mAllObjs, this.kSpriteDict);
+    this.mFirstCreatedIndex = this.mAllObjs.size();
     
     // Initial controllable
-    this.mAllObjs.addToSet(new Minion(this.kSpriteDict["Minion"], 50, 50, true));
-    this.mAllObjs.getObjectAt(26).getRigidBody().updateMass(-1000);
-    
-    this.mAllObjs.addToSet(new Minion(this.kSpriteDict["Minion"], 30, 60, false));
-    this.mAllObjs.getObjectAt(27).getRigidBody().updateMass(10);
-    
-    this.mAllObjs.addToSet(new Minion(this.kSpriteDict["Minion"], 40, 60, true));
-    this.mAllObjs.getObjectAt(28).getRigidBody().updateMass(20);
-    
+    //this.mAllObjs.addToSet(new Minion(this.kSpriteDict["Minion"], 50, 50, true));
+    //this.mAllObjs.addToSet(new Minion(this.kSpriteDict["Minion"], 50, 65, false));
 //    this.mHero = new Hero(this.kSpriteDict["Minion"]);
 //    
 //    
@@ -101,12 +98,16 @@ MyGame.prototype.draw = function () {
     
     this.mAllObjs.draw(this.mCamera);
     
-    // for now draw these ...
-    for (var i = 0; i<this.mCollisionInfos.length; i++) 
-        this.mCollisionInfos[i].draw(this.mCamera);
+    // Draw Collisions if desired
+    if(this.mDrawCollisions){
+        for (var i = 0; i<this.mCollisionInfos.length; i++) 
+            this.mCollisionInfos[i].draw(this.mCamera);
+    }
     this.mCollisionInfos = [];
     
-    this.mMarker.draw(this.mCamera);
+    if (this.mCurrentObj !== 0){
+        this.mMarker.draw(this.mCamera);
+    }
     this.mMsg.draw(this.mCamera);   // only draw status in the main camera
 };
 
@@ -119,28 +120,72 @@ MyGame.prototype.increaseShapeSize = function(obj, delta) {
 // anything from this function!
 MyGame.kBoundDelta = 0.1;
 MyGame.prototype.update = function () {
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.C)){
+        this.mDrawCollisions = !this.mDrawCollisions;
+    }
+    // Create new Rectangles (F) or Circles (G)
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.F)){
+        var wcw = this.mCamera.getWCWidth();
+        var wch = this.mCamera.getWCHeight();
+        // Create new Rectangle at the top of the viewport
+        this.mAllObjs.addToSet(
+                new Minion(this.kSpriteDict["Minion"], 
+                           Math.random() * ((wcw -5) - (5)) + (5),
+                           Math.random() * ((wch - 10) - (wch - 30)) + (wch - 30), false));
+    }
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.G)){
+        var wcw = this.mCamera.getWCWidth();
+        var wch = this.mCamera.getWCHeight();
+        // Create new Rectangle at the top of the viewport
+        this.mAllObjs.addToSet(
+                new Minion(this.kSpriteDict["Minion"], 
+                           Math.random() * ((wcw -5) - (5)) + (5),
+                           Math.random() * ((wch - 10) - (wch - 30)) + (wch - 30), true));
+    }
     
-    var msg = "Num: " + this.mAllObjs.size() + " Current=" + this.mCurrentObj;   
+    // For unselecting prep - if an object is selected, it is no longer subject
+    // to automatic physics updates.  Unselecting it puts it back in play
+    var obj = this.mAllObjs.getObjectAt(this.mCurrentObj);
+    var msg = "P: " + ((gEngine.Physics.getPositionalCorrection()) ? "On " : "Off"); 
+    msg += " V: " + ((gEngine.Physics.getSystemMovement()) ? "On " : "Off");   
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.P)){
         gEngine.Physics.togglePositionalCorrection();
     }
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.V)){
         gEngine.Physics.toggleSystemMovement();
     }
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Right)) {
-        this.mCurrentObj = (this.mCurrentObj + 1) % (this.mAllObjs.size());
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Zero)){
+        obj.unselect();
+        this.mCurrentObj = 0;
     }
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Right)) {
+        // Scenery is loaded first.
+        this.mCurrentObj = (((this.mCurrentObj + 1 < this.mAllObjs.size()) &&
+                             (this.mCurrentObj >= this.mFirstCreatedIndex)) ? 
+                                this.mCurrentObj + 1 : this.mFirstCreatedIndex); 
+        obj.unselect();
+    } // mFCI = 26; size = 27; mFCI = last index; 27 = 26
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Left)) {
         this.mCurrentObj = (this.mCurrentObj - 1);
-        if (this.mCurrentObj < 0)
+        if (this.mCurrentObj < this.mFirstCreatedIndex)
             this.mCurrentObj = (this.mAllObjs.size() - 1);
+        obj.unselect();
     }
-    var obj = this.mAllObjs.getObjectAt(this.mCurrentObj);
     
-    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Up)) {
+    // Select the requested object, so that is only moves under user input
+    if (this.mCurrentObj !== 0){
+        obj = this.mAllObjs.getObjectAt(this.mCurrentObj);
+        if(!obj.isSelected()){
+            obj.select();
+        }
+    }
+    // Increase / decrease Collision Bound of object
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Up) && 
+            gEngine.Input.isKeyPressed(gEngine.Input.keys.Shift)) {
         this.increaseShapeSize(obj, MyGame.kBoundDelta);
     }
-    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Down)) {
+    if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Down) &&
+            gEngine.Input.isKeyPressed(gEngine.Input.keys.Shift)) {
         this.increaseShapeSize(obj, -MyGame.kBoundDelta);
     }
     if ("keyControl" in obj){
@@ -148,12 +193,15 @@ MyGame.prototype.update = function () {
     }
     
     this.mAllObjs.update(this.mCamera);
-    var xfp = obj.getXform().getPosition();
-    this.mMarker.getXform().setPosition(xfp[0], xfp[1]);
-
+    
+    if (this.mCurrentObj !== 0){
+        var xfp = obj.getXform().getPosition();
+        this.mMarker.getXform().setPosition(xfp[0], xfp[1]);
+    }
+    
     gEngine.Physics.processCollision(this.mAllObjs, this.mCollisionInfos);
     var objRB = obj.getRigidBody();
-    msg += " V= (" + objRB.mVelocity[0].toPrecision(2) + ", " + objRB.mVelocity[1].toPrecision(2) + ") ";
-    msg += " W= " + objRB.mAngularVelocity.toPrecision(2);
+    msg += " M [I]: " + (1/objRB.mInvMass).toPrecision(2) + " [" + objRB.mInertia.toPrecision(2) + "] ";
+    msg += " F= " + objRB.mFriction.toPrecision(2) + " R= " + objRB.mRestitution.toPrecision(2);
     this.mMsg.setText(msg);
 };

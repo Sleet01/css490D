@@ -47,6 +47,10 @@ GameObject.prototype.update = function () {
     }
 };
 
+GameObject.prototype.isSelected = function () { return this.mRigidBody.mSelected; };
+GameObject.prototype.select = function () { this.mRigidBody.mSelected = true; };
+GameObject.prototype.unselect = function () { this.mRigidBody.mSelected = false; };
+
 GameObject.prototype.draw = function (aCamera) {
     if (this.isVisible()) {
         if (this.mDrawRenderable)

@@ -8,7 +8,7 @@
     <!-- cameras -->
                 <!-- Viewport: x, y, w, h -->
     <Camera CenterX="50" CenterY="37.5" Width="100" 
-          Viewport="0 0 800 600"   
+          Viewport="0 0 1024 768"   
           BgColor="0.8 0.8 0.8 1.0"
           />
               

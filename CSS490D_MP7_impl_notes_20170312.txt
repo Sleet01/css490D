@@ -3,5 +3,25 @@ To change:
 2) Impulse is putting too much energy into ball			 Check (was scaling Impulse against itself)
 2.A) figure out how to do this on purpose			 Selectively scale Impulse?  
 2.B) fix issue							 Check
-3) Movement is still working on Xform, needs to go through rigid shape completely - Better, but RigidRectangle.Move is busted
-4) Selected object needs to go to mInvMass == 0.
+3) Movement is still working on Xform, needs to go through rigid shape completely 	CHEEEECKKKKKK
+4) Selected object needs to go to mInvMass == 0.^W^W^W just stop updating the selected obj	Check!
+5) Screen output: P(On/Off) V(On/Off), M(I) F R
+
+
+Keys:
+H: inject random velocity to all rigid shapes 							Check
+		(different for each shape) -20 to 20 U/s (so multiply by dT)
+F: Random rectangle between 2x2.4 and 8x7.4							Check
+G: Random circle between 3.8 to 10.8								Check
+<- / ->: sequence through all of the *created* shapes.						Check
+M + up/down arrow: mass up/down for selected item (change mInvMass to 0, update mMass?) 	Check
+F + up/down arrow: friction up/down for the selected item					Check
+R + up/down arrow: restitution up/down for the selected item					Check
+T: toggle textures										Check!
+
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.H)){
+        var manualImpulse = vec2.fromValues(Math.floor(Math.random() * (41) - 21), 
+            Math.floor(Math.random() * (41) - 21));
+        vec2.scale(manualImpulse, manualImpulse, dt)
+        vec2.add(this.mVelocity, this.mVelocity, manualImpulse);
+    }

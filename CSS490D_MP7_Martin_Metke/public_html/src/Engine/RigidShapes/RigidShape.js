@@ -10,19 +10,20 @@ function RigidShape(xf, mass, friction, restitution) {
     if (mass !== undefined) {
         this.mInvMass = mass;
     } else {
-        this.mInvMass = 1;
+        this.mInvMass = gEngine.Physics.kDefaultInvMass;
+        
     }
 
     if (friction !== undefined) {
         this.mFriction = friction;
     } else {
-        this.mFriction = 0.8;
+        this.mFriction = gEngine.Physics.kDefaultFriction;
     }
 
     if (restitution !== undefined) {
         this.mRestitution = restitution;
     } else {
-        this.mRestitution = 0.2;
+        this.mRestitution = gEngine.Physics.kDefaultRestitution;
     }
 
     this.mVelocity = vec2.fromValues(0, 0);
@@ -51,6 +52,10 @@ function RigidShape(xf, mass, friction, restitution) {
     this.mBoundRadius = 0;
     
     this.mDrawBounds = false;
+    
+    // MP7-specific UI enhancements
+    this.kVarDelta = 2;
+    this.mSelected = false;
 }
 
 // New from Ch. 4.4 Physics implementation:
@@ -110,13 +115,39 @@ RigidShape.prototype.travel = function(dt) {};
 RigidShape.prototype.move = function(s) {};
 
 RigidShape.prototype.update = function () {
-    if (gEngine.Physics.getSystemMovement()){
-        var dt = gEngine.GameLoop.getUpdateIntervalInSeconds();
+    
+    var dt = gEngine.GameLoop.getUpdateIntervalInSeconds();
+    // Handle changes to selected RigidShape's physics vitals
+    if (this.mSelected){
+        if(gEngine.Input.isKeyPressed(gEngine.Input.keys.M)){
+            if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Up)){
+                this.updateMass( this.kVarDelta * dt );
+            } else if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Down)){
+                this.updateMass( -1 * this.kVarDelta * dt );
+            }
+        }
+        if(gEngine.Input.isKeyPressed(gEngine.Input.keys.F)){
+            if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Up)){
+                this.mFriction += this.kVarDelta * dt/4;
+            } else if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Down)){
+                this.mFriction -= this.kVarDelta * dt/4;
+            }
+        }
+        if(gEngine.Input.isKeyPressed(gEngine.Input.keys.R)){
+            if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Up)){
+                this.mRestitution += this.kVarDelta * dt/4;
+            } else if(gEngine.Input.isKeyPressed(gEngine.Input.keys.Down)){
+                this.mRestitution -= this.kVarDelta * dt/4;
+            }
+        }
+    }
+    
+    else if (gEngine.Physics.getSystemMovement()){
+        
         //v += a*t
         var accelScale = vec2.create();
         vec2.scale(accelScale, this.mAcceleration, dt);
         vec2.add(this.mVelocity, this.mVelocity, accelScale);
-        //this.mVelocity = this.mVelocity.add(this.mAcceleration.scale(dt));
         //s += v*t
         var velocityScale = vec2.create();
         vec2.scale(velocityScale, this.mVelocity, dt);
@@ -171,7 +202,7 @@ RigidShape.prototype.draw = function(aCamera) {
     this.mLine.draw(aCamera);
 };
 
-RigidShape.kNumCircleSides = 32;
+RigidShape.kNumCircleSides = 24;
 RigidShape.prototype.drawCircle = function(aCamera, r) {
     var pos = this.mXform.getPosition();    
     var prevPoint = vec2.clone(pos);
