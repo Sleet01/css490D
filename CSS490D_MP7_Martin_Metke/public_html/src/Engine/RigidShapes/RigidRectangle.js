@@ -28,6 +28,8 @@ RigidRectangle.prototype.incShapeSizeBy= function (dt) {
     this.mHeight += dt;
     this.mWidth += dt;
     this.mBoundRadius = Math.sqrt(this.mWidth * this.mWidth + this.mHeight * this.mHeight) / 2;
+    this.setVertices();
+    this.rotateVertices(this.mAngle);
     this.updateInertia();
 };
 

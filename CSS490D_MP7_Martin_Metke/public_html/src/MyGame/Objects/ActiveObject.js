@@ -1,6 +1,6 @@
-/* File: Minion.js 
+/* File: ActiveObject.js 
  *
- * Creates and initializes a Minion object
+ * Creates and initializes a ActiveObject object
  * overrides the update function of GameObject to define
  * simple sprite animation behavior behavior
  */
@@ -11,22 +11,22 @@
 
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
-function Minion(spriteTexture, atX, atY, createCircle) {
+function ActiveObject(spriteTexture, atX, atY, createCircle) {
     this.kDelta = 0.3;
     
-    this.mMinion = new SpriteAnimateRenderable(spriteTexture);
-    this.mMinion.setColor([1, 1, 1, 0]);
-    this.mMinion.getXform().setPosition(atX, atY);
-    this.mMinion.getXform().setSize(Math.random() * (8 - 2) + 2, Math.random() * (7.4 - 2.4 ) + 2.4);
-    this.mMinion.setSpriteSequence(512, 0,      // first element pixel position: top-left 512 is top of image, 0 is left of image
+    this.mActiveObject = new SpriteAnimateRenderable(spriteTexture);
+    this.mActiveObject.setColor([1, 1, 1, 0]);
+    this.mActiveObject.getXform().setPosition(atX, atY);
+    this.mActiveObject.getXform().setSize(Math.random() * (8 - 2) + 2, Math.random() * (7.4 - 2.4 ) + 2.4);
+    this.mActiveObject.setSpriteSequence(512, 0,      // first element pixel position: top-left 512 is top of image, 0 is left of image
                                     204, 164,   // widthxheight in pixels
                                     5,          // number of elements in this sequence
                                     0);         // horizontal padding in between
-    this.mMinion.setAnimationType(SpriteAnimateRenderable.eAnimationType.eAnimateSwing);
-    this.mMinion.setAnimationSpeed(30);
+    this.mActiveObject.setAnimationType(SpriteAnimateRenderable.eAnimationType.eAnimateSwing);
+    this.mActiveObject.setAnimationSpeed(30);
                                 // show each element for mAnimSpeed updates
 
-    GameObject.call(this, this.mMinion);
+    GameObject.call(this, this.mActiveObject);
     
     var r;
     var xf = this.getXform();
@@ -41,9 +41,9 @@ function Minion(spriteTexture, atX, atY, createCircle) {
     this.setRigidBody(r);
     this.toggleDrawRenderable();
 }
-gEngine.Core.inheritPrototype(Minion, WASDObj);
+gEngine.Core.inheritPrototype(ActiveObject, WASDObj);
 
-Minion.prototype.update = function (aCamera) {
+ActiveObject.prototype.update = function (aCamera) {
     if(gEngine.Input.isKeyClicked(gEngine.Input.keys.H)){
         var dt = gEngine.GameLoop.getUpdateIntervalInSeconds();
         var manualImpulse = vec2.fromValues(Math.floor(Math.random() * (41) - 21), 
@@ -53,6 +53,6 @@ Minion.prototype.update = function (aCamera) {
     }
     
     GameObject.prototype.update.call(this);
-    // remember to update this.mMinion's animation
-    this.mMinion.updateAnimation();
+    // remember to update this.mActiveObject's animation
+    this.mActiveObject.updateAnimation();
 };

@@ -12,7 +12,7 @@
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 
 function MyGame() {
-    this.kSpriteDict = { Minion:"assets/minion_sprite.png",
+    this.kSpriteDict = { ActiveObject:"assets/minion_sprite.png",
                          Wall:"assets/wall.png",
                          Platform:"assets/platform.png",
                          Target:"assets/target.png"};
@@ -63,25 +63,12 @@ MyGame.prototype.initialize = function () {
     sceneParser.parseFrame(this.mAllObjs, this.kSpriteDict);
     this.mFirstCreatedIndex = this.mAllObjs.size();
     
-    // Initial controllable
-    //this.mAllObjs.addToSet(new Minion(this.kSpriteDict["Minion"], 50, 50, true));
-    //this.mAllObjs.addToSet(new Minion(this.kSpriteDict["Minion"], 50, 65, false));
-//    this.mHero = new Hero(this.kSpriteDict["Minion"]);
-//    
-//    
-//    this.mAllObjs.addToSet(this.mHero);
-//    var y = 10;
-//    var x = 10;
-//    for (var i = 1; i<=5; i++) {
-//        var m = new Minion(this.kSpriteDict["Minion"], x, y, ((i%2)!==0));
-//        x += 20;
-//        this.mAllObjs.addToSet(m);
-//    }
-
+    // Create marker to identify selected object (if any)
     this.mMarker = new SpriteRenderable(this.kSpriteDict["Target"]);
     this.mMarker.setColor([1, 1, 1, 0]);
     this.mMarker.getXform().setSize(3, 3);
 
+    // Set up output renderable.  Did you know this consumes massive amounts of CPU time?
     this.mMsg = new FontRenderable("Status Message");
     this.mMsg.setColor([0, 0, 0, 1]);
     this.mMsg.getXform().setPosition(2, 5);
@@ -112,6 +99,8 @@ MyGame.prototype.draw = function () {
 };
 
 MyGame.prototype.increaseShapeSize = function(obj, delta) {
+    var xf = obj.getXform();
+    xf.incSizeBy(delta);
     var s = obj.getRigidBody();
     var r = s.incShapeSizeBy(delta);
 };
@@ -129,7 +118,7 @@ MyGame.prototype.update = function () {
         var wch = this.mCamera.getWCHeight();
         // Create new Rectangle at the top of the viewport
         this.mAllObjs.addToSet(
-                new Minion(this.kSpriteDict["Minion"], 
+                new ActiveObject(this.kSpriteDict["ActiveObject"], 
                            Math.random() * ((wcw -5) - (5)) + (5),
                            Math.random() * ((wch - 10) - (wch - 30)) + (wch - 30), false));
     }
@@ -138,7 +127,7 @@ MyGame.prototype.update = function () {
         var wch = this.mCamera.getWCHeight();
         // Create new Rectangle at the top of the viewport
         this.mAllObjs.addToSet(
-                new Minion(this.kSpriteDict["Minion"], 
+                new ActiveObject(this.kSpriteDict["ActiveObject"],
                            Math.random() * ((wcw -5) - (5)) + (5),
                            Math.random() * ((wch - 10) - (wch - 30)) + (wch - 30), true));
     }
@@ -182,11 +171,13 @@ MyGame.prototype.update = function () {
     // Increase / decrease Collision Bound of object
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Up) && 
             gEngine.Input.isKeyPressed(gEngine.Input.keys.Shift)) {
-        this.increaseShapeSize(obj, MyGame.kBoundDelta);
+        if(obj.isSelected())
+            this.increaseShapeSize(obj, MyGame.kBoundDelta);
     }
     if (gEngine.Input.isKeyPressed(gEngine.Input.keys.Down) &&
             gEngine.Input.isKeyPressed(gEngine.Input.keys.Shift)) {
-        this.increaseShapeSize(obj, -MyGame.kBoundDelta);
+        if(obj.isSelected())
+            this.increaseShapeSize(obj, -MyGame.kBoundDelta);
     }
     if ("keyControl" in obj){
         obj.keyControl();
