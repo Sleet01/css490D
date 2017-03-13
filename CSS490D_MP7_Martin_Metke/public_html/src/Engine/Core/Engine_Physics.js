@@ -136,9 +136,10 @@ gEngine.Physics = (function () {
         s2.mAngularVelocity += R2crossN * jN * s2.mInertia;
 
 // --- updated to vec2 standard --- //
-        var tangent = vec2.clone(n);
+//      var tangent = relativeVelocity.subtract(n.scale(relativeVelocity.dot(n)));
+        var tangent = vec2.create();
         vec2.scale(n, n, vec2.dot(relativeVelocity, n));
-        vec2.subtract(relativeVelocity, relativeVelocity, n);
+        vec2.subtract(tangent, relativeVelocity, n);
 
 // --- updated to vec2 standard --- //
         //relativeVelocity.dot(tangent) should less than 0
