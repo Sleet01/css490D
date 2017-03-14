@@ -203,7 +203,7 @@ MyGame.prototype.draw = function () {
     this.mAllObjs.draw(this.mCamera);
     
     // Draw Collisions if desired
-    console.log("Current CollisionInfo count: " + this.mCollisionInfos.length.toString());
+    //console.log("Current CollisionInfo count: " + this.mCollisionInfos.length.toString());
     if(this.mDrawCollisions){
         for (var i = 0; i<this.mCollisionInfos.length; i++) 
             this.mCollisionInfos[i].draw(this.mCamera);
