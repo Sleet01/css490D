@@ -25,3 +25,10 @@ T: toggle textures										Check!
         vec2.scale(manualImpulse, manualImpulse, dt)
         vec2.add(this.mVelocity, this.mVelocity, manualImpulse);
     }
+
+Spatial Partitioning issues:
+1) We are creating *way* too many sets of CollisionInfos.  Should probably be cleared after ever relaxation pass?  Check
+2) Some obstacles are not getting loaded right.									   Fixed
+3) Move text output away from his Char font renderable :P
+4) Add two output fields to HTML
+5) Output current message, and output total number of checks (and figure out how to calculate (-_-;)

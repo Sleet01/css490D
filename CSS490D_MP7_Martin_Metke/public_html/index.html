@@ -128,7 +128,14 @@
                 font-size: 25px;
                 color: #818181;
             }
-
+            
+            /* Change output font size and color */
+            .output {
+                
+                font-size: 25px;
+                color: #f1f1f1;
+            }
+            
             /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
             #main {
                 transition: margin-left .5s;
@@ -179,6 +186,12 @@
             <!-- this message will show only if WebGL clearing failed -->
         </canvas>
         
+        <!-- adding update objects, because the FontRenderable is SOOOO SLOOOOOW -->
+        <br>
+        <div id='UpdateFrame' class="output"></div>
+        <hr>
+        <div id='UpdateObject' class="output"></div>
+        
         <div id="bottom">
             <button type="button" id="controlButton1" onclick="openNav()">Instructions</button>
         </div>
@@ -193,6 +206,19 @@
             function closeNav() {
                 document.getElementById("mySidenav").style.width = "0";
             }
+            // For update sections
+            var gUpdateFrame = function(msg) {
+                var elm = document.getElementById("UpdateFrame");
+                elm.innerHTML =
+                        "<b>"+ msg + "</b><br>";
+            };
+           
+            var gUpdateObject = function(n) {
+                var elm = document.getElementById("UpdateObject");
+                elm.innerHTML =
+                        "<b>Total num collision tests: </b>" + n + "<br>";
+               
+            };
 	</script>
     </body>
 </html>

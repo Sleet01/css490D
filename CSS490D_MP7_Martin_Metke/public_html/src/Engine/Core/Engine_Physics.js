@@ -191,6 +191,9 @@ gEngine.Physics = (function () {
     var togglePositionalCorrection = function () { mPositionalCorrectionFlag = !mPositionalCorrectionFlag; };
     
     var processCollision = function(set, infoSet) {
+        // Added to count number of collision tests done per frame
+        var counter = 0;
+        
         var i = 0, j, k;
         // Added to prevent creating too many collisionInfo records
         var tempCollisions;
@@ -201,6 +204,7 @@ gEngine.Physics = (function () {
             for (i = 0; i<set.size(); i++) {
                 var objI = set.getObjectAt(i).getRigidBody(); // vice gEngine.Core.mAllObjects
                 for (j = i+1; j<set.size(); j++) {
+                    counter++;
                     var objJ = set.getObjectAt(j).getRigidBody();
                     // It appears that I have not been careful enough with removing objects in
                     // my updated GameObjectSet.  Let's see if this fixes the slowdown issue.
@@ -223,6 +227,7 @@ gEngine.Physics = (function () {
             }
         }
         infoSet.push.apply(infoSet, tempCollisions);
+    return counter;
     };
     
     var mPublic = {

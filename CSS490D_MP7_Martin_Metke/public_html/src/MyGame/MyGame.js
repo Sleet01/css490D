@@ -21,8 +21,6 @@ function MyGame() {
     // The camera to view the scene
     this.mCamera = null;
 
-    this.mMsg = null;
-    
     this.mAllObjs = null;
     this.mCollisionInfos = [];
     this.mDrawCollisions = false;
@@ -75,12 +73,15 @@ MyGame.prototype.initialize = function () {
     this.mMarker.setColor([1, 1, 1, 0]);
     this.mMarker.getXform().setSize(3, 3);
 
-    // Set up output renderable.  Did you know this consumes massive amounts of CPU time?
-    this.mMsg = new FontRenderable("Status Message");
-    this.mMsg.setColor([0, 0, 0, 1]);
-    this.mMsg.getXform().setPosition(2, 5);
-    this.mMsg.setTextHeight(3);
-    
+    // Set up output message.  
+    gUpdateFrame("Initializing...");
+    gUpdateObject(0);
+//    Did you know that FontRenderables consumes massive amounts of CPU time?
+//    this.mMsg = new FontRenderable("Status Message");
+//    this.mMsg.setColor([0, 0, 0, 1]);
+//    this.mMsg.getXform().setPosition(2, 5);
+//    this.mMsg.setTextHeight(3);
+  
     // Initialize the spatial partitions with the loaded-in scenery
     this.initializePartitions();
 };
@@ -112,11 +113,12 @@ MyGame.prototype.initializePartitions = function () {
     // Assign the existing scenery to cells
     this.updateSPCells(0, this.mAllObjs.size());
     
-    
 };
 
 MyGame.prototype.updateSPCells = function (start, end){
-
+    // Used for comparing total checks
+    var count = 0;
+    
     // We need to know how each object and bbox relate to each other.
     var obj, bbox, result;
     var index;
@@ -126,6 +128,7 @@ MyGame.prototype.updateSPCells = function (start, end){
         for (var j = 0; j < this.mSPCells.length; j++){
             //console.log("SPCell #: " + j.toString() + ", Length: " + this.mSPSets[j].size().toString());
             result = this.mSPCells[j].boundCollideStatus(bbox);
+            count++;
             // 1. If the object is fully within the current cell, it cannot be within
             //    another cell.  Remove it from any other cells it might have been in.
             //    Then go to next object, skipping all other cells
@@ -160,6 +163,9 @@ MyGame.prototype.updateSPCells = function (start, end){
             }
         }
     }
+    
+    // Used for comparison of All v All collisions, vs spatial partitions.
+    return count;
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
@@ -207,7 +213,6 @@ MyGame.prototype.draw = function () {
     if (this.mCurrentObj !== 0){
         this.mMarker.draw(this.mCamera);
     }
-    this.mMsg.draw(this.mCamera);   // only draw status in the main camera
 };
 
 MyGame.prototype.increaseShapeSize = function(obj, delta) {
@@ -221,6 +226,11 @@ MyGame.prototype.increaseShapeSize = function(obj, delta) {
 // anything from this function!
 MyGame.kBoundDelta = 0.1;
 MyGame.prototype.update = function () {
+    // Clear mCollisionInfos every update; should leave only one set at draw time
+    this.mCollisionInfos = [];
+    // Used to output collision checks (all v all vs partitioned)
+    var totalCollisionChecks = 0;
+    
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.C)){
         this.mDrawCollisions = !this.mDrawCollisions;
     }
@@ -318,20 +328,22 @@ MyGame.prototype.update = function () {
         // The SP Cell setup *should* allow for objects to cross borders without
         // significantly slowing processing.
         for (var p = 0; p < this.mSPCells.length; p++){
-            gEngine.Physics.processCollision(this.mSPSets[p], this.mCollisionInfos);
+            totalCollisionChecks += gEngine.Physics.processCollision(this.mSPSets[p], this.mCollisionInfos);
         }
         // Step 2: process new cell membership.
         // Here we cheat a little and only check objects that may move.
-        this.updateSPCells(this.mFirstCreatedIndex, this.mAllObjs.size() );
+        totalCollisionChecks += this.updateSPCells(this.mFirstCreatedIndex, this.mAllObjs.size() );
         
     }else {
-        gEngine.Physics.processCollision(this.mAllObjs, this.mCollisionInfos);
+        totalCollisionChecks += gEngine.Physics.processCollision(this.mAllObjs, this.mCollisionInfos);
     }
     
     // Finally, update msg with info about the selected object, if one is selected
     // (We cheat here and output object 0's info if nothing else is selected.
+    // Output to gUpdateFrame.
     var objRB = obj.getRigidBody();
     msg += " M [I]: " + (1/objRB.mInvMass).toPrecision(2) + " [" + objRB.mInertia.toPrecision(2) + "] ";
     msg += " F= " + objRB.mFriction.toPrecision(2) + " R= " + objRB.mRestitution.toPrecision(2);
-    this.mMsg.setText(msg);
+    gUpdateFrame(msg);
+    gUpdateObject(totalCollisionChecks);
 };
