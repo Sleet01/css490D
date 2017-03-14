@@ -33,7 +33,6 @@ function MyGame() {
     this.kSPCount = 4;
     this.mSPCells = [];
     this.mSPSets = [];
-    this.mDebugSP = false;
 }
 gEngine.Core.inheritPrototype(MyGame, Scene);
 
@@ -234,9 +233,6 @@ MyGame.prototype.update = function () {
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.C)){
         this.mDrawCollisions = !this.mDrawCollisions;
     }
-    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.One)){
-        this.mDebugSP = !this.mDebugSP;
-    }
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Four)){
         this.mUseSP = !this.mUseSP;
     }
@@ -325,13 +321,14 @@ MyGame.prototype.update = function () {
     // This is where spatial partitioning will happen.
     if (this.mUseSP){
         // Step 1: process the contents of each SP cell separately.
-        // The SP Cell setup *should* allow for objects to cross borders without
-        // significantly slowing processing.
+        //         The SP Cell setup *should* allow for objects to cross 
+        //         borders without significantly slowing processing.
         for (var p = 0; p < this.mSPCells.length; p++){
             totalCollisionChecks += gEngine.Physics.processCollision(this.mSPSets[p], this.mCollisionInfos);
         }
-        // Step 2: process new cell membership.
-        // Here we cheat a little and only check objects that may move.
+        // Step 2: process new cell membership, checking for objects moving through
+        //         cell boundaries.
+        //         Here we cheat a little and only check created objects, which may move.
         totalCollisionChecks += this.updateSPCells(this.mFirstCreatedIndex, this.mAllObjs.size() );
         
     }else {
