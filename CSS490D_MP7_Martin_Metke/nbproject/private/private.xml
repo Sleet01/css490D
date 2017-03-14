@@ -12,18 +12,16 @@
             <file>file:/C:/Users/ksungAD/Dropbox/2.Classes/490/CSS490Shared/Source/MPSolutions/MP6.KelvinSolution/public_html/src/Engine/RigidShapes/RigidShape.js</file>
         </group>
         <group>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/MyGame/Objects/Minion.js</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/GameObjects/GameObject.js</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/Core/Engine_Input.js</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/RigidShapes/RigidCircle.js</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/MyGame/MyGame.js</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/lib/gl-matrix.js</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/Utils/xmlSceneFileParser.js</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/assets/LevelOne.xml</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/Utils/Transform.js</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/Core/Engine_Physics.js</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/RigidShapes/RigidShape.js</file>
-            <file>file:/C:/Users/sleet01/Documents/UWB/2017_WI/css490D/CSS490D_MP7_Martin_Metke/public_html/index.html</file>
+            <file>file:/C:/Users/IEUser/Documents/NetBeansProjects/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/Utils/xmlSceneFileParser.js</file>
+            <file>file:/C:/Users/IEUser/Documents/NetBeansProjects/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/Utils/Transform.js</file>
+            <file>file:/C:/Users/IEUser/Documents/NetBeansProjects/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/GameObjects/GameObject.js</file>
+            <file>file:/C:/Users/IEUser/Documents/NetBeansProjects/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/RigidShapes/RigidShape.js</file>
+            <file>file:/C:/Users/IEUser/Documents/NetBeansProjects/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/Core/Engine_Physics.js</file>
+            <file>file:/C:/Users/IEUser/Documents/NetBeansProjects/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/RigidShapes/RigidCircle.js</file>
+            <file>file:/C:/Users/IEUser/Documents/NetBeansProjects/css490D/CSS490D_MP7_Martin_Metke/public_html/src/MyGame/MyGame.js</file>
+            <file>file:/C:/Users/IEUser/Documents/NetBeansProjects/css490D/CSS490D_MP7_Martin_Metke/public_html/src/MyGame/Objects/WASDObj.js</file>
+            <file>file:/C:/Users/IEUser/Documents/NetBeansProjects/css490D/CSS490D_MP7_Martin_Metke/public_html/src/MyGame/Objects/Obstacle.js</file>
+            <file>file:/C:/Users/IEUser/Documents/NetBeansProjects/css490D/CSS490D_MP7_Martin_Metke/public_html/src/Engine/RigidShapes/RigidRectangle.js</file>
         </group>
     </open-files>
 </project-private>
