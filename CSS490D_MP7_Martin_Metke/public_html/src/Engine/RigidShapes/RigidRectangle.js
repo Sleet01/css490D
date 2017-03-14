@@ -114,7 +114,7 @@ RigidRectangle.prototype.updateInertia = function () {
         this.mInertia = 0;
     } else {
         //inertia=mass*width^2+height^2
-        this.mInertia = (1 / this.mInvMass) * (this.mWidth * this.mWidth + this.mHeight * this.mHeight) / 6;
+        this.mInertia = (1 / this.mInvMass) * (this.mWidth * this.mWidth + this.mHeight * this.mHeight) / 12;
         this.mInertia = 1 / this.mInertia;
     }
 };
