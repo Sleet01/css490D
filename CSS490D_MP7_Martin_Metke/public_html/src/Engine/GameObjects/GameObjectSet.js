@@ -20,8 +20,22 @@ GameObjectSet.prototype.getObjectAt = function (index) {
     return this.mSet[index];
 };
 
+GameObjectSet.prototype.getIndexOf = function (obj) {
+    return this.mSet.indexOf(obj);
+};
+
 GameObjectSet.prototype.addToSet = function (obj) {
     this.mSet.push(obj);
+};
+
+GameObjectSet.prototype.removeIndex = function (index) {
+    this.mSet.splice(index, 1);
+};
+
+GameObjectSet.prototype.removeObject = function (obj) {
+    var i = this.getIndexOf(obj);
+    if (i !== -1)
+        this.removeIndex(i);
 };
 
 GameObjectSet.prototype.update = function (aCamera) {

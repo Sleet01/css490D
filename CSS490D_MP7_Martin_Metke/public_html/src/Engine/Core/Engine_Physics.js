@@ -192,13 +192,20 @@ gEngine.Physics = (function () {
     
     var processCollision = function(set, infoSet) {
         var i = 0, j, k;
+        // Added to prevent creating too many collisionInfo records
+        var tempCollisions;
         var iToj = vec2.create();
         var info = new CollisionInfo();
         for (k = 0; k < kRelaxationCount; k++){
+            tempCollisions = [];
             for (i = 0; i<set.size(); i++) {
                 var objI = set.getObjectAt(i).getRigidBody(); // vice gEngine.Core.mAllObjects
                 for (j = i+1; j<set.size(); j++) {
                     var objJ = set.getObjectAt(j).getRigidBody();
+                    // It appears that I have not been careful enough with removing objects in
+                    // my updated GameObjectSet.  Let's see if this fixes the slowdown issue.
+                    if (objI === objJ)
+                        break;  // This "fixes" the self-collision issue, but collision spam still happens.
                     if (objI.boundTest(objJ)) {
                         if (objI.collisionTest(objJ, info)) {
                             // make sure info is always from i towards j
@@ -208,13 +215,14 @@ gEngine.Physics = (function () {
                             // New from ch. 4.4 physics
                             resolveCollision(objI, objJ, info);
                             
-                            infoSet.push(info);
+                            tempCollisions.push(info);
                             info = new CollisionInfo();
                         }
                     }
                 }
             }
         }
+        infoSet.push.apply(infoSet, tempCollisions);
     };
     
     var mPublic = {

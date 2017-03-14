@@ -29,6 +29,13 @@ function MyGame() {
     this.mMarker = null;
     this.mFirstCreatedIndex = 0;
     this.mCurrentObj = 0;
+    
+    // Extra credit: *Naive* spatial partitioning
+    this.mUseSP = true;
+    this.kSPCount = 4;
+    this.mSPCells = [];
+    this.mSPSets = [];
+    this.mDebugSP = false;
 }
 gEngine.Core.inheritPrototype(MyGame, Scene);
 
@@ -58,7 +65,7 @@ MyGame.prototype.initialize = function () {
     var sceneParser = new xmlSceneFileParser(this.kSceneFile);
     this.mCamera = sceneParser.parseCamera();
  
-    // Parse in all walls, floor, ceiling, platform
+    // Parse in all walls, floors, ceilings, platforms
     this.mAllObjs = new GameObjectSet();
     sceneParser.parseFrame(this.mAllObjs, this.kSpriteDict);
     this.mFirstCreatedIndex = this.mAllObjs.size();
@@ -73,6 +80,86 @@ MyGame.prototype.initialize = function () {
     this.mMsg.setColor([0, 0, 0, 1]);
     this.mMsg.getXform().setPosition(2, 5);
     this.mMsg.setTextHeight(3);
+    
+    // Initialize the spatial partitions with the loaded-in scenery
+    this.initializePartitions();
+};
+
+// Spatial Partition requires more prep than N x N collision checks, but offers
+// higher performance.
+MyGame.prototype.initializePartitions = function () {
+    // First, partition visible area into this.kSPCount full-height cells
+    //console.log("Initializing partitions...");
+    
+    var camHeight, camWidth;
+    var camPos = this.mCamera.getWCCenter();
+    camHeight = this.mCamera.getWCHeight();
+    camWidth = this.mCamera.getWCWidth();
+    var cellHeight = camHeight;
+    var cellWidth = camWidth / this.kSPCount;
+    
+    // Create kSPCount # of cells and their matching GameObjectSets
+    var xPos, yPos;
+    for (var i = 0; i < this.kSPCount; i++){
+        //console.log("Initializing Bounding Box # " + i.toString());
+        // camX + 1/2 of a cell width + i * cell width
+        xPos = (camPos[0] - (camWidth / 2)) + (cellWidth / 2) + (i * cellWidth);
+        yPos = camPos[1];
+        this.mSPCells.push(new BoundingBox([xPos, yPos], cellWidth, cellHeight));
+        this.mSPSets.push(new GameObjectSet());
+    }
+    
+    // Assign the existing scenery to cells
+    this.updateSPCells(0, this.mAllObjs.size());
+    
+    
+};
+
+MyGame.prototype.updateSPCells = function (start, end){
+
+    // We need to know how each object and bbox relate to each other.
+    var obj, bbox, result;
+    var index;
+    for (var i = start; i < end; i++){
+        obj = this.mAllObjs.getObjectAt(i);
+        bbox = obj.getBBox();
+        for (var j = 0; j < this.mSPCells.length; j++){
+            //console.log("SPCell #: " + j.toString() + ", Length: " + this.mSPSets[j].size().toString());
+            result = this.mSPCells[j].boundCollideStatus(bbox);
+            // 1. If the object is fully within the current cell, it cannot be within
+            //    another cell.  Remove it from any other cells it might have been in.
+            //    Then go to next object, skipping all other cells
+            if (result === BoundingBox.eboundCollideStatus.eInside){
+                for (var r = 0; r < this.mSPCells.length; r++){
+                    index = this.mSPSets[r].getIndexOf(obj);
+                    // If obj is found in another set, remove it.
+                    if (r !== j && index !== -1 )
+                        this.mSPSets[r].removeIndex(index);
+                    // If obj is *not* found in *this* set, remove it.
+                    if (r === j && index === -1 )
+                        this.mSPSets[r].addToSet(obj);
+                }
+                // No need to check if this object is touching any other cells
+                break;
+            }
+            // 1. But if it is outside this cell, check its internal-ness.  If it was inside,
+            //    remove it.  Otherwise, continue to the next cell
+            else if (result === BoundingBox.eboundCollideStatus.eOutside){
+                index = this.mSPSets[j].getIndexOf(obj);  // Somehow I forgot this check for ~8 hours
+                if ( index !== -1)                        // and it broke everything.
+                    this.mSPSets[j].removeIndex(index);
+                continue;
+            }
+            // Finally, if the object is touching but not fully contained in this cell,
+            // add it to this cell's set and go to the next cell.  The object may be
+            // touching two cells, or may just be sticking out past the camera's view.
+            else {
+                index = this.mSPSets[j].getIndexOf(obj);
+                if (index === -1)
+                    this.mSPSets[j].addToSet(obj);
+            }
+        }
+    }
 };
 
 // This is the draw function, make sure to setup proper drawing environment, and more
@@ -83,9 +170,34 @@ MyGame.prototype.draw = function () {
 
     this.mCamera.setupViewProjection();
     
+    // Turn on rendering of Spatial Partitioning cells
+    if (this.mUseSP){
+              
+        var myLine = new LineRenderable(0, 0, 0, 0);
+        myLine.setColor([0, 1, 0.796, 1]);
+        
+        // Draw each BBox from its lower-left corner, to lower-right, to upper-right,
+        // to upper-left, and back.
+        var bbox;
+        for (var i = 0; i < this.mSPCells.length; i++ ){
+            bbox = this.mSPCells[i];
+            myLine.setVertices(bbox.mLL[0], bbox.mLL[1], bbox.mLL[0] + bbox.mWidth, bbox.mLL[1]);
+            myLine.draw(this.mCamera);
+            myLine.setVertices(bbox.mLL[0] + bbox.mWidth, bbox.mLL[1], bbox.mLL[0] + bbox.mWidth, bbox.mLL[1] + bbox.mHeight);
+            myLine.draw(this.mCamera);
+            myLine.setVertices(bbox.mLL[0] + bbox.mWidth, bbox.mLL[1]  + bbox.mHeight, bbox.mLL[0], bbox.mLL[1] + bbox.mHeight);
+            myLine.draw(this.mCamera);
+            myLine.setVertices(bbox.mLL[0], bbox.mLL[1] + bbox.mHeight, bbox.mLL[0], bbox.mLL[1]);
+            myLine.draw(this.mCamera);
+        }
+        
+    }
+    
+    // mAllObjs is sufficient for drawing; no need to partition the visual aspects
     this.mAllObjs.draw(this.mCamera);
     
     // Draw Collisions if desired
+    console.log("Current CollisionInfo count: " + this.mCollisionInfos.length.toString());
     if(this.mDrawCollisions){
         for (var i = 0; i<this.mCollisionInfos.length; i++) 
             this.mCollisionInfos[i].draw(this.mCamera);
@@ -111,6 +223,12 @@ MyGame.kBoundDelta = 0.1;
 MyGame.prototype.update = function () {
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.C)){
         this.mDrawCollisions = !this.mDrawCollisions;
+    }
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.One)){
+        this.mDebugSP = !this.mDebugSP;
+    }
+    if (gEngine.Input.isKeyClicked(gEngine.Input.keys.Four)){
+        this.mUseSP = !this.mUseSP;
     }
     // Create new Rectangles (F) or Circles (G)
     if (gEngine.Input.isKeyClicked(gEngine.Input.keys.F)){
@@ -179,18 +297,39 @@ MyGame.prototype.update = function () {
         if(obj.isSelected())
             this.increaseShapeSize(obj, -MyGame.kBoundDelta);
     }
+    // Only some objects (extending WASDObj) have keyControl function.
+    // Only call keyControl if it is a member of the object or its prototype.
     if ("keyControl" in obj){
         obj.keyControl();
     }
     
+    // Update all objects.
     this.mAllObjs.update(this.mCamera);
     
+    // Ensure that the marker tracks its selected object, if one is selected
     if (this.mCurrentObj !== 0){
         var xfp = obj.getXform().getPosition();
         this.mMarker.getXform().setPosition(xfp[0], xfp[1]);
     }
     
-    gEngine.Physics.processCollision(this.mAllObjs, this.mCollisionInfos);
+    // This is where spatial partitioning will happen.
+    if (this.mUseSP){
+        // Step 1: process the contents of each SP cell separately.
+        // The SP Cell setup *should* allow for objects to cross borders without
+        // significantly slowing processing.
+        for (var p = 0; p < this.mSPCells.length; p++){
+            gEngine.Physics.processCollision(this.mSPSets[p], this.mCollisionInfos);
+        }
+        // Step 2: process new cell membership.
+        // Here we cheat a little and only check objects that may move.
+        this.updateSPCells(this.mFirstCreatedIndex, this.mAllObjs.size() );
+        
+    }else {
+        gEngine.Physics.processCollision(this.mAllObjs, this.mCollisionInfos);
+    }
+    
+    // Finally, update msg with info about the selected object, if one is selected
+    // (We cheat here and output object 0's info if nothing else is selected.
     var objRB = obj.getRigidBody();
     msg += " M [I]: " + (1/objRB.mInvMass).toPrecision(2) + " [" + objRB.mInertia.toPrecision(2) + "] ";
     msg += " F= " + objRB.mFriction.toPrecision(2) + " R= " + objRB.mRestitution.toPrecision(2);
