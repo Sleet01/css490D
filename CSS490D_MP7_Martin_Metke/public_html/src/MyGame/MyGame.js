@@ -29,7 +29,7 @@ function MyGame() {
     this.mCurrentObj = 0;
     
     // Extra credit: *Naive* spatial partitioning
-    this.mUseSP = true;
+    this.mUseSP = false;
     this.kSPCount = 4;
     this.mSPCells = [];
     this.mSPSets = [];
